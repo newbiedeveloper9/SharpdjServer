@@ -3,7 +3,7 @@ using Hik.Communication.Scs.Communication.EndPoints.Tcp;
 using Hik.Communication.Scs.Communication.Messages;
 using Hik.Communication.Scs.Server;
 
-namespace Server.ServerManagment
+namespace Server.deprecated.ServerManagment
 {
     public class Server
     {

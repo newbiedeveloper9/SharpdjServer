@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Communication.Shared.Data;
 
-namespace Server.Sql
+namespace Server.deprecated.Sql
 {
     class SqlUserCommands
     {

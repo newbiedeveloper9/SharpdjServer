@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Hik.Communication.Scs.Server;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class SendMessageChatCommand : ICommand
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Hik.Communication.Scs.Server;
-using Server.ServerManagment.Commands;
+using Server.deprecated.ServerManagment.Commands;
 
-namespace Server.ServerManagment
+namespace Server.deprecated.ServerManagment
 {
     public class ServerReceiver
     {

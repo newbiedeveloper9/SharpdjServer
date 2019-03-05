@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Server
+namespace Server.deprecated
 {
     public class ServerConfig
     {

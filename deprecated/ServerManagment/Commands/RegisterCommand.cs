@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hik.Communication.Scs.Server;
+using Server.deprecated.Sql;
 using Server.Security;
-using Server.Sql;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class RegisterCommand : ICommand
     {

@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace Server.Sql
+namespace Server.deprecated.Sql
 {
     public class SqlHelper
     {

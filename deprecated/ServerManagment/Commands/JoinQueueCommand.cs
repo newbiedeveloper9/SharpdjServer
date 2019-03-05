@@ -6,7 +6,7 @@ using Hik.Communication.Scs.Server;
 using Newtonsoft.Json;
 using YoutubeExplode;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class JoinQueueCommand : ICommand
     {

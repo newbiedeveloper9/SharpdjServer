@@ -5,9 +5,9 @@ using Communication.Client.User;
 using Communication.Shared;
 using Communication.Shared.Data;
 using Hik.Communication.Scs.Server;
-using Server.Sql;
+using Server.deprecated.Sql;
 
-namespace Server.ServerManagment
+namespace Server.deprecated.ServerManagment
 {
     class ServerLogic
     {

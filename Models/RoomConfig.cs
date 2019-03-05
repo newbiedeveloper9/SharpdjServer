@@ -9,7 +9,6 @@ namespace Server.Models
         public int Id { get; set; }
 
         public ChatType ChatType { get; set; } = ChatType.All;
-        public bool Is
     }
 
     public enum ChatType

@@ -5,7 +5,7 @@ using Communication.Shared.Data;
 using Hik.Communication.Scs.Server;
 using Newtonsoft.Json;
 
-namespace Server.ServerManagment
+namespace Server.deprecated.ServerManagment
 {
     public class ServerSender
     {

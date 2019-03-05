@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Hik.Communication.Scs.Server;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class AfterLoginData : ICommand
     {

@@ -17,14 +17,11 @@ namespace Server.Models
         public string Username { get; set; }
 
         [EmailAddress]
-        [Index(IsUnique = true)]
         public string Email { get; set; }
         public Rank Rank { get; set; }
 
-        [Index(IsUnique = true)]
         public UserAuth UserAuth { get; set; }
 
-        [Index(IsUnique = true)]
         public ICollection<User> FriendList { get; set; }
 
         public string AvatarUrl { get; set; } = "";

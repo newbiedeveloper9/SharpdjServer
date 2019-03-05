@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Communication.Server;
 using Communication.Shared.Data;
 using Hik.Communication.Scs.Server;
+using Server.deprecated.Sql;
 using Server.Security;
-using Server.Sql;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class LoginCommand : ICommand
     {

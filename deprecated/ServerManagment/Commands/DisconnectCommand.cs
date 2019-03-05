@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hik.Communication.Scs.Server;
-using Server.Sql;
+using Server.deprecated.Sql;
 
-namespace Server.ServerManagment.Commands
+namespace Server.deprecated.ServerManagment.Commands
 {
     public class DisconnectCommand : ICommand
     {
