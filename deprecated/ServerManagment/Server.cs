@@ -2,6 +2,7 @@ using System;
 using Hik.Communication.Scs.Communication.EndPoints.Tcp;
 using Hik.Communication.Scs.Communication.Messages;
 using Hik.Communication.Scs.Server;
+using Server.Management;
 
 namespace Server.deprecated.ServerManagment
 {

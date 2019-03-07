@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
 using System.IO;
-using Newtonsoft.Json;
 
-namespace Server.deprecated
+namespace Server.Management
 {
     public class ServerConfig
     {
-        public int Port { get; set; } = 21337;
-        public string Ip { get; set; }
-        public bool Whitelist { get; set; } = false;
-        public bool Blacklist { get; set; } = false;
+        [JsonRequired] public int Port { get; set; } = 21337;
+
+        [JsonRequired] public string Ip { get; set; } = "127.0.0.1";
+        [JsonRequired] public int RSAKeySize { get; set; } = 2048;
 
         private ServerConfig()
         {
@@ -17,14 +18,15 @@ namespace Server.deprecated
 
         public static ServerConfig LoadConfig(string configFile = "config.json")
         {
-            var path = $"{Environment.CurrentDirectory}\\{configFile}";
+            var path = $"{AppDomain.CurrentDomain.BaseDirectory}\\{configFile}";
 
             if (!File.Exists(path))
             {
                 var json = JsonConvert.SerializeObject(new ServerConfig(), Formatting.Indented);
                 File.WriteAllText(path, json);
-                Console.WriteLine("Created new config file. Complete server configuration file and restart.");
+                Console.WriteLine("New config file has been created. Press enter to restart.");
                 Console.ReadLine();
+                Process.Start("Server.exe");
                 Environment.Exit(0);
             }
 
@@ -36,7 +38,7 @@ namespace Server.deprecated
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error in load config:");
+                    Console.WriteLine("Error in config.json:");
                     Console.WriteLine(ex.Message);
                     Console.ReadLine();
                 }
