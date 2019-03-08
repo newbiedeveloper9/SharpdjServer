@@ -122,15 +122,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataSingleton.cs" />
+    <Compile Include="Management\ClientSingleton.cs" />
+    <Compile Include="Management\ConnectionExtension.cs" />
+    <Compile Include="Management\HandlersAction\ServerRegisterAction.cs" />
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
-    <Compile Include="Management\HandlersAction\LoginAction.cs" />
+    <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
+    <Compile Include="Migrations\201903081916503_Prototype.cs" />
+    <Compile Include="Migrations\201903081916503_Prototype.Designer.cs">
+      <DependentUpon>201903081916503_Prototype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Connection.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\MediaHistory.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\RoomConfig.cs" />
-    <Compile Include="Models\ServerContext.cs" />
+    <Compile Include="Models\UserContext.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserAuth.cs" />
     <Compile Include="Program.cs" />
@@ -171,7 +179,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <EmbeddedResource Include="Migrations\201903081916503_Prototype.resx">
+      <DependentUpon>201903081916503_Prototype.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

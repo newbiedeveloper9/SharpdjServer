@@ -63,9 +63,9 @@ namespace Server.deprecated.ServerManagment
 
             #endregion Login
 
-            #region Register
+            #region RegisterPackets
 
-            else if (message.StartsWith(Commands.Register))
+            else if (message.StartsWith(Commands.RegisterPackets))
             {
                 var rgx = new Regex(MessagesPattern.RegisterRgx);
                 var match = rgx.Match(message);
@@ -84,7 +84,7 @@ namespace Server.deprecated.ServerManagment
                 }
             }
 
-            #endregion Register
+            #endregion RegisterPackets
 
             #region ChangePassword
 

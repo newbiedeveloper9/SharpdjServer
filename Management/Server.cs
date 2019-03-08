@@ -34,13 +34,13 @@ namespace Server.Management
 
         private void ServerConnectionLost(Connection connection, ConnectionType connectionType, CloseReason closeReason)
         {
-            Console.WriteLine("lost");
+            Console.WriteLine($"{connection.IPRemoteEndPoint} connection lost");
         }
 
         private void ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
         {
-            Console.WriteLine(connection.IPRemoteEndPoint);
-            _packetsList.Register(connection);
+            Console.WriteLine($"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+            _packetsList.RegisterPackets(connection);
         }
     }
 }

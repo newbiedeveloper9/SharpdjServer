@@ -8,7 +8,7 @@ namespace Server.deprecated.ServerManagment.Commands
 {
     public class RegisterCommand : ICommand
     {
-        public string CommandText { get; } = Communication.Shared.Commands.Instance.CommandsDictionary["Register"];
+        public string CommandText { get; } = Communication.Shared.Commands.Instance.CommandsDictionary["RegisterPackets"];
         
         public void Run(IScsServerClient client, List<string> parameters, string messageId)
         {

@@ -68,10 +68,10 @@ namespace Server.deprecated.Sql
                     new SqlParameter("@Id",id),
                     new SqlParameter("@Ip", ip),
                     new SqlParameter("@Date", GetSqlDateTime()),
-                    new SqlParameter("@Action", action)
+                    new SqlParameter("@Request", action)
                 };
 
-                SqlHelper.SqlNonQueryCommand("INSERT INTO ActionInfo (Id, Ip, Time, Action) VALUES (@Id, @Ip, @Date, @Action)", parameters);
+                SqlHelper.SqlNonQueryCommand("INSERT INTO ActionInfo (Id, Ip, Time, Request) VALUES (@Id, @Ip, @Date, @Request)", parameters);
             }
             catch (Exception ex)
             {

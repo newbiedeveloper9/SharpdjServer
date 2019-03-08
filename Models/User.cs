@@ -28,7 +28,7 @@ namespace Server.Models
 
         public override string ToString()
         {
-            return $"[{Id}] {Username}, Rank: {Rank}, Email: {Email}";
+            return $"[{Id}][\"{UserAuth?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
         }
     }
 }
