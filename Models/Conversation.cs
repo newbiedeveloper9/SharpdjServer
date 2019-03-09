@@ -8,17 +8,12 @@ using System.Threading.Tasks;
 
 namespace Server.Models
 {
-    public class MediaHistory
+    public class Conversation
     {
-        [Key, Column("MediaHistoryId")]
+        [Key, Column("ConversationId")]
         public int Id { get; set; }
-        public MediaType MediaType { get; set; }
-        public string Url { get; set; }
-    }
-
-    public enum MediaType
-    {
-        SoundCloud,
-        Youtube
+        public List<User> Users { get; set; }
+        public List<ConversationMessage> Messages { get; set; }
+        public string Title { get; set; }
     }
 }

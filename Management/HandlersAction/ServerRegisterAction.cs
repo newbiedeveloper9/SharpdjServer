@@ -10,8 +10,8 @@ namespace Server.Management.HandlersAction
 {
     class ServerRegisterAction
     {
-        private readonly UserContext _context;
-        public ServerRegisterAction(UserContext context)
+        private readonly ServerContext _context;
+        public ServerRegisterAction(ServerContext context)
         {
             _context = context;
         }

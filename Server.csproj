@@ -92,9 +92,6 @@
     <Reference Include="SCPackets">
       <HintPath>..\SCPackets\SCPackets\SCPackets\bin\Debug\SCPackets.dll</HintPath>
     </Reference>
-    <Reference Include="Scs, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Scs.1.1.1\lib\net40-client\Scs.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -121,24 +118,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSingleton.cs" />
     <Compile Include="Management\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
     <Compile Include="Management\HandlersAction\ServerRegisterAction.cs" />
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
-    <Compile Include="Migrations\201903081916503_Prototype.cs" />
-    <Compile Include="Migrations\201903081916503_Prototype.Designer.cs">
-      <DependentUpon>201903081916503_Prototype.cs</DependentUpon>
+    <Compile Include="Migrations\201903092142390_Prototype.cs" />
+    <Compile Include="Migrations\201903092142390_Prototype.Designer.cs">
+      <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Connection.cs" />
+    <Compile Include="Models\UserConnection.cs" />
+    <Compile Include="Models\Conversation.cs" />
+    <Compile Include="Models\ConversationMessage.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\MediaHistory.cs" />
     <Compile Include="Models\Room.cs" />
+    <Compile Include="Models\RoomChatPost.cs" />
     <Compile Include="Models\RoomConfig.cs" />
-    <Compile Include="Models\UserContext.cs" />
+    <Compile Include="Models\ServerContext.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserAuth.cs" />
     <Compile Include="Program.cs" />
@@ -164,8 +163,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903081916503_Prototype.resx">
-      <DependentUpon>201903081916503_Prototype.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903092142390_Prototype.resx">
+      <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

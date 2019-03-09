@@ -2,6 +2,8 @@
 using Network.Enums;
 using SCPackets.LoginPacket;
 using System;
+using System.IO;
+using Communication.Shared;
 
 namespace Server.Management
 {
@@ -16,7 +18,7 @@ namespace Server.Management
         {
             _config = config;
             _packetsList = new ServerPacketsToHandleList();
-            _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(_config.Ip, _config.Port, _config.RSAKeySize, false);
+            _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(_config.Ip, _config.Port, 2048, false);
 
             Initialize();
         }
@@ -39,8 +41,17 @@ namespace Server.Management
 
         private void ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
         {
-            Console.WriteLine($"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
-            _packetsList.RegisterPackets(connection);
+            try
+            {
+                connection.LogIntoStream(Stream.Null);
+                Console.WriteLine(
+                    $"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+                _packetsList.RegisterPackets(connection);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Server.Management.HandlersAction
 {
     public class ServerLoginAction
     {
-        private readonly UserContext _context;
+        private readonly ServerContext _context;
 
-        public ServerLoginAction(UserContext context)
+        public ServerLoginAction(ServerContext context)
         {
             _context = context;
         }

@@ -11,7 +11,7 @@ namespace Server.Management
 {
     public class ServerPacketsToHandleList
     {
-        private UserContext context;
+        private ServerContext context;
 
         public HandlerModel<LoginRequest> Login { get; set; }
         public HandlerModel<RegisterRequest> Register { get; set; }
@@ -19,7 +19,7 @@ namespace Server.Management
         public ServerPacketsToHandleList()
         {
 
-                context = new UserContext();
+                context = new ServerContext();
                 User user = context.Users.FirstOrDefault(); //Will create entire EF structure at start
 
                 Login = new HandlerModel<LoginRequest> {Action = new HandlersAction.ServerLoginAction(context).Request};

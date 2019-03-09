@@ -7,11 +7,19 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            var config = ServerConfig.LoadConfig();
-            var server = new Management.Server(config);
-            server.Start();
-            Console.WriteLine("Server started");
-            Console.ReadLine();
+            try
+            {
+                var config = ServerConfig.LoadConfig();
+                var server = new Management.Server(config);
+                server.Start();
+                Console.WriteLine("Server started");
+                Console.ReadLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

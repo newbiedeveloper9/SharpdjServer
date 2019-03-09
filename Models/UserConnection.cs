@@ -9,7 +9,7 @@ using Communication.Client.User;
 
 namespace Server.Models
 {
-    class UserConnection
+    public class UserConnection
     {
         [Key, Column("UserConnectionId")]
         public int Id { get; set; }
