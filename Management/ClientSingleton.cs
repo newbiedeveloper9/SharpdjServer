@@ -16,9 +16,9 @@ namespace Server.Management
 
         private ClientSingleton()
         {
-            Users = new List<User>();
+            Users = new List<ServerUserModel>();
         }
 
-        public List<User> Users { get; set; }
+        public List<ServerUserModel> Users { get; set; }
     }
 }

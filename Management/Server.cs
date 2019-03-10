@@ -3,7 +3,6 @@ using Network.Enums;
 using SCPackets.LoginPacket;
 using System;
 using System.IO;
-using Communication.Shared;
 
 namespace Server.Management
 {
@@ -43,7 +42,6 @@ namespace Server.Management
         {
             try
             {
-                connection.LogIntoStream(Stream.Null);
                 Console.WriteLine(
                     $"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
                 _packetsList.RegisterPackets(connection);

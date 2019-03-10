@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Communication.Shared.Data;
 using Rank = SCPackets.Rank;
 
 namespace Server.Models

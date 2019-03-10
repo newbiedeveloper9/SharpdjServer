@@ -41,6 +41,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>
     </DocumentationFile>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -120,13 +121,24 @@
   <ItemGroup>
     <Compile Include="Management\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
+    <Compile Include="Management\DictionaryConditionsValidation.cs" />
+    <Compile Include="Management\HandlersAction\ServerCreateRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerRegisterAction.cs" />
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
+    <Compile Include="Management\ServerUserModel.cs" />
     <Compile Include="Migrations\201903092142390_Prototype.cs" />
     <Compile Include="Migrations\201903092142390_Prototype.Designer.cs">
       <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903101537254_UpdatePrototype.cs" />
+    <Compile Include="Migrations\201903101537254_UpdatePrototype.Designer.cs">
+      <DependentUpon>201903101537254_UpdatePrototype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903101554369_RemoveDescription.cs" />
+    <Compile Include="Migrations\201903101554369_RemoveDescription.Designer.cs">
+      <DependentUpon>201903101554369_RemoveDescription.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\UserConnection.cs" />
@@ -165,6 +177,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903092142390_Prototype.resx">
       <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903101537254_UpdatePrototype.resx">
+      <DependentUpon>201903101537254_UpdatePrototype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903101554369_RemoveDescription.resx">
+      <DependentUpon>201903101554369_RemoveDescription.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

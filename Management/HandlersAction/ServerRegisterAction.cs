@@ -1,8 +1,10 @@
 ﻿using Network;
+using SCPackets;
 using SCPackets.RegisterPacket;
 using Server.Models;
 using Server.Security;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -18,22 +20,24 @@ namespace Server.Management.HandlersAction
 
         public void Request(RegisterRequest req, Connection conn)
         {
-            Console.WriteLine(req.Password);
+            var ext = new ConnectionExtension(conn, this);
 
             try
             {
-                if (_context.Users.Include(x=>x.UserAuth)
-                        .Any(x => x.UserAuth.Login.Equals(req.Login)) || _context.Users.Any(x => x.Email.Equals(req.Email)))
+                var validation = new DictionaryConditionsValidation<Result>();
+                validation.Conditions.Add(Result.PasswordError, (req.Password.Length < 6 || req.Password.Length > 48));
+                validation.Conditions.Add(Result.EmailError, !DataValidation.EmailIsValid(req.Email));
+                validation.Conditions.Add(Result.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32));
+                validation.Conditions.Add(Result.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32));
+                validation.Conditions.Add(Result.AlreadyExist, AccountExist(req.Login, req.Email));
+
+                var result = validation.Validate();
+                if (result != null)
                 {
-                    conn.Send(new RegisterResponse(Result.AlreadyExist, req));
+                    ext.SendPacket(new RegisterResponse((Result) result, req));
                     return;
                 }
 
-                if (req.Password.Length < 6 || req.Password.Length > 48)
-                {
-                    ConnectionExtension.SendPacket(conn, new RegisterResponse(Result.PasswordError, req), this);
-                    return;
-                }
 
                 string salt = Scrypt.GenerateSalt();
                 var user = new User()
@@ -50,14 +54,22 @@ namespace Server.Management.HandlersAction
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
-                ConnectionExtension.SendPacket(conn, new RegisterResponse(Result.Success, req), this);
+                ext.SendPacket(new RegisterResponse(Result.Success, req));
                 Console.WriteLine("Register: {0}", user);
             }
             catch (Exception e)
             {
-                ConnectionExtension.SendPacket(conn, new RegisterResponse(Result.Error, req), this);
+                ext.SendPacket(new RegisterResponse(Result.Error, req));
                 Console.WriteLine(e.Message);
             }
         }
+
+        private bool AccountExist(string login, string email)
+        {
+            return _context.Users.Include(x => x.UserAuth)
+                        .Any(x => x.UserAuth.Login.Equals(login)) ||
+                    _context.Users.Any(x => x.Email.Equals(email));
+        }
+
     }
 }
