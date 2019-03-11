@@ -4,6 +4,8 @@ using SCPackets.CreateRoom;
 using SCPackets.CreateRoom.Container;
 using Server.Models;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Server.Management.HandlersAction
 {
@@ -22,9 +24,17 @@ namespace Server.Management.HandlersAction
             try
             {
                 var author = ConnectionExtension.GetClient(conn);
+                if (author == null)
+                {
+                    conn.Send(new NotLoggedInRequest());
+                    return;
+                }
+
+                var roomExist = _context.Rooms.Any(x => x.Name.Equals(req.RoomModel.Name));
+
 
                 var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.Error, author == null);
+                validation.Conditions.Add(Result.AlreadyExist, roomExist);
                 validation.Conditions.Add(Result.NameError, !DataValidation.LengthIsValid(req.RoomModel.Name, 2, 40));
                 validation.Conditions.Add(Result.ImageError, !DataValidation.ImageIsValid(req.RoomModel.ImageUrl));
 
