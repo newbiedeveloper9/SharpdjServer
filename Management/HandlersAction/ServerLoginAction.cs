@@ -47,12 +47,9 @@ namespace Server.Management.HandlersAction
                 {
                     var response = new LoginResponse(Result.Success, req);
                     response.User = user.ToUserClient();
-                    response.RoomOutsideModelList = new List<RoomOutsideModel>();
 
                     foreach (var roomModel in RoomSingleton.Instance.Rooms)
-                    {
                         response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
-                    }
 
                     ext.SendPacket(response);
                     ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,10 @@ namespace Server.Management
 
         private RoomSingleton()
         {
-            Rooms = new List<RoomInstance>();
+            Rooms = new SpecialRoomList<RoomInstance>();
         }
 
-        public List<RoomInstance> Rooms { get; set; }
+        public SpecialRoomList<RoomInstance> Rooms { get; set; }
+
     }
 }

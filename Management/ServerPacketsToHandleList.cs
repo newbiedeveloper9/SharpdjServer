@@ -7,8 +7,10 @@ using Network;
 using SCPackets;
 using SCPackets.CreateRoom;
 using SCPackets.LoginPacket;
+using SCPackets.NewRoomCreated;
 using SCPackets.RegisterPacket;
 using Server.Management.HandlersAction;
+using Server.Management.Singleton;
 using Server.Models;
 
 namespace Server.Management
@@ -29,6 +31,8 @@ namespace Server.Management
                 User user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
                 InitializeRooms();
 
+                RoomSingleton.Instance.Rooms.AfterInsert += RoomsOnAfterInsert;
+
                 Login = new HandlerModel<LoginRequest> {Action = new ServerLoginAction(_context).Request};
                 Register = new HandlerModel<RegisterRequest> {Action = new ServerRegisterAction(_context).Request};
                 CreateRoom = new HandlerModel<CreateRoomRequest>()
@@ -39,6 +43,16 @@ namespace Server.Management
                 Console.WriteLine(ex.Message);
             }
         }
+
+        private void RoomsOnAfterInsert(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)
+        {
+            foreach (var user in ClientSingleton.Instance.Users)
+            {
+                user.Connection.Send(
+                    new NewRoomCreatedRequest(e.Item.ToRoomOutsideModel()));
+            }
+        }
+
 
         public void RegisterPackets(Connection conn)
         {

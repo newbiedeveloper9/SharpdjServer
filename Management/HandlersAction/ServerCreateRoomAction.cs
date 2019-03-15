@@ -55,6 +55,7 @@ namespace Server.Management.HandlersAction
 
                 var room = new Room();
                 room = room.ToServerModel(req.RoomModel, author.User);
+                RoomSingleton.Instance.Rooms.Add(room.ToRoomInstance());
 
                 _context.Rooms.Add(room);
                 _context.SaveChanges();

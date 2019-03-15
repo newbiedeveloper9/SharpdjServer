@@ -152,6 +152,7 @@
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
     <Compile Include="Management\Strategy\TrackJustOnce.cs" />
+    <Compile Include="SpecialRoomList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
