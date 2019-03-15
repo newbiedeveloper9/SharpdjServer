@@ -2,10 +2,10 @@
 using SCPackets;
 using SCPackets.CreateRoom;
 using SCPackets.CreateRoom.Container;
+using SCPackets.NotLoggedIn;
 using Server.Models;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Server.Management.HandlersAction
 {
@@ -46,7 +46,7 @@ namespace Server.Management.HandlersAction
                     (!DataValidation.LengthIsValid(req.RoomModel.PublicEnterMessage, 0, 512) ||
                      !DataValidation.LengthIsValid(req.RoomModel.PublicLeaveMessage, 0, 512)));
 
-                var result = validation.Validate(); 
+                var result = validation.Validate();
                 if (result != null)
                 {
                     ext.SendPacket(new CreateRoomResponse((Result)result, req));

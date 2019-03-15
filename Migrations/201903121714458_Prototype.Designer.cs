@@ -7,13 +7,13 @@ namespace Server.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class RemoveDescription : IMigrationMetadata
+    public sealed partial class Prototype : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RemoveDescription));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Prototype));
         
         string IMigrationMetadata.Id
         {
-            get { return "201903101554369_RemoveDescription"; }
+            get { return "201903121714458_Prototype"; }
         }
         
         string IMigrationMetadata.Source

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using SCPackets;
 using Rank = SCPackets.Rank;
 
 namespace Server.Models
@@ -29,6 +30,11 @@ namespace Server.Models
         public override string ToString()
         {
             return $"[{Id}][\"{UserAuth?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
+        }
+
+        public UserClient ToUserClient()
+        {
+            return new UserClient(this.Id, this.Username, this.Rank);
         }
     }
 }

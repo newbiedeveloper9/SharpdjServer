@@ -17,7 +17,7 @@ namespace Server.Management
         {
             _config = config;
             _packetsList = new ServerPacketsToHandleList();
-            _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(_config.Ip, _config.Port, 2048, false);
+            _connectionContainer = ConnectionFactory.CreateServerConnectionContainer(_config.Ip, _config.Port, false);
 
             Initialize();
         }
@@ -44,6 +44,8 @@ namespace Server.Management
             {
                 Console.WriteLine(
                     $"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+                connection.EnableLogging = true;
+                connection.LogIntoStream(Console.OpenStandardOutput());
                 _packetsList.RegisterPackets(connection);
             }
             catch (Exception ex)

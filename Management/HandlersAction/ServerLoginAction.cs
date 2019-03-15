@@ -1,8 +1,12 @@
 ﻿using Network;
 using SCPackets.LoginPacket;
+using SCPackets.LoginPacket.Container;
+using SCPackets.Models;
+using Server.Management.Singleton;
 using Server.Models;
 using Server.Security;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -29,8 +33,9 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                User user = _context.Users.Include(x=>x.UserAuth).
+                User user = _context.Users.Include(x => x.UserAuth).
                     FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
+
                 if (user == null)
                 {
                     ext.SendPacket(new LoginResponse(Result.Error, req));
@@ -40,8 +45,17 @@ namespace Server.Management.HandlersAction
                 string hashedPass = Scrypt.Hash(req.Password, user.UserAuth.Salt);
                 if (user.UserAuth.Hash.Equals(hashedPass))
                 {
+                    var response = new LoginResponse(Result.Success, req);
+                    response.User = user.ToUserClient();
+                    response.RoomOutsideModelList = new List<RoomOutsideModel>();
+
+                    foreach (var roomModel in RoomSingleton.Instance.Rooms)
+                    {
+                        response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
+                    }
+
+                    ext.SendPacket(response);
                     ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
-                    ext.SendPacket(new LoginResponse(Result.Success, req));
                     Console.WriteLine("Login: {0}", user);
                 }
                 else

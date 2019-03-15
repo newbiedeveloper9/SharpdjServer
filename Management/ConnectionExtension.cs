@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Network;
+using Server.Management.Singleton;
 
 namespace Server.Management
 {

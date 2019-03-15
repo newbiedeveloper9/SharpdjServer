@@ -84,8 +84,8 @@
       <HintPath>packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Network, Version=6.1.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Network.6.1.0.3\lib\net46\Network.dll</HintPath>
+    <Reference Include="Network, Version=6.1.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Network.6.1.0.6\lib\net46\Network.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -119,26 +119,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Management\ClientSingleton.cs" />
+    <Compile Include="Management\Singleton\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
     <Compile Include="Management\DictionaryConditionsValidation.cs" />
     <Compile Include="Management\HandlersAction\ServerCreateRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerRegisterAction.cs" />
+    <Compile Include="Management\Singleton\RoomSingleton.cs" />
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
     <Compile Include="Management\ServerUserModel.cs" />
-    <Compile Include="Migrations\201903092142390_Prototype.cs" />
-    <Compile Include="Migrations\201903092142390_Prototype.Designer.cs">
-      <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903101537254_UpdatePrototype.cs" />
-    <Compile Include="Migrations\201903101537254_UpdatePrototype.Designer.cs">
-      <DependentUpon>201903101537254_UpdatePrototype.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903101554369_RemoveDescription.cs" />
-    <Compile Include="Migrations\201903101554369_RemoveDescription.Designer.cs">
-      <DependentUpon>201903101554369_RemoveDescription.cs</DependentUpon>
+    <Compile Include="Management\Strategy\ITrackStrategy.cs" />
+    <Compile Include="Migrations\201903121714458_Prototype.cs" />
+    <Compile Include="Migrations\201903121714458_Prototype.Designer.cs">
+      <DependentUpon>201903121714458_Prototype.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\UserConnection.cs" />
@@ -154,8 +148,10 @@
     <Compile Include="Models\UserAuth.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoomInstance.cs" />
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
+    <Compile Include="Management\Strategy\TrackJustOnce.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -175,14 +171,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903092142390_Prototype.resx">
-      <DependentUpon>201903092142390_Prototype.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903101537254_UpdatePrototype.resx">
-      <DependentUpon>201903101537254_UpdatePrototype.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903101554369_RemoveDescription.resx">
-      <DependentUpon>201903101554369_RemoveDescription.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903121714458_Prototype.resx">
+      <DependentUpon>201903121714458_Prototype.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

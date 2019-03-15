@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using SCPackets.CreateRoom.Container;
 
 namespace Server.Models
@@ -32,7 +33,21 @@ namespace Server.Models
                     PublicEnterMessage = model.PublicEnterMessage,
                     PublicLeaveMessage =  model.PublicLeaveMessage,
                 },
+                Media = new List<MediaHistory>()
+                {
+                    
+                },
+                Posts = new List<RoomChatPost>()
+                {
+
+                }
             };
+        }
+
+        public RoomInstance ToRoomInstance()
+        {
+            var serializedParent = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<RoomInstance>(serializedParent);
         }
     }
 }

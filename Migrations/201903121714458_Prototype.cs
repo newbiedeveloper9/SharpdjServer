@@ -126,6 +126,10 @@ namespace Server.Migrations
                     {
                         RoomConfigId = c.Int(nullable: false, identity: true),
                         ChatType = c.Int(nullable: false),
+                        PublicEnterMessage = c.String(),
+                        PublicLeaveMessage = c.String(),
+                        LocalEnterMessage = c.String(),
+                        LocalLeaveMessage = c.String(),
                     })
                 .PrimaryKey(t => t.RoomConfigId);
             
@@ -134,7 +138,7 @@ namespace Server.Migrations
                 c => new
                     {
                         RoomId = c.Int(nullable: false, identity: true),
-                        Name = c.Int(nullable: false),
+                        Name = c.String(),
                         ImagePath = c.String(),
                         Author_Id = c.Int(),
                         RoomConfig_Id = c.Int(),
