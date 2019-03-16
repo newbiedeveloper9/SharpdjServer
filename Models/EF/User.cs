@@ -7,7 +7,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SCPackets;
-using Rank = SCPackets.Rank;
+using SCPackets.Models;
+using Rank = SCPackets.Models.Rank;
 
 namespace Server.Models
 {

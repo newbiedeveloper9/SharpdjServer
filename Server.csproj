@@ -128,31 +128,31 @@
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
-    <Compile Include="Management\ServerUserModel.cs" />
+    <Compile Include="Models\ServerUserModel.cs" />
     <Compile Include="Management\Strategy\ITrackStrategy.cs" />
     <Compile Include="Migrations\201903121714458_Prototype.cs" />
     <Compile Include="Migrations\201903121714458_Prototype.Designer.cs">
       <DependentUpon>201903121714458_Prototype.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\UserConnection.cs" />
-    <Compile Include="Models\Conversation.cs" />
-    <Compile Include="Models\ConversationMessage.cs" />
-    <Compile Include="Models\Log.cs" />
-    <Compile Include="Models\MediaHistory.cs" />
-    <Compile Include="Models\Room.cs" />
-    <Compile Include="Models\RoomChatPost.cs" />
-    <Compile Include="Models\RoomConfig.cs" />
-    <Compile Include="Models\ServerContext.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserAuth.cs" />
+    <Compile Include="Models\EF\UserConnection.cs" />
+    <Compile Include="Models\EF\Conversation.cs" />
+    <Compile Include="Models\EF\ConversationMessage.cs" />
+    <Compile Include="Models\EF\Log.cs" />
+    <Compile Include="Models\EF\MediaHistory.cs" />
+    <Compile Include="Models\EF\Room.cs" />
+    <Compile Include="Models\EF\RoomChatPost.cs" />
+    <Compile Include="Models\EF\RoomConfig.cs" />
+    <Compile Include="Models\EF\ServerContext.cs" />
+    <Compile Include="Models\EF\User.cs" />
+    <Compile Include="Models\EF\UserAuth.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoomInstance.cs" />
+    <Compile Include="Models\RoomInstance.cs" />
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
     <Compile Include="Management\Strategy\TrackJustOnce.cs" />
-    <Compile Include="SpecialRoomList.cs" />
+    <Compile Include="Models\SpecialRoomList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
