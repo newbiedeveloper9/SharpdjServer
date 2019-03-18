@@ -75,14 +75,12 @@ namespace Server
             var current = new TrackModel();
             var previous = new TrackModel();
 
-            if (Tracks.Count > 0)
-                next = Tracks[0];
-
             if (Tracks.Count > 1)
                 next = Tracks[1];
 
             return new RoomOutsideModel()
             {
+                Id = Id,
                 Name = Name,
                 ImagePath = ImagePath,
                 AmountOfPeople = AmountOfPeople,

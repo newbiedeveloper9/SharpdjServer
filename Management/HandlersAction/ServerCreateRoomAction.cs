@@ -32,7 +32,6 @@ namespace Server.Management.HandlersAction
 
                 var roomExist = _context.Rooms.Any(x => x.Name.Equals(req.RoomModel.Name));
 
-
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.AlreadyExist, roomExist);
                 validation.Conditions.Add(Result.NameError, !DataValidation.LengthIsValid(req.RoomModel.Name, 2, 40));
@@ -54,13 +53,13 @@ namespace Server.Management.HandlersAction
                 }
 
                 var room = new Room();
-                room = room.ToServerModel(req.RoomModel, author.User);
-                RoomSingleton.Instance.Rooms.Add(room.ToRoomInstance());
+                room.ImportByRoomModel(req.RoomModel, author.User);
 
                 _context.Rooms.Add(room);
                 _context.SaveChanges();
+                RoomSingleton.Instance.Rooms.Add(room.ToRoomInstance());
 
-                ext.SendPacket(new CreateRoomResponse(Result.Success, req));
+                ext.SendPacket(new CreateRoomResponse(Result.Success, req) { Room = room.ToRoomModel() });
             }
             catch (Exception ex)
             {

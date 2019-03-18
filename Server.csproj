@@ -84,8 +84,8 @@
       <HintPath>packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Network, Version=6.1.0.6, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Network.6.1.0.6\lib\net46\Network.dll</HintPath>
+    <Reference Include="Network, Version=6.1.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Network.6.1.0.7\lib\net46\Network.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\HandlersAction\ServerUpdateRoomAction.cs" />
     <Compile Include="Management\Singleton\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
     <Compile Include="Management\DictionaryConditionsValidation.cs" />

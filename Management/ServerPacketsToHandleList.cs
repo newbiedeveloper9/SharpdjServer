@@ -1,17 +1,15 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Network;
+﻿using Network;
 using SCPackets;
 using SCPackets.CreateRoom;
 using SCPackets.LoginPacket;
 using SCPackets.NewRoomCreated;
 using SCPackets.RegisterPacket;
+using SCPackets.UpdateRoomData;
 using Server.Management.HandlersAction;
 using Server.Management.Singleton;
 using Server.Models;
+using System;
+using System.Linq;
 
 namespace Server.Management
 {
@@ -22,6 +20,8 @@ namespace Server.Management
         public HandlerModel<LoginRequest> Login { get; set; }
         public HandlerModel<RegisterRequest> Register { get; set; }
         public HandlerModel<CreateRoomRequest> CreateRoom { get; set; }
+        public HandlerModel<UpdateRoomDataRequest> UpdateRoom { get; set; }
+
 
         public ServerPacketsToHandleList()
         {
@@ -31,12 +31,16 @@ namespace Server.Management
                 User user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
                 InitializeRooms();
 
-                RoomSingleton.Instance.Rooms.AfterInsert += RoomsOnAfterInsert;
+                RoomSingleton.Instance.Rooms.AfterInsert += RoomAfterCreationNewRoom;
 
-                Login = new HandlerModel<LoginRequest> {Action = new ServerLoginAction(_context).Request};
-                Register = new HandlerModel<RegisterRequest> {Action = new ServerRegisterAction(_context).Request};
+                Login = new HandlerModel<LoginRequest>
+                { Action = new ServerLoginAction(_context).Request };
+                Register = new HandlerModel<RegisterRequest>
+                { Action = new ServerRegisterAction(_context).Request };
                 CreateRoom = new HandlerModel<CreateRoomRequest>()
-                    {Action = new ServerCreateRoomAction(_context).Action};
+                { Action = new ServerCreateRoomAction(_context).Action };
+                UpdateRoom = new HandlerModel<UpdateRoomDataRequest>
+                { Action = new ServerUpdateRoomAction(_context).Action };
             }
             catch (Exception ex)
             {
@@ -44,21 +48,21 @@ namespace Server.Management
             }
         }
 
-        private void RoomsOnAfterInsert(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)
+        public void RegisterPackets(Connection conn)
+        {
+            Login.RegisterPacket(conn);
+            Register.RegisterPacket(conn);
+            CreateRoom.RegisterPacket(conn);
+            UpdateRoom.RegisterPacket(conn);
+        }
+
+        private void RoomAfterCreationNewRoom(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)
         {
             foreach (var user in ClientSingleton.Instance.Users)
             {
                 user.Connection.Send(
                     new NewRoomCreatedRequest(e.Item.ToRoomOutsideModel()));
             }
-        }
-
-
-        public void RegisterPackets(Connection conn)
-        {
-            Login.RegisterPacket(conn);
-            Register.RegisterPacket(conn);
-            CreateRoom.RegisterPacket(conn);
         }
 
         public void InitializeRooms()

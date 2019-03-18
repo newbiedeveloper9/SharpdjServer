@@ -1,12 +1,10 @@
 ﻿using Network;
 using SCPackets.LoginPacket;
 using SCPackets.LoginPacket.Container;
-using SCPackets.Models;
 using Server.Management.Singleton;
 using Server.Models;
 using Server.Security;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -33,9 +31,9 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
+                //Check if login/email exists in DB
                 User user = _context.Users.Include(x => x.UserAuth).
                     FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
-
                 if (user == null)
                 {
                     ext.SendPacket(new LoginResponse(Result.Error, req));
@@ -48,8 +46,15 @@ namespace Server.Management.HandlersAction
                     var response = new LoginResponse(Result.Success, req);
                     response.User = user.ToUserClient();
 
+                    //Pull all rooms
                     foreach (var roomModel in RoomSingleton.Instance.Rooms)
                         response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
+
+                    //Pull his rooms
+                    var userRooms = _context.Rooms.Include(x=>x.RoomConfig)
+                        .Where(x => x.Author.Id.Equals(user.Id));
+                    foreach (var room in userRooms)
+                        response.UserRoomList.Add(room.ToRoomModel());
 
                     ext.SendPacket(response);
                     ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
@@ -57,7 +62,7 @@ namespace Server.Management.HandlersAction
                 }
                 else
                 {
-                    ext.SendPacket(new LoginResponse(Result.Error, req));
+                    ext.SendPacket(new LoginResponse(Result.CredentialsError, req));
                 }
             }
             catch (Exception e)

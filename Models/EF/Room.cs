@@ -1,9 +1,8 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using SCPackets.CreateRoom.Container;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
-using SCPackets.CreateRoom.Container;
 
 namespace Server.Models
 {
@@ -18,29 +17,35 @@ namespace Server.Models
         public ICollection<MediaHistory> Media { get; set; }
         public ICollection<RoomChatPost> Posts { get; set; }
 
-        public Room ToServerModel(RoomModel model, User author)
+        public void ImportByRoomModel(RoomModel model, User author)
         {
-            return new Room()
+            Id = model.Id;
+            Name = model.Name;
+            Author = author;
+            ImagePath = model.ImageUrl;
+            RoomConfig = new RoomConfig()
             {
-                Name = model.Name,
-                Author = author,
-                ImagePath = model.ImageUrl,
-                RoomConfig = new RoomConfig()
-                {
-                    ChatType = ChatType.All,
-                    LocalEnterMessage = model.LocalEnterMessage,
-                    LocalLeaveMessage =  model.LocalLeaveMessage,
-                    PublicEnterMessage = model.PublicEnterMessage,
-                    PublicLeaveMessage =  model.PublicLeaveMessage,
-                },
-                Media = new List<MediaHistory>()
-                {
-                    
-                },
-                Posts = new List<RoomChatPost>()
-                {
+                ChatType = ChatType.All,
+                LocalEnterMessage = model.LocalEnterMessage,
+                LocalLeaveMessage = model.LocalLeaveMessage,
+                PublicEnterMessage = model.PublicEnterMessage,
+                PublicLeaveMessage = model.PublicLeaveMessage,
+            };
+            Media = Media;
+            Posts = Posts;
+        }
 
-                }
+        public RoomModel ToRoomModel()
+        {
+            return new RoomModel()
+            {
+                Id = Id,
+                ImageUrl = ImagePath,
+                Name = Name,
+                LocalEnterMessage = RoomConfig.LocalEnterMessage,
+                LocalLeaveMessage = RoomConfig.LocalLeaveMessage,
+                PublicEnterMessage = RoomConfig.PublicEnterMessage,
+                PublicLeaveMessage = RoomConfig.PublicLeaveMessage,
             };
         }
 
