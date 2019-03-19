@@ -6,6 +6,8 @@ using Server.Models;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using SCPackets.RoomOutsideUpdate;
+using Server.Management.Singleton;
 
 namespace Server.Management.HandlersAction
 {
@@ -68,6 +70,12 @@ namespace Server.Management.HandlersAction
 
                     var response = new UpdateRoomDataResponse(Result.Success, req) { Room = room.ToRoomModel() };
                     ext.SendPacket(response);
+                    var roomOutside = roomInstance.ToRoomOutsideModel();
+
+                    foreach (var user in ClientSingleton.Instance.Users)
+                    {
+                        user.Connection.Send(new RoomOutsideUpdateRequest(roomOutside));
+                    }
                 }
                 else
                 {

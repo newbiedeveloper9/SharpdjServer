@@ -59,9 +59,6 @@
     <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Communication">
-      <HintPath>..\sharpdj\Communication\bin\Debug\Communication.dll</HintPath>
-    </Reference>
     <Reference Include="ConsoleTables, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ConsoleTables.2.2.0\lib\net40\ConsoleTables.dll</HintPath>
     </Reference>
@@ -89,9 +86,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SCPackets">
-      <HintPath>..\SCPackets\SCPackets\SCPackets\bin\Debug\SCPackets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -170,6 +164,10 @@
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{e8790b81-831e-458b-800d-bcae0017cfcb}</Project>
       <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SCPackets\SCPackets\SCPackets\SCPackets.csproj">
+      <Project>{c6b0dd67-1dc2-4524-a790-5ccb35ffd4b2}</Project>
+      <Name>SCPackets</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
