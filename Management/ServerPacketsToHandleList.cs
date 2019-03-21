@@ -1,6 +1,7 @@
 ﻿using Network;
 using SCPackets;
 using SCPackets.CreateRoom;
+using SCPackets.Disconnect;
 using SCPackets.LoginPacket;
 using SCPackets.NewRoomCreated;
 using SCPackets.RegisterPacket;
@@ -21,6 +22,7 @@ namespace Server.Management
         public HandlerModel<RegisterRequest> Register { get; set; }
         public HandlerModel<CreateRoomRequest> CreateRoom { get; set; }
         public HandlerModel<UpdateRoomDataRequest> UpdateRoom { get; set; }
+        public HandlerModel<DisconnectRequest> Disconnect { get; set; }
 
 
         public ServerPacketsToHandleList()
@@ -41,6 +43,8 @@ namespace Server.Management
                 { Action = new ServerCreateRoomAction(_context).Action };
                 UpdateRoom = new HandlerModel<UpdateRoomDataRequest>
                 { Action = new ServerUpdateRoomAction(_context).Action };
+                Disconnect = new HandlerModel<DisconnectRequest>
+                { Action = new ServerDisconnectAction(_context).Action };
             }
             catch (Exception ex)
             {
@@ -54,6 +58,7 @@ namespace Server.Management
             Register.RegisterPacket(conn);
             CreateRoom.RegisterPacket(conn);
             UpdateRoom.RegisterPacket(conn);
+            Disconnect.RegisterPacket(conn);
         }
 
         private void RoomAfterCreationNewRoom(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)

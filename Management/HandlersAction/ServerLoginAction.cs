@@ -24,10 +24,11 @@ namespace Server.Management.HandlersAction
             var ext = new ConnectionExtension(conn, this);
             try
             {
+                //Check if is logged in (as connection)
                 var isActive = ConnectionExtension.GetClient(conn);
                 if (isActive != null)
                 {
-                    ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
+                    ext.SendPacket(new LoginResponse(Result.AlreadyLoggedError, req));
                     return;
                 }
 
@@ -39,6 +40,14 @@ namespace Server.Management.HandlersAction
                     ext.SendPacket(new LoginResponse(Result.Error, req));
                     return;
                 }
+
+                //Check second time if is logged in (as user).
+                /*isActive = ClientSingleton.Instance.Users.FirstOrDefault(x => x.User.Id == user.Id);
+                if (isActive != null)
+                {
+                    ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
+                    return;
+                }*/
 
                 string hashedPass = Scrypt.Hash(req.Password, user.UserAuth.Salt);
                 if (user.UserAuth.Hash.Equals(hashedPass))

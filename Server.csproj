@@ -113,6 +113,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />
     <Compile Include="Management\HandlersAction\ServerUpdateRoomAction.cs" />
     <Compile Include="Management\Singleton\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
