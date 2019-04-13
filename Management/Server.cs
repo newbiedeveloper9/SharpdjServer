@@ -3,6 +3,7 @@ using Network.Enums;
 using SCPackets.LoginPacket;
 using System;
 using System.IO;
+using SCPackets.SendRoomChatMessage;
 
 namespace Server.Management
 {
@@ -16,8 +17,9 @@ namespace Server.Management
         public Server(ServerConfig config)
         {
             _config = config;
+            Console.WriteLine($"Starting server on socket {_config.Ip}:{_config.Port}");
             _packetsList = new ServerPacketsToHandleList();
-            _connectionContainer = ConnectionFactory.CreateServerConnectionContainer(_config.Ip, _config.Port, false);
+            _connectionContainer = ConnectionFactory.CreateServerConnectionContainer("192.168.0.103", 5666, false);
 
             Initialize();
         }

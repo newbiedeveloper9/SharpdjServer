@@ -5,6 +5,7 @@ using SCPackets.Disconnect;
 using SCPackets.LoginPacket;
 using SCPackets.NewRoomCreated;
 using SCPackets.RegisterPacket;
+using SCPackets.SendRoomChatMessage;
 using SCPackets.UpdateRoomData;
 using Server.Management.HandlersAction;
 using Server.Management.Singleton;
@@ -23,6 +24,7 @@ namespace Server.Management
         public HandlerModel<CreateRoomRequest> CreateRoom { get; set; }
         public HandlerModel<UpdateRoomDataRequest> UpdateRoom { get; set; }
         public HandlerModel<DisconnectRequest> Disconnect { get; set; }
+        public HandlerModel<SendRoomChatMessageRequest> SendRoomChatMessage { get; set; }
 
 
         public ServerPacketsToHandleList()
@@ -45,6 +47,10 @@ namespace Server.Management
                 { Action = new ServerUpdateRoomAction(_context).Action };
                 Disconnect = new HandlerModel<DisconnectRequest>
                 { Action = new ServerDisconnectAction(_context).Action };
+                SendRoomChatMessage = new HandlerModel<SendRoomChatMessageRequest>
+                {
+                    Action = new ServerSendRoomChatMessageAction(_context).Action
+                };
             }
             catch (Exception ex)
             {
@@ -59,6 +65,7 @@ namespace Server.Management
             CreateRoom.RegisterPacket(conn);
             UpdateRoom.RegisterPacket(conn);
             Disconnect.RegisterPacket(conn);
+            SendRoomChatMessage.RegisterPacket(conn);
         }
 
         private void RoomAfterCreationNewRoom(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)

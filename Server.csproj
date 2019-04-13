@@ -108,12 +108,13 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="YoutubeExplode, Version=4.6.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\YoutubeExplode.4.6.6\lib\net45\YoutubeExplode.dll</HintPath>
+    <Reference Include="YoutubeExplode, Version=4.6.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\YoutubeExplode.4.6.8\lib\net45\YoutubeExplode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />
+    <Compile Include="Management\HandlersAction\ServerSendRoomChatMessageAction.cs" />
     <Compile Include="Management\HandlersAction\ServerUpdateRoomAction.cs" />
     <Compile Include="Management\Singleton\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />

@@ -7,7 +7,7 @@ namespace Server.Management
 {
     public class ServerConfig
     {
-        [JsonRequired] public int Port { get; set; } = 21337;
+        [JsonRequired] public int Port { get; set; } = 5666;
 
         [JsonRequired] public string Ip { get; set; } = "127.0.0.1";
         [JsonRequired] public int RSAKeySize { get; set; } = 2048;
