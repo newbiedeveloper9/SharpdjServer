@@ -31,6 +31,8 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
+                //TODO: Sending message to user active room chat
+                throw new Exception("Todo sending message to user active room chat");
 
             }
             catch (Exception e)
