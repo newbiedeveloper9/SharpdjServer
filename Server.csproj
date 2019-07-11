@@ -56,11 +56,8 @@
     <StartupObject>Server.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
-      <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="ConsoleTables, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ConsoleTables.2.2.0\lib\net40\ConsoleTables.dll</HintPath>
+    <Reference Include="ConsoleTables, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\ConsoleTables.2.3.0\lib\net40\ConsoleTables.dll</HintPath>
     </Reference>
     <Reference Include="CryptSharp, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\CryptSharpOfficial.2.1.0.0\lib\CryptSharp.dll</HintPath>
@@ -81,12 +78,13 @@
       <HintPath>packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Network, Version=6.1.0.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Network.6.1.0.7\lib\net46\Network.dll</HintPath>
+    <Reference Include="Network, Version=6.1.2.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Network.6.1.2.15\lib\net46\Network.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -102,14 +100,17 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Xml.XmlDocument.4.3.0\lib\net46\System.Xml.XmlDocument.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="YoutubeExplode, Version=4.6.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\YoutubeExplode.4.6.8\lib\net45\YoutubeExplode.dll</HintPath>
+    <Reference Include="YoutubeExplode, Version=4.7.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\YoutubeExplode.4.7.4\lib\net45\YoutubeExplode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,15 @@
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
+    <Compile Include="Migrations\201907060110255_Claims.cs" />
+    <Compile Include="Migrations\201907060110255_Claims.Designer.cs">
+      <DependentUpon>201907060110255_Claims.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EF\Claim.cs" />
+    <Compile Include="Models\EF\RoleClaim.cs" />
+    <Compile Include="Models\EF\ServerRole.cs" />
+    <Compile Include="Models\EF\UserClaim.cs" />
+    <Compile Include="Models\InstanceHelpers\RoomHelper.cs" />
     <Compile Include="Models\ServerUserModel.cs" />
     <Compile Include="Management\Strategy\ITrackStrategy.cs" />
     <Compile Include="Migrations\201903121714458_Prototype.cs" />
@@ -150,7 +160,7 @@
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
     <Compile Include="Management\Strategy\TrackJustOnce.cs" />
-    <Compile Include="Models\SpecialRoomList.cs" />
+    <Compile Include="Models\SpecialAfterInsertList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -164,11 +174,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Communication\Communication.csproj">
-      <Project>{e8790b81-831e-458b-800d-bcae0017cfcb}</Project>
-      <Name>Communication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SCPackets\SCPackets\SCPackets\SCPackets.csproj">
+    <ProjectReference Include="..\SCPackets\SCPackets\SCPackets.csproj">
       <Project>{c6b0dd67-1dc2-4524-a790-5ccb35ffd4b2}</Project>
       <Name>SCPackets</Name>
     </ProjectReference>
@@ -176,6 +182,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903121714458_Prototype.resx">
       <DependentUpon>201903121714458_Prototype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907060110255_Claims.resx">
+      <DependentUpon>201907060110255_Claims.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

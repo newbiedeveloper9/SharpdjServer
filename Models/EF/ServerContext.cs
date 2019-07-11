@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using Server.Models.EF;
 
 namespace Server.Models
 {
@@ -21,5 +22,9 @@ namespace Server.Models
         public DbSet<ConversationMessage> ConversationMessages { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<UserConnection> Connections { get; set; }
+        public DbSet<Claim> Claims { get; set; }
+        public DbSet<ServerRole> ServerRoles { get; set; }
+        public DbSet<UserClaim> UserClaims { get; set; }
+        public DbSet<RoleClaim> RoleClaims { get; set; }
     }
 }

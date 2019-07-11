@@ -1,3 +1,5 @@
+using Server.Models.EF;
+
 namespace Server.Migrations
 {
     using System;
@@ -18,6 +20,9 @@ namespace Server.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
+            context.ServerRoles.AddOrUpdate(new ServerRole() { Name = "Admin" });
+            context.ServerRoles.AddOrUpdate(new ServerRole() { Name = "Moderator" });
+            context.ServerRoles.AddOrUpdate(new ServerRole() { Name = "User" });
         }
     }
 }

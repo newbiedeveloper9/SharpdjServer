@@ -3,6 +3,7 @@ using SCPackets.CreateRoom.Container;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Server.Models.EF;
 
 namespace Server.Models
 {
@@ -16,6 +17,8 @@ namespace Server.Models
         public RoomConfig RoomConfig { get; set; }
         public ICollection<MediaHistory> Media { get; set; }
         public ICollection<RoomChatPost> Posts { get; set; }
+        public ICollection<UserClaim> UserClaims { get; set; }
+        public ICollection<UserClaim> RoleClaims { get; set; }
 
         public void ImportByRoomModel(RoomModel model, User author)
         {
@@ -31,8 +34,6 @@ namespace Server.Models
                 PublicEnterMessage = model.PublicEnterMessage,
                 PublicLeaveMessage = model.PublicLeaveMessage,
             };
-            Media = Media;
-            Posts = Posts;
         }
 
         public RoomModel ToRoomModel()

@@ -37,7 +37,7 @@ namespace Server.Management
                 User user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
                 InitializeRooms();
 
-                RoomSingleton.Instance.Rooms.AfterInsert += RoomAfterCreationNewRoom;
+                RoomSingleton.Instance.RoomInstances.AfterInsert += RoomAfterCreationNewRoom;
 
                 Login = new HandlerModel<LoginRequest>
                 { Action = new ServerLoginAction(_context).Request };
@@ -72,12 +72,17 @@ namespace Server.Management
             ConnectToRoom.RegisterPacket(conn);
         }
 
-        private void RoomAfterCreationNewRoom(object sender, SpecialRoomList<RoomInstance>.SpecialRoomArgs e)
+        private void RoomAfterCreationNewRoom(object sender, SpecialAfterInsertList<RoomInstance>.SpecialAfterInsertListEventArgs e)
         {
+            if (!(e.Item is RoomInstance))
+                throw new Exception("item is not of room type");
+            var roomInstance = (RoomInstance) e.Item;
+
+
             foreach (var user in ClientSingleton.Instance.Users)
             {
                 user.Connection.Send(
-                    new NewRoomCreatedRequest(e.Item.ToRoomOutsideModel()));
+                    new NewRoomCreatedRequest(roomInstance.ToRoomOutsideModel()));
             }
         }
 
@@ -85,7 +90,7 @@ namespace Server.Management
         {
             foreach (var room in _context.Rooms)
             {
-                RoomSingleton.Instance.Rooms.Add(room.ToRoomInstance());
+                RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
             }
         }
     }

@@ -56,7 +56,7 @@ namespace Server.Management.HandlersAction
                     response.User = user.ToUserClient();
 
                     //Pull all rooms
-                    foreach (var roomModel in RoomSingleton.Instance.Rooms)
+                    foreach (var roomModel in RoomSingleton.Instance.RoomInstances)
                         response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
 
                     //Pull his rooms

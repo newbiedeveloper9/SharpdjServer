@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Network;
-using SCPackets.NotLoggedIn;
 using SCPackets.SendRoomChatMessage;
 using Server.Models;
 
@@ -25,20 +21,31 @@ namespace Server.Management.HandlersAction
             try
             {
                 var active = ConnectionExtension.GetClient(conn);
-                if (active == null)
+                if (ext.CheckObjIsNullAndSendLogoutPacket(active)) return;
+
+
+                var userIsInRoom = active.RoomList.Any(x => x.RoomId == request.RoomId);
+                if (!userIsInRoom)
                 {
-                    conn.Send(new NotLoggedInRequest());
+                    conn.Send(new SendRoomChatMessageResponse(Result.NotInRoom));
                     return;
                 }
 
-                //TODO: Sending message to user active room chat
-                throw new Exception("Todo sending message to user active room chat");
+                var roomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == request.RoomId);
+                if (roomInstance == null)
+                {
+                    conn.Send(new SendRoomChatMessageResponse(Result.Error));
+                    return;
+                }
 
+                conn.Send(new SendRoomChatMessageResponse(Result.Success));
+                roomInstance.ActionHelper.MessageDistribute(request, active.User.ToUserClient()); //send message to all users
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                ext.SendPacket(new SendRoomChatMessageResponse(Result.Error, request));
+                conn.Send(new SendRoomChatMessageResponse(Result.Error));
+
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using Network;
+using Network.Packets;
+using SCPackets.NotLoggedIn;
 using Server.Management.Singleton;
 
 namespace Server.Management
@@ -7,17 +9,25 @@ namespace Server.Management
     public class ConnectionExtension
     {
         private readonly Connection _conn;
-        private readonly object _anyClass;
+        private readonly object _sender;
 
-        public ConnectionExtension(Connection conn, object anyClass)
+        public ConnectionExtension(Connection conn, object sender)
         {
             _conn = conn;
-            _anyClass = anyClass;
+            _sender = sender;
         }
 
         public void SendPacket<TPacket>(TPacket packet) where TPacket : Packet
         {
-            _conn.Send(packet, _anyClass);
+            _conn.Send(packet, _sender);
+        }
+
+        public bool CheckObjIsNullAndSendLogoutPacket(object condition)
+        {
+            if (condition != null) return false;
+
+            _conn.Send(new NotLoggedInRequest());
+            return true;
         }
 
         public static ServerUserModel GetClient(Connection conn)

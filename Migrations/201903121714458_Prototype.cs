@@ -102,7 +102,7 @@ namespace Server.Migrations
                         Room_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.MediaHistoryId)
-                .ForeignKey("dbo.Rooms", t => t.Room_Id)
+                .ForeignKey("dbo.AfterInserts", t => t.Room_Id)
                 .Index(t => t.Room_Id);
             
             CreateTable(
@@ -116,7 +116,7 @@ namespace Server.Migrations
                     })
                 .PrimaryKey(t => t.RoomChatPostId)
                 .ForeignKey("dbo.Users", t => t.Author_Id)
-                .ForeignKey("dbo.Rooms", t => t.Room_Id)
+                .ForeignKey("dbo.AfterInserts", t => t.Room_Id)
                 .Index(t => t.Author_Id)
                 .Index(t => t.Room_Id);
             
@@ -134,7 +134,7 @@ namespace Server.Migrations
                 .PrimaryKey(t => t.RoomConfigId);
             
             CreateTable(
-                "dbo.Rooms",
+                "dbo.AfterInserts",
                 c => new
                     {
                         RoomId = c.Int(nullable: false, identity: true),
@@ -153,10 +153,10 @@ namespace Server.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.Rooms", "RoomConfig_Id", "dbo.RoomConfigs");
-            DropForeignKey("dbo.RoomChatPosts", "Room_Id", "dbo.Rooms");
-            DropForeignKey("dbo.MediaHistories", "Room_Id", "dbo.Rooms");
-            DropForeignKey("dbo.Rooms", "Author_Id", "dbo.Users");
+            DropForeignKey("dbo.AfterInserts", "RoomConfig_Id", "dbo.RoomConfigs");
+            DropForeignKey("dbo.RoomChatPosts", "Room_Id", "dbo.AfterInserts");
+            DropForeignKey("dbo.MediaHistories", "Room_Id", "dbo.AfterInserts");
+            DropForeignKey("dbo.AfterInserts", "Author_Id", "dbo.Users");
             DropForeignKey("dbo.RoomChatPosts", "Author_Id", "dbo.Users");
             DropForeignKey("dbo.Logs", "User_Id", "dbo.Users");
             DropForeignKey("dbo.Users", "Conversation_Id", "dbo.Conversations");
@@ -165,8 +165,8 @@ namespace Server.Migrations
             DropForeignKey("dbo.UserConnections", "User_Id", "dbo.Users");
             DropForeignKey("dbo.Users", "UserAuth_Id", "dbo.UserAuths");
             DropForeignKey("dbo.Users", "User_Id", "dbo.Users");
-            DropIndex("dbo.Rooms", new[] { "RoomConfig_Id" });
-            DropIndex("dbo.Rooms", new[] { "Author_Id" });
+            DropIndex("dbo.AfterInserts", new[] { "RoomConfig_Id" });
+            DropIndex("dbo.AfterInserts", new[] { "Author_Id" });
             DropIndex("dbo.RoomChatPosts", new[] { "Room_Id" });
             DropIndex("dbo.RoomChatPosts", new[] { "Author_Id" });
             DropIndex("dbo.MediaHistories", new[] { "Room_Id" });
@@ -177,7 +177,7 @@ namespace Server.Migrations
             DropIndex("dbo.Users", new[] { "UserAuth_Id" });
             DropIndex("dbo.Users", new[] { "User_Id" });
             DropIndex("dbo.UserConnections", new[] { "User_Id" });
-            DropTable("dbo.Rooms");
+            DropTable("dbo.AfterInserts");
             DropTable("dbo.RoomConfigs");
             DropTable("dbo.RoomChatPosts");
             DropTable("dbo.MediaHistories");

@@ -16,10 +16,10 @@ namespace Server.Management
 
         private RoomSingleton()
         {
-            Rooms = new SpecialRoomList<RoomInstance>();
+            RoomInstances = new SpecialAfterInsertList<RoomInstance>();
         }
 
-        public SpecialRoomList<RoomInstance> Rooms { get; set; }
+        public SpecialAfterInsertList<RoomInstance> RoomInstances { get; set; }
 
     }
 }

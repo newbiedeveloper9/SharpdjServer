@@ -57,7 +57,7 @@ namespace Server.Management.HandlersAction
 
                 _context.Rooms.Add(room);
                 _context.SaveChanges();
-                RoomSingleton.Instance.Rooms.Add(room.ToRoomInstance());
+                RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
 
                 ext.SendPacket(new CreateRoomResponse(Result.Success, req) { Room = room.ToRoomModel() });
             }

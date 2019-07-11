@@ -3,6 +3,7 @@ using System.Linq;
 using Network;
 using SCPackets.ConnectToRoom;
 using SCPackets.NotLoggedIn;
+using SCPackets.Ping;
 using Server.Models;
 
 namespace Server.Management.HandlersAction
@@ -28,12 +29,17 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                var room = RoomSingleton.Instance.Rooms.FirstOrDefault(x => x.Id == request.RoomId);
+                var room = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == request.RoomId);
                 var connected = room?.Users.Contains(active);
+
+                if (connected.GetValueOrDefault())
+                {
+                    ext.SendPacket(new ConnectToRoomResponse(Result.Success, room?.ToRoomOutsideModel(), request));
+                    return;
+                }
 
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.Error, room == null);
-                validation.Conditions.Add(Result.AlreadyConnected, connected.GetValueOrDefault());
 
                 var result = validation.Validate();
                 if (result != null)
@@ -42,9 +48,12 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                active.RoomUserConnection.Add(new RoomUserConnection(room.Id, RoomConnectionType.Active));
-                room.Users.Add(active);
-                ext.SendPacket(new ConnectToRoomResponse(Result.Success, request));
+                active.AddIfNotExist(new RoomUserConnection(room.Id));
+
+                if (!room.Users.Contains(active))
+                    room.Users.Add(active);
+
+                ext.SendPacket(new ConnectToRoomResponse(Result.Success, room.ToRoomOutsideModel(), request));
             }
             catch (Exception e)
             {

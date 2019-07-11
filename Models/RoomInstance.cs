@@ -8,21 +8,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Network;
 using SCPackets.RoomOutsideUpdate;
 using Server.Management.Singleton;
+using Server.Models.InstanceHelpers;
 
 namespace Server
 {
     [NotMapped]
     public class RoomInstance : Room
     {
+        public int AmountOfPeople => Users.Count;
+        public int AmountOfAdministration => Users.Count(x => x.User.Rank > 0);
+
+
         public ITrackStrategy TrackStrategy { get; set; }
+        public TrackModel CurrentTrack => Tracks[0];
+
+        public RoomHelper ActionHelper { get; }
+
+        public List<TrackModel> Tracks { get; set; }
+        public List<ServerUserModel> Users { get; set; }
+
 
         public RoomInstance()
         {
             Tracks = new List<TrackModel>();
             Users = new List<ServerUserModel>();
             TrackStrategy = new TrackJustOnce();
+
+            ActionHelper = new RoomHelper(Users);
 
             TimeLeftReached += TimeReachedZero;
         }
@@ -39,26 +54,20 @@ namespace Server
             }
         }
 
-        public int AmountOfPeople => Users.Count;
-        public int AmountOfAdministration => Users.Count(x => x.User.Rank > 0);
-
-        public List<TrackModel> Tracks { get; set; }
-        public List<ServerUserModel> Users { get; set; }
-
-
         public void PlayMedia()
         {
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(1000);
                 TimeLeft--;
-            });
+            }); 
         }
 
         private void TimeReachedZero(object sender, EventArgs e)
         {
             TrackStrategy.NextTrack(Tracks);
-            TimeLeft = Tracks[0].Duration;
+            if (CurrentTrack != null)
+                TimeLeft = CurrentTrack.Duration;
         }
 
         #region Events

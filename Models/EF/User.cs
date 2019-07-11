@@ -33,9 +33,9 @@ namespace Server.Models
             return $"[{Id}][\"{UserAuth?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
         }
 
-        public UserClient ToUserClient()
+        public UserClientModel ToUserClient()
         {
-            return new UserClient(this.Id, this.Username, this.Rank);
+            return new UserClientModel(this.Id, this.Username, this.Rank);
         }
     }
 }

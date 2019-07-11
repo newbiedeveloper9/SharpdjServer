@@ -34,7 +34,7 @@ namespace Server.Management.HandlersAction
 
                 var room = _context.Rooms.Include(x => x.Author)
                     .FirstOrDefault(x => x.Id == req.Room.Id);
-                var roomInstance = RoomSingleton.Instance.Rooms.FirstOrDefault(x => x.Id == req.Room.Id);
+                var roomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == req.Room.Id);
 
                 var roomExist = _context.Rooms.Any(x => 
                     (x.Name.Equals(req.Room.Name) && x.Name != room.Name));
