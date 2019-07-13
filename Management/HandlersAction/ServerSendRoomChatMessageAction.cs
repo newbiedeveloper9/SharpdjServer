@@ -39,7 +39,7 @@ namespace Server.Management.HandlersAction
                 }
 
                 conn.Send(new SendRoomChatMessageResponse(Result.Success));
-                roomInstance.ActionHelper.MessageDistribute(request, active.User.ToUserClient()); //send message to all users
+                roomInstance.ActionHelper.MessageDistribute(request, active.User.ToUserClient());
             }
             catch (Exception e)
             {

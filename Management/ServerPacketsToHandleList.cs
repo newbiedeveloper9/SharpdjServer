@@ -13,6 +13,7 @@ using Server.Management.Singleton;
 using Server.Models;
 using System;
 using System.Linq;
+using SCPackets.Buffers;
 
 namespace Server.Management
 {
@@ -78,6 +79,7 @@ namespace Server.Management
                 throw new Exception("item is not of room type");
             var roomInstance = (RoomInstance) e.Item;
 
+            BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(roomInstance.Id);
 
             foreach (var user in ClientSingleton.Instance.Users)
             {
@@ -91,6 +93,7 @@ namespace Server.Management
             foreach (var room in _context.Rooms)
             {
                 RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
+                BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(room.Id);
             }
         }
     }

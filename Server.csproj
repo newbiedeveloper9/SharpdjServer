@@ -114,10 +114,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Management\ActionBuffer.cs" />
+    <Compile Include="Management\Buffers\RoomUserListBufferManager.cs" />
     <Compile Include="Management\HandlersAction\ServerConnectToRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />
     <Compile Include="Management\HandlersAction\ServerSendRoomChatMessageAction.cs" />
     <Compile Include="Management\HandlersAction\ServerUpdateRoomAction.cs" />
+    <Compile Include="Management\Singleton\BufferSingleton.cs" />
     <Compile Include="Management\Singleton\ClientSingleton.cs" />
     <Compile Include="Management\ConnectionExtension.cs" />
     <Compile Include="Management\DictionaryConditionsValidation.cs" />

@@ -6,6 +6,7 @@ using SCPackets.NotLoggedIn;
 using Server.Models;
 using System;
 using System.Linq;
+using Server.Management.Singleton;
 
 namespace Server.Management.HandlersAction
 {
