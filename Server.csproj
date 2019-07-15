@@ -163,7 +163,6 @@
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
     <Compile Include="Management\Strategy\TrackJustOnce.cs" />
-    <Compile Include="Models\SpecialAfterInsertList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

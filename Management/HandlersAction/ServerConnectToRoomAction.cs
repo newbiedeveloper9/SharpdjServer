@@ -33,8 +33,7 @@ namespace Server.Management.HandlersAction
                 }
 
                 var room = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == request.RoomId);
-                var connected = room?.Users.Contains(active);
-
+                var connected = room?.Users.GetList().Contains(active);
 
                 if (connected == true)
                 {
@@ -42,6 +41,7 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
+                #region validation
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.Error, room == null);
 
@@ -51,24 +51,18 @@ namespace Server.Management.HandlersAction
                     ext.SendPacket(new ConnectToRoomResponse((Result)result, request));
                     return;
                 }
+                #endregion validation
 
                 active.AddIfNotExist(new RoomUserConnection(room.Id));
 
-                if (!room.Users.Contains(active))
+                if (!room.Users.GetList().Contains(active))
                     room.Users.Add(active);
 
                 var userList = new List<UserClientModel>();
-                foreach (var serverUserModel in room.Users)
+                foreach (var serverUserModel in room.Users.GetList())
                     userList.Add(serverUserModel.User.ToUserClient());
 
                 ext.SendPacket(new ConnectToRoomResponse(Result.Success, room.ToRoomOutsideModel(), userList, request));
-
-                var clientUser = active.User.ToUserClient();
-                var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(room.Id);
-                if (buffer == null)
-                    throw new Exception("buffer cannot find room by id");
-
-                buffer.RequestPacket.InsertUserList.Add(clientUser);
             }
             catch (Exception e)
             {

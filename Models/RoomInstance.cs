@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Network;
+using SCPackets;
 using SCPackets.RoomOutsideUpdate;
 using Server.Management.Singleton;
 using Server.Models.InstanceHelpers;
@@ -18,8 +19,8 @@ namespace Server
     [NotMapped]
     public class RoomInstance : Room
     {
-        public int AmountOfPeople => Users.Count;
-        public int AmountOfAdministration => Users.Count(x => x.User.Rank > 0);
+        public int AmountOfPeople => Users.GetList().Count;
+        public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
 
 
         public ITrackStrategy TrackStrategy { get; set; }
@@ -28,18 +29,39 @@ namespace Server
         public RoomHelper ActionHelper { get; }
 
         public List<TrackModel> Tracks { get; set; }
-        public List<ServerUserModel> Users { get; set; }
+        public ListWrapper<ServerUserModel> Users { get; set; }
 
 
         public RoomInstance()
         {
             Tracks = new List<TrackModel>();
-            Users = new List<ServerUserModel>();
+            Users = new ListWrapper<ServerUserModel>();
             TrackStrategy = new TrackJustOnce();
-
-            ActionHelper = new RoomHelper(Users);
+            ActionHelper = new RoomHelper(Users.GetList());
 
             TimeLeftReached += TimeReachedZero;
+            Users.AfterAdd += AfterAddUser;
+            Users.AfterRemove += AfterRemoveUser;
+        }
+
+        private void AfterRemoveUser(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs<ServerUserModel> e)
+        {
+            var clientUser = e.Item.User.ToUserClient();
+            var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
+            if (buffer == null)
+                throw new Exception("buffer cannot find room by id");
+
+            buffer.RequestPacket.RemoveUser(clientUser);
+        }
+
+        private void AfterAddUser(object sender, ListWrapper<ServerUserModel>.AfterAddEventArgs<ServerUserModel> e)
+        {
+            var clientUser = e.Item.User.ToUserClient();
+            var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
+            if (buffer == null)
+                throw new Exception("buffer cannot find room by id");
+
+            buffer.RequestPacket.AddUser(clientUser);
         }
 
         private int _timeLeft;

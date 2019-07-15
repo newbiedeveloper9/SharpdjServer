@@ -73,7 +73,7 @@ namespace Server.Management
             ConnectToRoom.RegisterPacket(conn);
         }
 
-        private void RoomAfterCreationNewRoom(object sender, SpecialAfterInsertList<RoomInstance>.SpecialAfterInsertListEventArgs e)
+        private void RoomAfterCreationNewRoom(object sender, SpecialAfterInsertList<RoomInstance>.AfterInsertEventArgs e)
         {
             if (!(e.Item is RoomInstance))
                 throw new Exception("item is not of room type");

@@ -16,9 +16,9 @@ namespace Server.Models.InstanceHelpers
 {
     public class RoomHelper
     {
-        private readonly List<ServerUserModel> _users;
+        private readonly IReadOnlyCollection<ServerUserModel> _users;
 
-        public RoomHelper(List<ServerUserModel> users)
+        public RoomHelper(IReadOnlyCollection<ServerUserModel> users)
         {
             _users = users;
         }

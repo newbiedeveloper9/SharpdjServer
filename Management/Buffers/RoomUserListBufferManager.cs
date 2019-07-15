@@ -26,7 +26,7 @@ namespace Server.Management.Buffers
         {
             while (true)
             {
-                Thread.Sleep(12000);
+                Thread.Sleep(10000);
 
                 foreach (var actionBuffer in _roomUserListBuffer)
                 {
