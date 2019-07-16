@@ -41,13 +41,13 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                //Check second time if is logged in (as user).
-                /*isActive = ClientSingleton.Instance.Users.FirstOrDefault(x => x.User.Id == user.Id);
+                
+                isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user.Id);
                 if (isActive != null)
                 {
                     ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
                     return;
-                }*/
+                }
 
                 string hashedPass = Scrypt.Hash(req.Password, user.UserAuth.Salt);
                 if (user.UserAuth.Hash.Equals(hashedPass))
@@ -56,7 +56,7 @@ namespace Server.Management.HandlersAction
                     response.User = user.ToUserClient();
 
                     //Pull all rooms
-                    foreach (var roomModel in RoomSingleton.Instance.RoomInstances)
+                    foreach (var roomModel in RoomSingleton.Instance.RoomInstances.GetList())
                         response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
 
                     //Pull his rooms

@@ -23,7 +23,7 @@ namespace Server.Management.HandlersAction
             try
             {
                 var user = ConnectionExtension.GetClient(connection);
-                var isActive = ClientSingleton.Instance.Users.FirstOrDefault(x => x.User.Id == user.User.Id);
+                var isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user.User.Id);
                 if (isActive != null)
                 {
                     var removed = ClientSingleton.Instance.Users.Remove(isActive);

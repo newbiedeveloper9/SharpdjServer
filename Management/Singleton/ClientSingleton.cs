@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using SCPackets;
 
 namespace Server.Management.Singleton
 {
@@ -12,9 +14,19 @@ namespace Server.Management.Singleton
 
         private ClientSingleton()
         {
-            Users = new List<ServerUserModel>();
+            Users = new ListWrapper<ServerUserModel>();
+            Users.AfterRemove += AfterUserDisconnect;
         }
 
-        public List<ServerUserModel> Users { get; set; }
+        private void AfterUserDisconnect(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs<ServerUserModel> e)
+        {
+            foreach (var room in RoomSingleton.Instance.RoomInstances.GetList())
+            {
+                room.Users.Remove(e.Item);
+            }
+        }
+
+
+        public ListWrapper<ServerUserModel> Users { get; set; }
     }
 }

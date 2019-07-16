@@ -49,7 +49,7 @@ namespace Server.Management.Buffers
             var buffer = new ActionBuffer<RoomUserListBufferRequest>(15000, request);
             buffer.BeforeSendBuffer += (sender, args) =>
             {
-                var roomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == roomId);
+                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == roomId);
                 if (roomInstance == null) throw new Exception("CreateBufer Manager for RoomUserList");
 
                 buffer.Connections = new List<Connection>(roomInstance.ActionHelper.GetConnections);

@@ -2,37 +2,40 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Network;
+using SCPackets;
 using Server.Models;
 
 namespace Server.Management
 {
     public class ServerUserModel
     {
+        private RoomUserConnection _activeRoom;
         public User User { get; set; }
         public Connection Connection { get; set; }
-        private readonly List<RoomUserConnection> _roomUserConnectionList;
-        public ReadOnlyCollection<RoomUserConnection> RoomList => new ReadOnlyCollection<RoomUserConnection>(_roomUserConnectionList);
 
-        public ServerUserModel(User user, Connection connection)
+        public RoomUserConnection ActiveRoom
         {
-            _roomUserConnectionList = new List<RoomUserConnection>();
-
-            User = user;
-            Connection = connection;
-        }
-
-        public void AddIfNotExist(RoomUserConnection room)
-        {
-            var exists = _roomUserConnectionList.FirstOrDefault(x => x.RoomId == room.RoomId);
-            if (exists == null)
+            get => _activeRoom;
+            set
             {
-                _roomUserConnectionList.Add(room);
+                if (value == _activeRoom) return;
+
+                var room = RoomSingleton.Instance.RoomInstances.GetList().
+                    FirstOrDefault(x => x.Users.GetList().Contains(this));
+                room?.Users.Remove(this);
+
+                var destinationRoom = RoomSingleton.Instance.RoomInstances.GetList()
+                    .FirstOrDefault(x => x.Id == value.RoomId);
+                destinationRoom?.Users.Add(this);
+
+                _activeRoom = value;
             }
         }
 
-        public void RemoveRoom(RoomUserConnection room)
+        public ServerUserModel(User user, Connection connection)
         {
-            _roomUserConnectionList.Remove(room);
+            User = user;
+            Connection = connection;
         }
     }
 
@@ -44,6 +47,5 @@ namespace Server.Management
         }
 
         public int RoomId { get; set; }
-        public bool Listening { get; set; }
     }
 }

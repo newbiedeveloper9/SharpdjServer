@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SCPackets;
 
 namespace Server.Management
 {
@@ -16,10 +17,10 @@ namespace Server.Management
 
         private RoomSingleton()
         {
-            RoomInstances = new SpecialAfterInsertList<RoomInstance>();
+            RoomInstances = new ListWrapper<RoomInstance>();
         }
 
-        public SpecialAfterInsertList<RoomInstance> RoomInstances { get; set; }
+        public ListWrapper<RoomInstance> RoomInstances { get; set; }
 
     }
 }

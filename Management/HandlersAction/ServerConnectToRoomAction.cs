@@ -26,24 +26,15 @@ namespace Server.Management.HandlersAction
             try
             {
                 var active = ConnectionExtension.GetClient(connection);
-                if (active == null)
-                {
-                    connection.Send(new NotLoggedInRequest());
-                    return;
-                }
+                if (ext.LogoutIfObjIsNull(active)) return;
 
-                var room = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == request.RoomId);
+                var room = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == request.RoomId);
                 var connected = room?.Users.GetList().Contains(active);
-
-                if (connected == true)
-                {
-                    ext.SendPacket(new ConnectToRoomResponse(Result.AlreadyConnected, request));
-                    return;
-                }
 
                 #region validation
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.Error, room == null);
+                validation.Conditions.Add(Result.AlreadyConnected, connected == true);
 
                 var result = validation.Validate();
                 if (result != null)
@@ -53,22 +44,17 @@ namespace Server.Management.HandlersAction
                 }
                 #endregion validation
 
-                active.AddIfNotExist(new RoomUserConnection(room.Id));
+                active.ActiveRoom = new RoomUserConnection(room.Id);
 
-                if (!room.Users.GetList().Contains(active))
-                    room.Users.Add(active);
+                var userList = room.Users.GetList().Select(serverUserModel => serverUserModel.User.ToUserClient());
 
-                var userList = new List<UserClientModel>();
-                foreach (var serverUserModel in room.Users.GetList())
-                    userList.Add(serverUserModel.User.ToUserClient());
-
-                ext.SendPacket(new ConnectToRoomResponse(Result.Success, room.ToRoomOutsideModel(), userList, request));
+                ext.SendPacket(new ConnectToRoomResponse(Result.Success,
+                    room.ToRoomOutsideModel(), userList.ToList(), request));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 ext.SendPacket(new ConnectToRoomResponse(Result.Error, request));
-                return;
+                throw e;
             }
         }
     }

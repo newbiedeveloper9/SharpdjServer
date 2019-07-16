@@ -22,9 +22,9 @@ namespace Server.Management
             _conn.Send(packet, _sender);
         }
 
-        public bool CheckObjIsNullAndSendLogoutPacket(object condition)
+        public bool LogoutIfObjIsNull(object conditionToCheck)
         {
-            if (condition != null) return false;
+            if (conditionToCheck != null) return false;
 
             _conn.Send(new NotLoggedInRequest());
             return true;
@@ -32,7 +32,7 @@ namespace Server.Management
 
         public static ServerUserModel GetClient(Connection conn)
         {
-            return ClientSingleton.Instance.Users.FirstOrDefault(x => x.Connection.Equals(conn));
+            return ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.Connection.Equals(conn));
         }
     }
 }

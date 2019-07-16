@@ -34,7 +34,7 @@ namespace Server.Management.HandlersAction
 
                 var room = _context.Rooms.Include(x => x.Author)
                     .FirstOrDefault(x => x.Id == req.Room.Id);
-                var roomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == req.Room.Id);
+                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == req.Room.Id);
 
                 var roomExist = _context.Rooms.Any(x => 
                     (x.Name.Equals(req.Room.Name) && x.Name != room.Name));
@@ -72,7 +72,7 @@ namespace Server.Management.HandlersAction
                     ext.SendPacket(response);
                     var roomOutside = roomInstance.ToRoomOutsideModel();
 
-                    foreach (var user in ClientSingleton.Instance.Users)
+                    foreach (var user in ClientSingleton.Instance.Users.GetList())
                     {
                         user.Connection.Send(new RoomOutsideUpdateRequest(roomOutside));
                     }

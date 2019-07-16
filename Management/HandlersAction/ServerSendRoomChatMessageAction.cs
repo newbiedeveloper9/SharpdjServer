@@ -21,17 +21,16 @@ namespace Server.Management.HandlersAction
             try
             {
                 var active = ConnectionExtension.GetClient(conn);
-                if (ext.CheckObjIsNullAndSendLogoutPacket(active)) return;
+                if (ext.LogoutIfObjIsNull(active)) return;
 
-
-                var userIsInRoom = active.RoomList.Any(x => x.RoomId == request.RoomId);
+                var userIsInRoom = active.ActiveRoom.RoomId == request.RoomId;
                 if (!userIsInRoom)
                 {
                     conn.Send(new SendRoomChatMessageResponse(Result.NotInRoom));
                     return;
                 }
 
-                var roomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == request.RoomId);
+                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == request.RoomId);
                 if (roomInstance == null)
                 {
                     conn.Send(new SendRoomChatMessageResponse(Result.Error));
