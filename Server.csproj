@@ -114,7 +114,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Management\ActionBuffer.cs" />
+    <Compile Include="Management\Buffers\ActionBuffer.cs" />
+    <Compile Include="Management\Buffers\BufferManager.cs" />
+    <Compile Include="Management\Buffers\SquareRoomBufferManager.cs" />
     <Compile Include="Management\Buffers\RoomUserListBufferManager.cs" />
     <Compile Include="Management\HandlersAction\ServerConnectToRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />

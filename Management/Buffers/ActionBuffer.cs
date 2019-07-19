@@ -16,7 +16,13 @@ namespace Server.Management
         public List<Connection> Connections { get; set; }
         public TReq RequestPacket { get; set; }
 
-        public ActionBuffer(int timer, TReq packet)
+        /// <summary>
+        /// Is checked after <see cref="OnBeforeSendBuffer"/>. Send <see cref="RequestPacket"/> only if this variable is set to <see langword="TRUE"/>
+        /// </summary>
+        public bool CanSend { get; set; } = true;
+
+
+        public ActionBuffer(TReq packet)
         {
             Connections = new List<Connection>();
             RequestPacket = packet;
@@ -25,6 +31,7 @@ namespace Server.Management
         public void SendRequestToAll()
         {
             OnBeforeSendBuffer(EventArgs.Empty);
+            if (!CanSend) return;
 
             foreach (var connection in Connections)
                 connection.Send(RequestPacket);

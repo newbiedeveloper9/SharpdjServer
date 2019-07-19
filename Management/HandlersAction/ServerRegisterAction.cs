@@ -18,7 +18,7 @@ namespace Server.Management.HandlersAction
             _context = context;
         }
 
-        public void Request(RegisterRequest req, Connection conn)
+        public void Action(RegisterRequest req, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
 

@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Network;
 using SCPackets;
-using SCPackets.RoomOutsideUpdate;
 using Server.Management.Singleton;
 using Server.Models.InstanceHelpers;
 
@@ -19,49 +18,47 @@ namespace Server
     [NotMapped]
     public class RoomInstance : Room
     {
-        public int AmountOfPeople => Users.GetList().Count;
+        public int AmountOfPeople => Users.Count;
         public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
 
-
         public ITrackStrategy TrackStrategy { get; set; }
-        public TrackModel CurrentTrack => Tracks[0];
+        public TrackModel CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
 
         public RoomHelper ActionHelper { get; }
-
-        public List<TrackModel> Tracks { get; set; }
+        public ListWrapper<TrackModel> Tracks { get; set; }
         public ListWrapper<ServerUserModel> Users { get; set; }
 
 
         public RoomInstance()
         {
-            Tracks = new List<TrackModel>();
+            Tracks = new ListWrapper<TrackModel>();
             Users = new ListWrapper<ServerUserModel>();
             TrackStrategy = new TrackJustOnce();
             ActionHelper = new RoomHelper(Users.GetList());
 
             TimeLeftReached += TimeReachedZero;
-            Users.AfterAdd += AfterAddUser;
-            Users.AfterRemove += AfterRemoveUser;
+            Users.AfterUpdate += UsersOnAfterUpdate;
         }
 
-        private void AfterRemoveUser(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs<ServerUserModel> e)
+        public void SendUpdateRequest()
+        {
+            var squareBuffer = BufferSingleton.Instance.SquareRoomBufferManager.GetRequest();
+            squareBuffer.UpdatedRooms.Add(ToRoomOutsideModel());
+        }
+
+        private void UsersOnAfterUpdate(object sender, ListWrapper<ServerUserModel>.UpdateEventArgs e)
         {
             var clientUser = e.Item.User.ToUserClient();
             var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
             if (buffer == null)
                 throw new Exception("buffer cannot find room by id");
 
-            buffer.RequestPacket.RemoveUser(clientUser);
-        }
+            if (e.State == ListWrapper<ServerUserModel>.UpdateEventArgs.UpdateState.Remove)
+                buffer.RequestPacket.RemoveUsers.Add(clientUser);
+            else
+                buffer.RequestPacket.InsertUsers.Add(clientUser);
 
-        private void AfterAddUser(object sender, ListWrapper<ServerUserModel>.AfterAddEventArgs<ServerUserModel> e)
-        {
-            var clientUser = e.Item.User.ToUserClient();
-            var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
-            if (buffer == null)
-                throw new Exception("buffer cannot find room by id");
-
-            buffer.RequestPacket.AddUser(clientUser);
+            SendUpdateRequest();
         }
 
         private int _timeLeft;
@@ -82,14 +79,16 @@ namespace Server
             {
                 Thread.Sleep(1000);
                 TimeLeft--;
-            }); 
+            });
         }
 
         private void TimeReachedZero(object sender, EventArgs e)
         {
-            TrackStrategy.NextTrack(Tracks);
+            TrackStrategy.NextTrack(Tracks.__nothing__);
             if (CurrentTrack != null)
                 TimeLeft = CurrentTrack.Duration;
+
+            BufferSingleton.Instance.SquareRoomBufferManager.GetRequest().UpdatedRooms.Add(ToRoomOutsideModel());
         }
 
         #region Events
@@ -109,7 +108,7 @@ namespace Server
             var previous = new TrackModel();
 
             if (Tracks.Count > 1)
-                next = Tracks[1];
+                next = Tracks.GetList().ElementAtOrDefault(1);
 
             return new RoomOutsideModel()
             {

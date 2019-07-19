@@ -4,7 +4,6 @@ using SCPackets.ConnectToRoom;
 using SCPackets.CreateRoom;
 using SCPackets.Disconnect;
 using SCPackets.LoginPacket;
-using SCPackets.NewRoomCreated;
 using SCPackets.RegisterPacket;
 using SCPackets.SendRoomChatMessage;
 using SCPackets.UpdateRoomData;
@@ -12,7 +11,9 @@ using Server.Management.HandlersAction;
 using Server.Management.Singleton;
 using Server.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Network.Packets;
 using SCPackets.Buffers;
 
 namespace Server.Management
@@ -20,41 +21,33 @@ namespace Server.Management
     public class ServerPacketsToHandleList
     {
         private readonly ServerContext _context;
-
-        public HandlerModel<LoginRequest> Login { get; set; }
-        public HandlerModel<RegisterRequest> Register { get; set; }
-        public HandlerModel<CreateRoomRequest> CreateRoom { get; set; }
-        public HandlerModel<UpdateRoomDataRequest> UpdateRoom { get; set; }
-        public HandlerModel<DisconnectRequest> Disconnect { get; set; }
-        public HandlerModel<SendRoomChatMessageRequest> SendRoomChatMessage { get; set; }
-        public HandlerModel<ConnectToRoomRequest> ConnectToRoom { get; set; }
-
+        private List<IHandlerModel> Handlers { get; set; } = new List<IHandlerModel>();
 
         public ServerPacketsToHandleList()
         {
             try
             {
                 _context = new ServerContext();
-                User user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
+                var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
                 InitializeRooms();
 
                 RoomSingleton.Instance.RoomInstances.AfterAdd += RoomAfterCreationNewRoom;
 
-                Login = new HandlerModel<LoginRequest>
-                { Action = new ServerLoginAction(_context).Request };
-                Register = new HandlerModel<RegisterRequest>
-                { Action = new ServerRegisterAction(_context).Request };
-                CreateRoom = new HandlerModel<CreateRoomRequest>()
-                { Action = new ServerCreateRoomAction(_context).Action };
-                UpdateRoom = new HandlerModel<UpdateRoomDataRequest>
-                { Action = new ServerUpdateRoomAction(_context).Action };
-                Disconnect = new HandlerModel<DisconnectRequest>
-                { Action = new ServerDisconnectAction(_context).Action };
-                SendRoomChatMessage = new HandlerModel<SendRoomChatMessageRequest>
-                { Action = new ServerSendRoomChatMessageAction(_context).Action };
-                ConnectToRoom = new HandlerModel<ConnectToRoomRequest>
-                { Action = new ServerConnectToRoomAction(_context).Action };
+                var login = new ServerLoginAction(_context);
+                var register = new ServerRegisterAction(_context);
+                var createRoom = new ServerCreateRoomAction(_context);
+                var updateRoom = new ServerUpdateRoomAction(_context);
+                var disconnect = new ServerDisconnectAction(_context);
+                var sendRoomChatMessage = new ServerSendRoomChatMessageAction(_context);
+                var connectToRoom = new ServerConnectToRoomAction(_context);
 
+                Handlers.Add(new HandlerModel<LoginRequest>(login.Action));
+                Handlers.Add(new HandlerModel<RegisterRequest>(register.Action));
+                Handlers.Add(new HandlerModel<CreateRoomRequest>(createRoom.Action));
+                Handlers.Add(new HandlerModel<UpdateRoomDataRequest>(updateRoom.Action));
+                Handlers.Add(new HandlerModel<DisconnectRequest>(disconnect.Action));
+                Handlers.Add(new HandlerModel<SendRoomChatMessageRequest>(sendRoomChatMessage.Action));
+                Handlers.Add(new HandlerModel<ConnectToRoomRequest>(connectToRoom.Action));
             }
             catch (Exception ex)
             {
@@ -64,28 +57,15 @@ namespace Server.Management
 
         public void RegisterPackets(Connection conn)
         {
-            Login.RegisterPacket(conn);
-            Register.RegisterPacket(conn);
-            CreateRoom.RegisterPacket(conn);
-            UpdateRoom.RegisterPacket(conn);
-            Disconnect.RegisterPacket(conn);
-            SendRoomChatMessage.RegisterPacket(conn);
-            ConnectToRoom.RegisterPacket(conn);
+            Handlers.ForEach(x=>x.RegisterPacket(conn));
         }
 
-        private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomInstance>.AfterAddEventArgs<RoomInstance> e)
+        private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomInstance>.AfterAddEventArgs e)
         {
-            if (!(e.Item is RoomInstance))
-                throw new Exception("item is not of room type");
-            var roomInstance = (RoomInstance) e.Item;
+            BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(e.Item.Id);
 
-            BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(roomInstance.Id);
-
-            foreach (var user in ClientSingleton.Instance.Users.GetList())
-            {
-                user.Connection.Send(
-                    new NewRoomCreatedRequest(roomInstance.ToRoomOutsideModel()));
-            }
+            var squareRoomBuffer = BufferSingleton.Instance.SquareRoomBufferManager.GetRequest();
+            squareRoomBuffer.InsertRooms.Add(e.Item.ToRoomOutsideModel());
         }
 
         public void InitializeRooms()

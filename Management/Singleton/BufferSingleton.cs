@@ -19,8 +19,10 @@ namespace Server.Management.Singleton
         private BufferSingleton()
         {
             RoomUserListBufferManager = new RoomUserListBufferManager();
+            SquareRoomBufferManager = new SquareRoomBufferManager();
         }
 
        public RoomUserListBufferManager RoomUserListBufferManager { get; set; }
+       public SquareRoomBufferManager SquareRoomBufferManager { get; set; }
     }
 }

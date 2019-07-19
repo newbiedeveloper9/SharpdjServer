@@ -19,7 +19,7 @@ namespace Server.Management.HandlersAction
             _context = context;
         }
 
-        public void Request(LoginRequest req, Connection conn)
+        public void Action(LoginRequest req, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try

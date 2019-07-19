@@ -18,7 +18,7 @@ namespace Server.Management.Singleton
             Users.AfterRemove += AfterUserDisconnect;
         }
 
-        private void AfterUserDisconnect(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs<ServerUserModel> e)
+        private void AfterUserDisconnect(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs e)
         {
             foreach (var room in RoomSingleton.Instance.RoomInstances.GetList())
             {

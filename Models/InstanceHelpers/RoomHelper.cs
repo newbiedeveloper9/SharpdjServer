@@ -36,19 +36,8 @@ namespace Server.Models.InstanceHelpers
         {
             get
             {
-                var connList = new List<Connection>();
-                foreach (var serverUserModel in _users)
-                {
-                    connList.Add(serverUserModel.Connection);
-                }
-
-                return connList;
+                return _users.Select(serverUserModel => serverUserModel.Connection).ToList();
             }
-        }
-
-        public bool HasClaim(ServerContext context, User user)
-        {
-            return false;
         }
     }
 }

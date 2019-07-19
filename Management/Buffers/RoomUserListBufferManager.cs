@@ -11,52 +11,40 @@ using Server.Management.Singleton;
 
 namespace Server.Management.Buffers
 {
-    public class RoomUserListBufferManager
+    public class RoomUserListBufferManager : BufferManager<RoomUserListBufferRequest>
     {
-        private readonly List<ActionBuffer<RoomUserListBufferRequest>> _roomUserListBuffer;
-
-        public RoomUserListBufferManager()
+        public RoomUserListBufferManager() : base(5000)
         {
-            _roomUserListBuffer = new List<ActionBuffer<RoomUserListBufferRequest>>();
 
-            Task.Factory.StartNew(BufferLoop);
+        }
+         
+        public ActionBuffer<RoomUserListBufferRequest> GetByRoomId(int roomId) =>
+             Buffers.FirstOrDefault(x => x.RequestPacket.RoomId == roomId);
+
+        protected override void ClearBuffer(ActionBuffer<RoomUserListBufferRequest> actionBuffer)
+        {
+            var roomId = actionBuffer.RequestPacket.RoomId;
+            actionBuffer.RequestPacket = new RoomUserListBufferRequest(roomId);
         }
 
-        private void BufferLoop()
-        {
-            while (true)
-            {
-                Thread.Sleep(10000);
-
-                foreach (var actionBuffer in _roomUserListBuffer)
-                {
-                    actionBuffer.SendRequestToAll();
-
-                    var roomId = actionBuffer.RequestPacket.RoomId;
-                    actionBuffer.RequestPacket = new RoomUserListBufferRequest(roomId);
-                }
-            }
-        }
-
-        public ActionBuffer<RoomUserListBufferRequest> GetByRoomId(int roomId)
-        {
-            return _roomUserListBuffer.FirstOrDefault(x => x.RequestPacket.RoomId == roomId);
-        }
-
-        public void CreateBuffer(int roomId)
+        public override void CreateBuffer(dynamic roomId)
         {
             var request = new RoomUserListBufferRequest(roomId);
-            var buffer = new ActionBuffer<RoomUserListBufferRequest>(15000, request);
+            var buffer = new ActionBuffer<RoomUserListBufferRequest>(request);
             buffer.BeforeSendBuffer += (sender, args) =>
             {
                 var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == roomId);
                 if (roomInstance == null) throw new Exception("CreateBufer Manager for RoomUserList");
 
                 buffer.Connections = new List<Connection>(roomInstance.ActionHelper.GetConnections);
+
+                var packet = buffer.RequestPacket;
+                buffer.CanSend = (packet.InsertUsers.Count > 0 ||
+                                  packet.RemoveUsers.Count > 0 ||
+                                  packet.UpdateUsers.Count > 0);
             };
 
-            _roomUserListBuffer.Add(buffer);
-
+            Buffers.Add(buffer);
         }
     }
 }
