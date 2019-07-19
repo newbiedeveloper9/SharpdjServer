@@ -23,11 +23,11 @@ namespace Server.Management
         private readonly ServerContext _context;
         private List<IHandlerModel> Handlers { get; set; } = new List<IHandlerModel>();
 
-        public ServerPacketsToHandleList()
+        public ServerPacketsToHandleList(ServerContext context)
         {
             try
             {
-                _context = new ServerContext();
+                this._context = context;
                 var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
                 InitializeRooms();
 

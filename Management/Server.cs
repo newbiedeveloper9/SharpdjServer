@@ -3,7 +3,11 @@ using Network.Enums;
 using SCPackets.LoginPacket;
 using System;
 using System.IO;
+using SCPackets.Disconnect;
 using SCPackets.SendRoomChatMessage;
+using Server.Management.HandlersAction;
+using Server.Models;
+using ConnectionType = Network.Enums.ConnectionType;
 
 namespace Server.Management
 {
@@ -12,13 +16,16 @@ namespace Server.Management
         private readonly ServerConfig _config;
         private readonly ServerConnectionContainer _connectionContainer;
         private readonly ServerPacketsToHandleList _packetsList;
+        private ServerContext _context;
 
 
         public Server(ServerConfig config)
         {
+            _context = new ServerContext();
             _config = config;
+
             Console.WriteLine($"Starting server on socket {_config.Ip}:{_config.Port}");
-            _packetsList = new ServerPacketsToHandleList();
+            _packetsList = new ServerPacketsToHandleList(_context);
             _connectionContainer = ConnectionFactory.CreateServerConnectionContainer("192.168.0.103", 5666, false);
 
             Initialize();
@@ -37,6 +44,8 @@ namespace Server.Management
 
         private void ServerConnectionLost(Connection connection, ConnectionType connectionType, CloseReason closeReason)
         {
+            new ServerDisconnectAction(_context).Action(new DisconnectRequest(), connection);
+
             Console.WriteLine($"{connection.IPRemoteEndPoint} connection lost");
         }
 
@@ -46,6 +55,7 @@ namespace Server.Management
             {
                 Console.WriteLine(
                     $"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
+
                 connection.EnableLogging = true;
                 connection.LogIntoStream(Console.OpenStandardOutput());
                 _packetsList.RegisterPackets(connection);
