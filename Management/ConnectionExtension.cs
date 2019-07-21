@@ -22,7 +22,7 @@ namespace Server.Management
             _conn.Send(packet, _sender);
         }
 
-        public bool LogoutIfObjIsNull(object conditionToCheck)
+        public bool TrueAndLogoutIfObjIsNull(object conditionToCheck)
         {
             if (conditionToCheck != null) return false;
 

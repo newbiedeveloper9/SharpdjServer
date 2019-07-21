@@ -16,13 +16,14 @@ using System.Linq;
 using Network.Packets;
 using SCPackets.AuthKeyLogin;
 using SCPackets.Buffers;
+using SCPackets.PullPostsInRoom;
 
 namespace Server.Management
 {
     public class ServerPacketsToHandleList
     {
         private readonly ServerContext _context;
-        private List<IHandlerModel> Handlers { get; set; } = new List<IHandlerModel>();
+        private readonly List<IHandlerModel> _handlers = new List<IHandlerModel>();
 
         public ServerPacketsToHandleList(ServerContext context)
         {
@@ -42,15 +43,17 @@ namespace Server.Management
                 var sendRoomChatMessage = new ServerSendRoomChatMessageAction(_context);
                 var connectToRoom = new ServerConnectToRoomAction(_context);
                 var authKeyLogin = new ServerAuthKeyLoginAction(_context);
+                var pullPostsInRoom = new ServerPullPostsInRoomAction(_context);
 
-                Handlers.Add(new HandlerModel<LoginRequest>(login.Action));
-                Handlers.Add(new HandlerModel<RegisterRequest>(register.Action));
-                Handlers.Add(new HandlerModel<CreateRoomRequest>(createRoom.Action));
-                Handlers.Add(new HandlerModel<UpdateRoomDataRequest>(updateRoom.Action));
-                Handlers.Add(new HandlerModel<DisconnectRequest>(disconnect.Action));
-                Handlers.Add(new HandlerModel<SendRoomChatMessageRequest>(sendRoomChatMessage.Action));
-                Handlers.Add(new HandlerModel<ConnectToRoomRequest>(connectToRoom.Action));
-                Handlers.Add(new HandlerModel<AuthKeyLoginRequest>(authKeyLogin.Action));
+                _handlers.Add(new HandlerModel<LoginRequest>(login.Action));
+                _handlers.Add(new HandlerModel<RegisterRequest>(register.Action));
+                _handlers.Add(new HandlerModel<CreateRoomRequest>(createRoom.Action));
+                _handlers.Add(new HandlerModel<UpdateRoomDataRequest>(updateRoom.Action));
+                _handlers.Add(new HandlerModel<DisconnectRequest>(disconnect.Action));
+                _handlers.Add(new HandlerModel<SendRoomChatMessageRequest>(sendRoomChatMessage.Action));
+                _handlers.Add(new HandlerModel<ConnectToRoomRequest>(connectToRoom.Action));
+                _handlers.Add(new HandlerModel<AuthKeyLoginRequest>(authKeyLogin.Action));
+                _handlers.Add(new HandlerModel<PullPostsInRoomRequest>(pullPostsInRoom.Action));
             }
             catch (Exception ex)
             {
@@ -60,7 +63,7 @@ namespace Server.Management
 
         public void RegisterPackets(Connection conn)
         {
-            Handlers.ForEach(x=>x.RegisterPacket(conn));
+            _handlers.ForEach(x=>x.RegisterPacket(conn));
         }
 
         private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomInstance>.AfterAddEventArgs e)

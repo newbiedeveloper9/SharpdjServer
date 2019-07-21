@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using Network;
 using SCPackets.SendRoomChatMessage;
@@ -21,7 +22,7 @@ namespace Server.Management.HandlersAction
             try
             {
                 var active = ConnectionExtension.GetClient(conn);
-                if (ext.LogoutIfObjIsNull(active)) return;
+                if (ext.TrueAndLogoutIfObjIsNull(active)) return;
 
                 var userIsInRoom = active.ActiveRoom.RoomId == request.RoomId;
                 if (!userIsInRoom)
@@ -37,8 +38,19 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                conn.Send(new SendRoomChatMessageResponse(Result.Success));
+                var post = new RoomChatPost()
+                {
+                    Author = active.User,
+                    Color = request.Color.ToString(),
+                    Text = request.Message
+                };
+
+                var roomContext = _context.Rooms.Include(x => x.Posts).FirstOrDefault(x => x.Id == request.RoomId);
+                roomContext.Posts.Add(post);
+                _context.SaveChanges();
+
                 roomInstance.ActionHelper.MessageDistribute(request, active.User.ToUserClient());
+                conn.Send(new SendRoomChatMessageResponse(Result.Success));
             }
             catch (Exception e)
             {

@@ -26,7 +26,7 @@ namespace Server.Management.HandlersAction
             try
             {
                 var active = ConnectionExtension.GetClient(connection);
-                if (ext.LogoutIfObjIsNull(active)) return;
+                if (ext.TrueAndLogoutIfObjIsNull(active)) return;
 
                 var room = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == request.RoomId);
                 var connected = room?.Users.GetList().Contains(active);

@@ -121,6 +121,7 @@
     <Compile Include="Management\HandlersAction\ServerAuthKeyLoginAction.cs" />
     <Compile Include="Management\HandlersAction\ServerConnectToRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />
+    <Compile Include="Management\HandlersAction\ServerPullPostsInRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerSendRoomChatMessageAction.cs" />
     <Compile Include="Management\HandlersAction\ServerUpdateRoomAction.cs" />
     <Compile Include="Management\Singleton\BufferSingleton.cs" />
@@ -140,6 +141,10 @@
     <Compile Include="Migrations\201907210111317_AuthenticationKey.cs" />
     <Compile Include="Migrations\201907210111317_AuthenticationKey.Designer.cs">
       <DependentUpon>201907210111317_AuthenticationKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907212136417_RoomChatPostUpdate.cs" />
+    <Compile Include="Migrations\201907212136417_RoomChatPostUpdate.Designer.cs">
+      <DependentUpon>201907212136417_RoomChatPostUpdate.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\EF\Claim.cs" />
     <Compile Include="Models\EF\RoleClaim.cs" />
@@ -197,6 +202,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907210111317_AuthenticationKey.resx">
       <DependentUpon>201907210111317_AuthenticationKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907212136417_RoomChatPostUpdate.resx">
+      <DependentUpon>201907212136417_RoomChatPostUpdate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

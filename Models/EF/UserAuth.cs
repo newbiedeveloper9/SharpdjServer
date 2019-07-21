@@ -21,11 +21,11 @@ namespace Server.Models
 
     public static class UserAuthHelper
     {
-        public static void ClearAuthKey(this UserAuth auth, ServerContext _context)
+        public static void ClearAuthKey(this UserAuth auth, ServerContext context)
         {
             auth.AuthenticationKey = string.Empty;
             auth.AuthenticationExpiration = DateTime.Now.AddYears(-10);
-            _context.SaveChanges();
+            context.SaveChanges();
         }
     }
 }
