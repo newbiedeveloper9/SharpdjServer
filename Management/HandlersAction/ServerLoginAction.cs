@@ -7,6 +7,7 @@ using Server.Security;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using SCPackets.Models;
 
 namespace Server.Management.HandlersAction
 {
@@ -41,7 +42,7 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                
+
                 isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user.Id);
                 if (isActive != null)
                 {
@@ -53,21 +54,21 @@ namespace Server.Management.HandlersAction
                 if (user.UserAuth.Hash.Equals(hashedPass))
                 {
                     var response = new LoginResponse(Result.Success, req);
-                    response.User = user.ToUserClient();
+                    response.Data.FillData(user, _context);
 
-                    //Pull all rooms
-                    foreach (var roomModel in RoomSingleton.Instance.RoomInstances.GetList())
-                        response.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
+                    ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
 
-                    //Pull his rooms
-                    var userRooms = _context.Rooms.Include(x=>x.RoomConfig)
-                        .Where(x => x.Author.Id.Equals(user.Id));
-                    foreach (var room in userRooms)
-                        response.UserRoomList.Add(room.ToRoomModel());
+                    if (req.RememberMe)
+                    {
+                        var authKey = Scrypt.GenerateSalt();
+                        user.UserAuth.AuthenticationKey = authKey;
+                        user.UserAuth.AuthenticationExpiration = DateTime.Now.AddDays(30);
+                        _context.SaveChanges();
+
+                        response.AuthenticationKey = authKey;
+                    }
 
                     ext.SendPacket(response);
-                    ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
-                    Console.WriteLine("Login: {0}", user);
                 }
                 else
                 {
@@ -79,6 +80,25 @@ namespace Server.Management.HandlersAction
                 ext.SendPacket(new LoginResponse(Result.Error, req));
                 Console.WriteLine(e.Message);
             }
+        }
+    }
+
+    public static class LoginHelper
+    {
+        public static void FillData(this LoginDataModel data, User user, ServerContext _context)
+        {
+            data.User = user.ToUserClient();
+
+            //Pull all rooms
+            foreach (var roomModel in RoomSingleton.Instance.RoomInstances.GetList())
+                data.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
+
+            //Pull his rooms
+            var userRooms = _context.Rooms.Include(x => x.RoomConfig)
+                .Where(x => x.Author.Id.Equals(user.Id));
+
+            foreach (var room in userRooms)
+                data.UserRoomList.Add(room.ToRoomModel());
         }
     }
 }

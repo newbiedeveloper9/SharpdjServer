@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Network.Packets;
+using SCPackets.AuthKeyLogin;
 using SCPackets.Buffers;
 
 namespace Server.Management
@@ -40,6 +41,7 @@ namespace Server.Management
                 var disconnect = new ServerDisconnectAction(_context);
                 var sendRoomChatMessage = new ServerSendRoomChatMessageAction(_context);
                 var connectToRoom = new ServerConnectToRoomAction(_context);
+                var authKeyLogin = new ServerAuthKeyLoginAction(_context);
 
                 Handlers.Add(new HandlerModel<LoginRequest>(login.Action));
                 Handlers.Add(new HandlerModel<RegisterRequest>(register.Action));
@@ -48,6 +50,7 @@ namespace Server.Management
                 Handlers.Add(new HandlerModel<DisconnectRequest>(disconnect.Action));
                 Handlers.Add(new HandlerModel<SendRoomChatMessageRequest>(sendRoomChatMessage.Action));
                 Handlers.Add(new HandlerModel<ConnectToRoomRequest>(connectToRoom.Action));
+                Handlers.Add(new HandlerModel<AuthKeyLoginRequest>(authKeyLogin.Action));
             }
             catch (Exception ex)
             {

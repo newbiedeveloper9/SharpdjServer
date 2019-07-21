@@ -14,6 +14,8 @@ namespace Server.Models
         public int Id { get; set; }
         public LogType Type { get; set; }
         public User User { get; set; }
+
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
         public ConnectionType ConnectionType { get; set; } = ConnectionType.Desktop;
     }

@@ -44,7 +44,7 @@ namespace Server.Management
 
         private void ServerConnectionLost(Connection connection, ConnectionType connectionType, CloseReason closeReason)
         {
-            new ServerDisconnectAction(_context).Action(new DisconnectRequest(), connection);
+            new ServerDisconnectAction(_context).Action(new DisconnectRequest(), connection, true);
 
             Console.WriteLine($"{connection.IPRemoteEndPoint} connection lost");
         }

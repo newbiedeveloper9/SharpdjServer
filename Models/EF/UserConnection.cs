@@ -15,6 +15,8 @@ namespace Server.Models
         public User User { get; set; }
         public string Ip { get; set; }
         public int Port { get; set; }
+
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
         public ConnectionType ConnectionType { get; set; } = ConnectionType.Desktop;
     }

@@ -118,6 +118,7 @@
     <Compile Include="Management\Buffers\BufferManager.cs" />
     <Compile Include="Management\Buffers\SquareRoomBufferManager.cs" />
     <Compile Include="Management\Buffers\RoomUserListBufferManager.cs" />
+    <Compile Include="Management\HandlersAction\ServerAuthKeyLoginAction.cs" />
     <Compile Include="Management\HandlersAction\ServerConnectToRoomAction.cs" />
     <Compile Include="Management\HandlersAction\ServerDisconnectAction.cs" />
     <Compile Include="Management\HandlersAction\ServerSendRoomChatMessageAction.cs" />
@@ -135,6 +136,10 @@
     <Compile Include="Migrations\201907060110255_Claims.cs" />
     <Compile Include="Migrations\201907060110255_Claims.Designer.cs">
       <DependentUpon>201907060110255_Claims.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907210111317_AuthenticationKey.cs" />
+    <Compile Include="Migrations\201907210111317_AuthenticationKey.Designer.cs">
+      <DependentUpon>201907210111317_AuthenticationKey.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\EF\Claim.cs" />
     <Compile Include="Models\EF\RoleClaim.cs" />
@@ -189,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907060110255_Claims.resx">
       <DependentUpon>201907060110255_Claims.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907210111317_AuthenticationKey.resx">
+      <DependentUpon>201907210111317_AuthenticationKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

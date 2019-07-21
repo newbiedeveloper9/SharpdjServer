@@ -28,7 +28,7 @@ namespace Server.Security
         public static string GenerateSalt()
         {
             Random rnd = new Random();
-            int length = rnd.Next(16, 24);
+            int length = rnd.Next(24, 32);
             return Guid.NewGuid().ToString("n").Substring(0, length);
         }
     }
