@@ -23,7 +23,8 @@ namespace Server.Models
             {
                 Author = Author.ToUserClient(),
                 Color = new ColorModel(Color),
-                Message = Text
+                Message = Text,
+                Id = Id
             };
         }
     }

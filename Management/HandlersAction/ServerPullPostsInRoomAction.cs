@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using Network;
 using SCPackets.Models;
@@ -17,7 +19,7 @@ namespace Server.Management.HandlersAction
             _context = context;
         }
 
-        public void Action(PullPostsInRoomRequest request, Connection conn)
+        public async void Action(PullPostsInRoomRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try
@@ -25,29 +27,23 @@ namespace Server.Management.HandlersAction
                 var active = ConnectionExtension.GetClient(conn);
                 if (ext.TrueAndLogoutIfObjIsNull(active)) return;
 
-                var userIsInRoom = active.ActiveRoom.RoomId == request.RoomId;
-                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == request.RoomId);
-
-                var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.NotInRoom, !userIsInRoom);
-                validation.Conditions.Add(Result.Error, roomInstance == null);
-
-                var any = validation.Validate();
-                if (any != null)
+                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == active.ActiveRoom.RoomId);
+                if (roomInstance == null)
                 {
-                    ext.SendPacket(new PullPostsInRoomResponse((Result)any, request));
+                    conn.Send(new PullPostsInRoomResponse(Result.Error));
                     return;
                 }
 
-                var roomContext = _context.Rooms.Include(x => x.Posts).FirstOrDefault(x => x.Id == request.RoomId);
-                var postsServer = roomContext.Posts.Skip(request.MessageCount).Take(30).ToList();
+                var roomContext = _context.Rooms.Include(x => x.Posts).FirstOrDefaultAsync(x => x.Id == request.RoomId).Result;
+                var postsServer = roomContext.Posts.Reverse().Skip(request.MessageCount).Take(30).Reverse();
+               
                 if (!postsServer.Any())
                 {
-                    ext.SendPacket(new PullPostsInRoomResponse(Result.EOF, request));
+                    conn.Send(new PullPostsInRoomResponse(Result.EOF));
                     return;
                 }
 
-                var response = new PullPostsInRoomResponse(Result.Success, request);
+                var response = new PullPostsInRoomResponse(Result.Success);
                 response.Posts = postsServer.Select(x => x.ToOutsideModel()).ToList();
 
                 conn.Send(response);
@@ -55,6 +51,7 @@ namespace Server.Management.HandlersAction
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                conn.Send(new PullPostsInRoomResponse(Result.Error));
             }
         }
     }

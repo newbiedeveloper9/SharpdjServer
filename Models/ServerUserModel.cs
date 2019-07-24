@@ -48,4 +48,13 @@ namespace Server.Management
 
         public int RoomId { get; set; }
     }
+
+    public static class RoomUserConnectionHelper
+    {
+        public static RoomInstance GetActiveRoom(this RoomUserConnection roomUserConnection)
+        {
+            return RoomSingleton.Instance.RoomInstances.GetList()
+                .FirstOrDefault(x => x.Id == roomUserConnection.RoomId);
+        }
+    }
 }

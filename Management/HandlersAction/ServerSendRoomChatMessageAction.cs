@@ -16,7 +16,7 @@ namespace Server.Management.HandlersAction
             _context = context;
         }
 
-        public void Action(SendRoomChatMessageRequest request, Connection conn)
+        public async void Action(SendRoomChatMessageRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try
@@ -24,14 +24,9 @@ namespace Server.Management.HandlersAction
                 var active = ConnectionExtension.GetClient(conn);
                 if (ext.TrueAndLogoutIfObjIsNull(active)) return;
 
-                var userIsInRoom = active.ActiveRoom.RoomId == request.RoomId;
-                if (!userIsInRoom)
-                {
-                    conn.Send(new SendRoomChatMessageResponse(Result.NotInRoom));
-                    return;
-                }
+                var roomId = active.ActiveRoom.RoomId;
 
-                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == request.RoomId);
+                var roomInstance = active.ActiveRoom.GetActiveRoom();
                 if (roomInstance == null)
                 {
                     conn.Send(new SendRoomChatMessageResponse(Result.Error));
@@ -41,13 +36,13 @@ namespace Server.Management.HandlersAction
                 var post = new RoomChatPost()
                 {
                     Author = active.User,
-                    Color = request.Color.ToString(),
-                    Text = request.Message
+                    Color = request.Post.Color.ToString(),
+                    Text = request.Post.Message
                 };
 
-                var roomContext = _context.Rooms.Include(x => x.Posts).FirstOrDefault(x => x.Id == request.RoomId);
+                var roomContext = _context.Rooms.Include(x => x.Posts).FirstOrDefault(x => x.Id == roomId);
                 roomContext.Posts.Add(post);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 roomInstance.ActionHelper.MessageDistribute(request, active.User.ToUserClient());
                 conn.Send(new SendRoomChatMessageResponse(Result.Success));
