@@ -26,7 +26,7 @@ namespace Server.Management
 
             Console.WriteLine($"Starting server on socket {_config.Ip}:{_config.Port}");
             _packetsList = new ServerPacketsToHandleList(_context);
-            _connectionContainer = ConnectionFactory.CreateServerConnectionContainer("192.168.0.103", 5666, false);
+            _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(config.Ip, config.Port, config.RSAKeySize, false);
 
             Initialize();
         }

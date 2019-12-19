@@ -3,10 +3,19 @@ namespace Server.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Prototype : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
+            CreateTable(
+                "dbo.Claims",
+                c => new
+                    {
+                        ClaimId = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                    })
+                .PrimaryKey(t => t.ClaimId);
+            
             CreateTable(
                 "dbo.UserConnections",
                 c => new
@@ -51,6 +60,8 @@ namespace Server.Migrations
                         Login = c.String(),
                         Hash = c.String(),
                         Salt = c.String(),
+                        AuthenticationKey = c.String(),
+                        AuthenticationExpiration = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.UserAuthId);
             
@@ -102,8 +113,31 @@ namespace Server.Migrations
                         Room_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.MediaHistoryId)
-                .ForeignKey("dbo.AfterInserts", t => t.Room_Id)
+                .ForeignKey("dbo.Rooms", t => t.Room_Id)
                 .Index(t => t.Room_Id);
+            
+            CreateTable(
+                "dbo.RoleClaims",
+                c => new
+                    {
+                        RoleClaimId = c.Int(nullable: false, identity: true),
+                        Role_Id = c.Int(),
+                        Type_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.RoleClaimId)
+                .ForeignKey("dbo.ServerRoles", t => t.Role_Id)
+                .ForeignKey("dbo.Claims", t => t.Type_Id)
+                .Index(t => t.Role_Id)
+                .Index(t => t.Type_Id);
+            
+            CreateTable(
+                "dbo.ServerRoles",
+                c => new
+                    {
+                        ServerRoleId = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                    })
+                .PrimaryKey(t => t.ServerRoleId);
             
             CreateTable(
                 "dbo.RoomChatPosts",
@@ -111,12 +145,13 @@ namespace Server.Migrations
                     {
                         RoomChatPostId = c.Int(nullable: false, identity: true),
                         Text = c.String(),
+                        Color = c.String(),
                         Author_Id = c.Int(),
                         Room_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.RoomChatPostId)
                 .ForeignKey("dbo.Users", t => t.Author_Id)
-                .ForeignKey("dbo.AfterInserts", t => t.Room_Id)
+                .ForeignKey("dbo.Rooms", t => t.Room_Id)
                 .Index(t => t.Author_Id)
                 .Index(t => t.Room_Id);
             
@@ -134,7 +169,7 @@ namespace Server.Migrations
                 .PrimaryKey(t => t.RoomConfigId);
             
             CreateTable(
-                "dbo.AfterInserts",
+                "dbo.Rooms",
                 c => new
                     {
                         RoomId = c.Int(nullable: false, identity: true),
@@ -149,15 +184,41 @@ namespace Server.Migrations
                 .Index(t => t.Author_Id)
                 .Index(t => t.RoomConfig_Id);
             
+            CreateTable(
+                "dbo.UserClaims",
+                c => new
+                    {
+                        UserClaimId = c.Int(nullable: false, identity: true),
+                        Type_Id = c.Int(),
+                        User_Id = c.Int(),
+                        Room_Id = c.Int(),
+                        Room_Id1 = c.Int(),
+                    })
+                .PrimaryKey(t => t.UserClaimId)
+                .ForeignKey("dbo.Claims", t => t.Type_Id)
+                .ForeignKey("dbo.Users", t => t.User_Id)
+                .ForeignKey("dbo.Rooms", t => t.Room_Id)
+                .ForeignKey("dbo.Rooms", t => t.Room_Id1)
+                .Index(t => t.Type_Id)
+                .Index(t => t.User_Id)
+                .Index(t => t.Room_Id)
+                .Index(t => t.Room_Id1);
+            
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.AfterInserts", "RoomConfig_Id", "dbo.RoomConfigs");
-            DropForeignKey("dbo.RoomChatPosts", "Room_Id", "dbo.AfterInserts");
-            DropForeignKey("dbo.MediaHistories", "Room_Id", "dbo.AfterInserts");
-            DropForeignKey("dbo.AfterInserts", "Author_Id", "dbo.Users");
+            DropForeignKey("dbo.UserClaims", "Room_Id1", "dbo.Rooms");
+            DropForeignKey("dbo.Rooms", "RoomConfig_Id", "dbo.RoomConfigs");
+            DropForeignKey("dbo.UserClaims", "Room_Id", "dbo.Rooms");
+            DropForeignKey("dbo.UserClaims", "User_Id", "dbo.Users");
+            DropForeignKey("dbo.UserClaims", "Type_Id", "dbo.Claims");
+            DropForeignKey("dbo.RoomChatPosts", "Room_Id", "dbo.Rooms");
+            DropForeignKey("dbo.MediaHistories", "Room_Id", "dbo.Rooms");
+            DropForeignKey("dbo.Rooms", "Author_Id", "dbo.Users");
             DropForeignKey("dbo.RoomChatPosts", "Author_Id", "dbo.Users");
+            DropForeignKey("dbo.RoleClaims", "Type_Id", "dbo.Claims");
+            DropForeignKey("dbo.RoleClaims", "Role_Id", "dbo.ServerRoles");
             DropForeignKey("dbo.Logs", "User_Id", "dbo.Users");
             DropForeignKey("dbo.Users", "Conversation_Id", "dbo.Conversations");
             DropForeignKey("dbo.ConversationMessages", "Conversation_Id", "dbo.Conversations");
@@ -165,10 +226,16 @@ namespace Server.Migrations
             DropForeignKey("dbo.UserConnections", "User_Id", "dbo.Users");
             DropForeignKey("dbo.Users", "UserAuth_Id", "dbo.UserAuths");
             DropForeignKey("dbo.Users", "User_Id", "dbo.Users");
-            DropIndex("dbo.AfterInserts", new[] { "RoomConfig_Id" });
-            DropIndex("dbo.AfterInserts", new[] { "Author_Id" });
+            DropIndex("dbo.UserClaims", new[] { "Room_Id1" });
+            DropIndex("dbo.UserClaims", new[] { "Room_Id" });
+            DropIndex("dbo.UserClaims", new[] { "User_Id" });
+            DropIndex("dbo.UserClaims", new[] { "Type_Id" });
+            DropIndex("dbo.Rooms", new[] { "RoomConfig_Id" });
+            DropIndex("dbo.Rooms", new[] { "Author_Id" });
             DropIndex("dbo.RoomChatPosts", new[] { "Room_Id" });
             DropIndex("dbo.RoomChatPosts", new[] { "Author_Id" });
+            DropIndex("dbo.RoleClaims", new[] { "Type_Id" });
+            DropIndex("dbo.RoleClaims", new[] { "Role_Id" });
             DropIndex("dbo.MediaHistories", new[] { "Room_Id" });
             DropIndex("dbo.Logs", new[] { "User_Id" });
             DropIndex("dbo.ConversationMessages", new[] { "Conversation_Id" });
@@ -177,9 +244,12 @@ namespace Server.Migrations
             DropIndex("dbo.Users", new[] { "UserAuth_Id" });
             DropIndex("dbo.Users", new[] { "User_Id" });
             DropIndex("dbo.UserConnections", new[] { "User_Id" });
-            DropTable("dbo.AfterInserts");
+            DropTable("dbo.UserClaims");
+            DropTable("dbo.Rooms");
             DropTable("dbo.RoomConfigs");
             DropTable("dbo.RoomChatPosts");
+            DropTable("dbo.ServerRoles");
+            DropTable("dbo.RoleClaims");
             DropTable("dbo.MediaHistories");
             DropTable("dbo.Logs");
             DropTable("dbo.Conversations");
@@ -187,6 +257,7 @@ namespace Server.Migrations
             DropTable("dbo.UserAuths");
             DropTable("dbo.Users");
             DropTable("dbo.UserConnections");
+            DropTable("dbo.Claims");
         }
     }
 }

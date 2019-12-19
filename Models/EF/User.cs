@@ -24,7 +24,7 @@ namespace Server.Models
 
         public UserAuth UserAuth { get; set; }
 
-        public ICollection<User> FriendList { get; set; }
+        public List<User> FriendList { get; set; }
 
         public string AvatarUrl { get; set; } = "";
 

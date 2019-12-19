@@ -1,4 +1,5 @@
 ﻿using Network;
+using NLog;
 using SCPackets;
 using SCPackets.RegisterPacket;
 using Server.Models;
@@ -13,6 +14,8 @@ namespace Server.Management.HandlersAction
     class ServerRegisterAction
     {
         private readonly ServerContext _context;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public ServerRegisterAction(ServerContext context)
         {
             _context = context;
@@ -57,10 +60,20 @@ namespace Server.Management.HandlersAction
                 ext.SendPacket(new RegisterResponse(Result.Success, req));
                 Console.WriteLine("Register: {0}", user);
             }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                foreach (var validationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Console.WriteLine("Property: {0} throws Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+            }
             catch (Exception e)
             {
                 ext.SendPacket(new RegisterResponse(Result.Error, req));
-                Console.WriteLine(e.Message);
+                Logger.Error(e, "Register action error happened");
             }
         }
 
