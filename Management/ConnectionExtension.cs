@@ -22,7 +22,7 @@ namespace Server.Management
             _conn.Send(packet, _sender);
         }
 
-        public bool TrueAndLogoutIfObjIsNull(object conditionToCheck)
+        public bool SendRequestOrIsNull(object conditionToCheck)
         {
             if (conditionToCheck != null) return false;
 
@@ -32,7 +32,9 @@ namespace Server.Management
 
         public static ServerUserModel GetClient(Connection conn)
         {
-            return ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.Connection.Equals(conn));
+            return ClientSingleton.Instance.Users
+                .GetList()
+                .FirstOrDefault(x => x.Connection.Equals(conn));
         }
     }
 }

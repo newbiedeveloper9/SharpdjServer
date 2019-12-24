@@ -2,6 +2,8 @@
 using System.Data.Entity;
 using System.Linq;
 using Network;
+using NLog;
+using NLog.Fluent;
 using SCPackets.AuthKeyLogin;
 using Server.Management.Singleton;
 using Server.Models;
@@ -17,6 +19,8 @@ namespace Server.Management.HandlersAction
             _context = context;
         }
 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public void Action(AuthKeyLoginRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
@@ -29,16 +33,17 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                User user = _context.Users.Include(x => x.UserAuth).
+                var user = _context.Users
+                    .Include(x => x.UserAuth).
                     FirstOrDefault(x => x.UserAuth.AuthenticationKey.Equals(request.AuthenticationKey));
 
-                var tmp = _context.Users.Include(x=>x.UserAuth).FirstOrDefault(x=>x.Username=="qwerty");
-                Console.WriteLine(tmp.UserAuth.AuthenticationKey);
-
-                active = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user?.Id);
+                active = ClientSingleton.Instance.Users
+                    .GetList()
+                    .FirstOrDefault(x => x.User.Id == user?.Id);
 
                 var expiration = user?.UserAuth.AuthenticationExpiration;
 
+                #region Validation
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.Error, user == null);
                 validation.Conditions.Add(Result.AlreadyLogged, active != null);
@@ -47,9 +52,11 @@ namespace Server.Management.HandlersAction
                 var validate = validation.Validate();
                 if (validate != null)
                 {
+                    Logger.Info($"Validation failed. {(Result)validate}");
                     ext.SendPacket(new AuthKeyLoginResponse((Result)validate, request));
                     return;
                 }
+                #endregion Validation
 
                 //Login Success, filling data
                 var response = new AuthKeyLoginResponse(Result.Success, request);
@@ -58,11 +65,11 @@ namespace Server.Management.HandlersAction
                 ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
 
                 ext.SendPacket(response);
-
+                Logger.Info("Success");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Logger.Error(e);
                 ext.SendPacket(new AuthKeyLoginResponse(Result.Error, request));
             }
         }

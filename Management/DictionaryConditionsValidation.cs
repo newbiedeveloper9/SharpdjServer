@@ -17,12 +17,11 @@ namespace Server.Management
 
         public Enum Validate()
         {
-            foreach (var result in Conditions)
+            foreach (var result in Conditions.Where(result => result.Value))
             {
-                if (!result.Value) continue;
-
                 return result.Key;
             }
+
             return null;
         }
     }

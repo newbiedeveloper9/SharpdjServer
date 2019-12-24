@@ -26,7 +26,6 @@ namespace Server.Management.Singleton
             }
         }
 
-
         public ListWrapper<ServerUserModel> Users { get; set; }
     }
 }

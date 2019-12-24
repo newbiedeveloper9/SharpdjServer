@@ -6,6 +6,7 @@ using Server.Models;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using NLog;
 using Server.Management.Singleton;
 
 namespace Server.Management.HandlersAction
@@ -18,6 +19,8 @@ namespace Server.Management.HandlersAction
         {
             _context = context;
         }
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Action(UpdateRoomDataRequest req, Connection connection)
         {
@@ -53,10 +56,11 @@ namespace Server.Management.HandlersAction
                     (!DataValidation.LengthIsValid(req.Room.PublicEnterMessage, 0, 512) ||
                      !DataValidation.LengthIsValid(req.Room.PublicLeaveMessage, 0, 512)));
 
-                var result = validation.Validate();
-                if (result != null)
+                var validate = validation.Validate();
+                if (validate != null)
                 {
-                    ext.SendPacket(new UpdateRoomDataResponse((Result)result, req));
+                    Logger.Info($"Validation failed. {(Result)validate}");
+                    ext.SendPacket(new UpdateRoomDataResponse((Result)validate, req));
                     return;
                 }
 
@@ -71,6 +75,7 @@ namespace Server.Management.HandlersAction
                     ext.SendPacket(response);
 
                     roomInstance.SendUpdateRequest();
+                    Logger.Info("Success");
                 }
                 else
                 {
@@ -80,7 +85,7 @@ namespace Server.Management.HandlersAction
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Logger.Error(e);
                 ext.SendPacket(new UpdateRoomDataResponse(Result.Error, req));
             }
         }

@@ -6,6 +6,7 @@ using SCPackets.NotLoggedIn;
 using Server.Models;
 using System;
 using System.Linq;
+using NLog;
 using Server.Management.Singleton;
 
 namespace Server.Management.HandlersAction
@@ -17,6 +18,8 @@ namespace Server.Management.HandlersAction
         {
             _context = context;
         }
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Action(CreateRoomRequest req, Connection conn)
         {
@@ -31,6 +34,7 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
+                #region Validation
                 var roomExist = _context.Rooms.Any(x => x.Name.Equals(req.RoomModel.Name));
 
                 var validation = new DictionaryConditionsValidation<Result>();
@@ -46,12 +50,14 @@ namespace Server.Management.HandlersAction
                     (!DataValidation.LengthIsValid(req.RoomModel.PublicEnterMessage, 0, 512) ||
                      !DataValidation.LengthIsValid(req.RoomModel.PublicLeaveMessage, 0, 512)));
 
-                var result = validation.Validate();
-                if (result != null)
+                var validate = validation.Validate();
+                if (validate != null)
                 {
-                    ext.SendPacket(new CreateRoomResponse((Result)result, req));
+                    Logger.Info($"Validation failed. {(Result)validate}");
+                    ext.SendPacket(new CreateRoomResponse((Result)validate, req));
                     return;
                 }
+                #endregion Validation
 
                 var room = new Room();
                 room.ImportByRoomModel(req.RoomModel, author.User);
@@ -61,10 +67,11 @@ namespace Server.Management.HandlersAction
                 RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
 
                 ext.SendPacket(new CreateRoomResponse(Result.Success, req) { Room = room.ToRoomModel() });
+                Logger.Info("Success");
             }
             catch (Exception ex)
-            {
-                Console.WriteLine(ex);
+            { 
+                Logger.Error(ex);
                 ext.SendPacket(new CreateRoomResponse(Result.Error, req));
             }
         }

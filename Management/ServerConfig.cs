@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using NLog;
 
 namespace Server.Management
 {
@@ -11,6 +12,8 @@ namespace Server.Management
 
         [JsonRequired] public string Ip { get; set; } = "127.0.0.1";
         [JsonRequired] public int RSAKeySize { get; set; } = 2048;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private ServerConfig()
         {
@@ -24,8 +27,10 @@ namespace Server.Management
             {
                 var json = JsonConvert.SerializeObject(new ServerConfig(), Formatting.Indented);
                 File.WriteAllText(path, json);
-                Console.WriteLine("New config file has been created. Press enter to restart.");
+
+                Logger.Info("New config file has been created. Press enter to restart.");
                 Console.ReadLine();
+
                 Process.Start("Server.exe");
                 Environment.Exit(0);
             }
@@ -37,9 +42,8 @@ namespace Server.Management
                         File.ReadAllText(path));
                 }
                 catch (Exception ex)
-                {
-                    Console.WriteLine("Error in config.json:");
-                    Console.WriteLine(ex.Message);
+                { 
+                    Logger.Error(ex);
                     Console.ReadLine();
                 }
         }

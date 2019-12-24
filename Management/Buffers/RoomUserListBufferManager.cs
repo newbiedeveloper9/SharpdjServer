@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Network;
 using Network.Packets;
+using NLog;
 using SCPackets.Buffers;
 using Server.Management.Singleton;
 
@@ -13,7 +14,9 @@ namespace Server.Management.Buffers
 {
     public class RoomUserListBufferManager : BufferManager<RoomUserListBufferRequest>
     {
-        public RoomUserListBufferManager() : base(5000)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public RoomUserListBufferManager() : base(Logger, 5000)
         {
 
         }
@@ -33,8 +36,13 @@ namespace Server.Management.Buffers
             var buffer = new ActionBuffer<RoomUserListBufferRequest>(request);
             buffer.BeforeSendBuffer += (sender, args) =>
             {
-                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == roomId);
-                if (roomInstance == null) throw new Exception("CreateBufer Manager for RoomUserList");
+                var roomInstance = RoomSingleton.Instance.RoomInstances
+                    .GetList()
+                    .FirstOrDefault(x => x.Id == roomId);
+
+                if (roomInstance == null)
+                    Logger.Fatal("This shouldn't ever happen");
+
 
                 buffer.Connections = new List<Connection>(roomInstance.ActionHelper.GetConnections);
 

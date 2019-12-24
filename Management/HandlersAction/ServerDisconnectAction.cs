@@ -5,6 +5,7 @@ using Server.Models;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using NLog;
 
 namespace Server.Management.HandlersAction
 {
@@ -16,7 +17,8 @@ namespace Server.Management.HandlersAction
         {
             _context = context;
         }
-
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
         public void Action(DisconnectRequest request, Connection connection, bool forced = false)
         {
             var ext = new ConnectionExtension(connection, this);
@@ -33,6 +35,7 @@ namespace Server.Management.HandlersAction
                     {
                         if (!forced)
                             userContext?.UserAuth.ClearAuthKey(_context);
+                        Logger.Info("User disconnected");
 
                         ext.SendPacket(new DisconnectResponse(Result.Success, request));
                         return;
@@ -47,6 +50,7 @@ namespace Server.Management.HandlersAction
                     userContext?.UserAuth.ClearAuthKey(_context);
 
                 ext.SendPacket(response);
+                Logger.Info($"Status: {response.Result}");
             }
             catch (Exception e)
             {

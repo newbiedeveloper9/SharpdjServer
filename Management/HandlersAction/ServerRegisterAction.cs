@@ -14,12 +14,13 @@ namespace Server.Management.HandlersAction
     class ServerRegisterAction
     {
         private readonly ServerContext _context;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ServerRegisterAction(ServerContext context)
         {
             _context = context;
         }
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Action(RegisterRequest req, Connection conn)
         {
@@ -37,10 +38,10 @@ namespace Server.Management.HandlersAction
                 var result = validation.Validate();
                 if (result != null)
                 {
+                    Logger.Info("User with given credentials already exist");
                     ext.SendPacket(new RegisterResponse((Result) result, req));
                     return;
                 }
-
 
                 string salt = Scrypt.GenerateSalt();
                 var user = new User()
@@ -58,22 +59,12 @@ namespace Server.Management.HandlersAction
                 _context.SaveChanges();
 
                 ext.SendPacket(new RegisterResponse(Result.Success, req));
-                Console.WriteLine("Register: {0}", user);
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                foreach (var validationErrors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        Console.WriteLine("Property: {0} throws Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                    }
-                }
+                Logger.Info($"Success register: {user}");
             }
             catch (Exception e)
             {
+                Logger.Error(e);
                 ext.SendPacket(new RegisterResponse(Result.Error, req));
-                Logger.Error(e, "Register action error happened");
             }
         }
 

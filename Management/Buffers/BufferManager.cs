@@ -6,17 +6,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Network;
 using Network.Packets;
+using NLog;
+using NLog.Fluent;
 using SCPackets.Buffers;
 
 namespace Server.Management.Buffers
 {
     public abstract class BufferManager<TReq> where TReq : RequestPacket
     {
+        private readonly Logger Logger;
         protected readonly List<ActionBuffer<TReq>> Buffers;
-        public int Timer;
+        public int Timer { get; set; }
 
-        protected BufferManager(int timer = 10000)
+        protected BufferManager(Logger logger, int timer = 10000)
         {
+            Logger = logger;
             Timer = timer;
             Buffers = new List<ActionBuffer<TReq>>();
 
@@ -31,9 +35,15 @@ namespace Server.Management.Buffers
 
                 foreach (var actionBuffer in Buffers)
                 {
-                    actionBuffer.SendRequestToAll();
+                    var success = actionBuffer.SendRequestToEveryone();
+                    if (!success)
+                    {
+                        Logger.Info("Buffer is probably EMPTY. Sending data has been skipped");
+    continue;
+                    };
 
                     ClearBuffer(actionBuffer);
+                    Logger.Info("Buffer is cleared");
                 }
             }
         }

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Network.Packets;
+using NLog;
 using SCPackets.AuthKeyLogin;
 using SCPackets.Buffers;
 using SCPackets.PullPostsInRoom;
@@ -24,13 +25,16 @@ namespace Server.Management
     {
         private readonly ServerContext _context;
         private readonly List<IHandlerModel> _handlers = new List<IHandlerModel>();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ServerPacketsToHandleList(ServerContext context)
         {
             try
             {
                 this._context = context;
-                var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at start
+                var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at the beginning 
+                user = null;
+
                 InitializeRooms();
 
                 RoomSingleton.Instance.RoomInstances.AfterAdd += RoomAfterCreationNewRoom;
@@ -57,13 +61,13 @@ namespace Server.Management
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.Error(ex);
             }
         }
 
         public void RegisterPackets(Connection conn)
         {
-            _handlers.ForEach(x=>x.RegisterPacket(conn));
+            _handlers.ForEach(x => x.RegisterPacket(conn));
         }
 
         private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomInstance>.AfterAddEventArgs e)
@@ -74,7 +78,7 @@ namespace Server.Management
             squareRoomBuffer.InsertRooms.Add(e.Item.ToRoomOutsideModel());
         }
 
-        public void InitializeRooms()
+        private void InitializeRooms()
         {
             foreach (var room in _context.Rooms)
             {

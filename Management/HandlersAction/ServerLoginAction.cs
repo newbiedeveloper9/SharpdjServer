@@ -7,6 +7,7 @@ using Server.Security;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using NLog;
 using SCPackets.Models;
 
 namespace Server.Management.HandlersAction
@@ -19,6 +20,7 @@ namespace Server.Management.HandlersAction
         {
             _context = context;
         }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Action(LoginRequest req, Connection conn)
         {
@@ -26,9 +28,10 @@ namespace Server.Management.HandlersAction
             try
             {
                 //Check if is logged in (as connection)
-                var isActive = ConnectionExtension.GetClient(conn);
-                if (isActive != null)
+                var connectionIsActive = ConnectionExtension.GetClient(conn);
+                if (connectionIsActive != null)
                 {
+                    Logger.Info($"Given connection is already logged in to account {connectionIsActive.User.Username}");
                     ext.SendPacket(new LoginResponse(Result.AlreadyLoggedError, req));
                     return;
                 }
@@ -38,14 +41,17 @@ namespace Server.Management.HandlersAction
                     FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
                 if (user == null)
                 {
+                    Logger.Info("User with given credentials doesn't exists");
                     ext.SendPacket(new LoginResponse(Result.Error, req));
                     return;
                 }
 
-
-                isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user.Id);
-                if (isActive != null)
+                var userIsActive = ClientSingleton.Instance.Users
+                    .GetList()
+                    .FirstOrDefault(x => x.User.Id == user.Id);
+                if (userIsActive != null)
                 {
+                    Logger.Info("User is already active");
                     ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
                     return;
                 }
@@ -69,16 +75,18 @@ namespace Server.Management.HandlersAction
                     }
 
                     ext.SendPacket(response);
+                    Logger.Info("Success");
                 }
                 else
                 {
                     ext.SendPacket(new LoginResponse(Result.CredentialsError, req));
+                    Logger.Info("Credentials error");
                 }
             }
             catch (Exception e)
             {
+                Logger.Error(e);
                 ext.SendPacket(new LoginResponse(Result.Error, req));
-                Console.WriteLine(e.Message);
             }
         }
     }

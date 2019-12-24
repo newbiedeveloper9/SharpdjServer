@@ -3,6 +3,7 @@ using Network.Enums;
 using SCPackets.LoginPacket;
 using System;
 using System.IO;
+using NLog;
 using SCPackets.Disconnect;
 using SCPackets.SendRoomChatMessage;
 using Server.Management.HandlersAction;
@@ -18,13 +19,14 @@ namespace Server.Management
         private readonly ServerPacketsToHandleList _packetsList;
         private ServerContext _context;
 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Server(ServerConfig config)
         {
             _context = new ServerContext();
             _config = config;
 
-            Console.WriteLine($"Starting server on socket {_config.Ip}:{_config.Port}");
+            Logger.Info($"Starting server on socket {_config.Ip}:{_config.Port}...");
             _packetsList = new ServerPacketsToHandleList(_context);
             _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(config.Ip, config.Port, config.RSAKeySize, false);
 
@@ -46,23 +48,23 @@ namespace Server.Management
         {
             new ServerDisconnectAction(_context).Action(new DisconnectRequest(), connection, true);
 
-            Console.WriteLine($"{connection.IPRemoteEndPoint} connection lost");
+            Logger.Warn($"{connection.IPRemoteEndPoint} connection lost");
         }
 
         private void ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
         {
             try
             {
-                Console.WriteLine(
+                Logger.Info(
                     $"{_connectionContainer.Count} {connection.GetType()} connected on port {connection.IPRemoteEndPoint.Port}");
 
-                connection.EnableLogging = true;
+                connection.EnableLogging = false;
                 connection.LogIntoStream(Console.OpenStandardOutput());
                 _packetsList.RegisterPackets(connection);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.Error(ex);
             }
         }
     }

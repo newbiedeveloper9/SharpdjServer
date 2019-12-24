@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 using SCPackets.Buffers;
 using Server.Management.Singleton;
 
@@ -10,7 +11,9 @@ namespace Server.Management.Buffers
 {
     public class SquareRoomBufferManager : BufferManager<SquareRoomBufferRequest>
     {
-        public SquareRoomBufferManager() : base(8000)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public SquareRoomBufferManager() : base(Logger, 8000)
         {
             CreateBuffer();
         }
@@ -31,8 +34,9 @@ namespace Server.Management.Buffers
                 (sender, args) =>
                 {
                     actionBuffer.Connections =
-                        ClientSingleton.Instance.Users.GetList().Select(x => x.Connection)
-                            .ToList();
+                        ClientSingleton.Instance.Users.GetList()
+                        .Select(x => x.Connection)
+                        .ToList();
 
                     var packet = actionBuffer.RequestPacket;
                     actionBuffer.CanSend = (packet.InsertRooms.Count > 0 ||
