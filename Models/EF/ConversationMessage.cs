@@ -10,7 +10,6 @@ namespace Server.Models
 {
     public class ConversationMessage
     {
-        [Key, Column("ConversationMessageId")]
         public int Id { get; set; }
         public string Text { get; set; }
         public User Author { get; set; }

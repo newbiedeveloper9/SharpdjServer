@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Network;
+using NLog;
 using SCPackets;
 using Server.Management.Singleton;
 using Server.Models.InstanceHelpers;
@@ -18,6 +19,8 @@ namespace Server
     [NotMapped]
     public class RoomInstance : Room
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public int AmountOfPeople => Users.Count;
         public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
 
@@ -40,18 +43,23 @@ namespace Server
             Users.AfterUpdate += UsersOnAfterUpdate;
         }
 
+        /// <summary>
+        /// <para>It's called only after room data is updated</para>
+        /// <para>Using buffer system</para>
+        /// </summary>
         public void SendUpdateRequest()
         {
             var squareBuffer = BufferSingleton.Instance.SquareRoomBufferManager.GetRequest();
             squareBuffer.UpdatedRooms.Add(ToRoomOutsideModel());
         }
 
+
         private void UsersOnAfterUpdate(object sender, ListWrapper<ServerUserModel>.UpdateEventArgs e)
         {
             var clientUser = e.Item.User.ToUserClient();
             var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
             if (buffer == null)
-                throw new Exception("buffer cannot find room by id");
+                Logger.Debug($"ROOM ID: [{Id}]| Buffer cannot find room by id");
 
             if (e.State == ListWrapper<ServerUserModel>.UpdateEventArgs.UpdateState.Remove)
                 buffer.RequestPacket.RemoveUsers.Add(clientUser);

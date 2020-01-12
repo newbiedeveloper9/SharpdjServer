@@ -37,8 +37,9 @@ namespace Server.Management.HandlersAction
                 }
 
                 //Check if login/email exists in DB
-                User user = _context.Users.Include(x => x.UserAuth).
-                    FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
+                User user = _context.Users
+                    .Include(x => x.UserAuth)
+                    .FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
                 if (user == null)
                 {
                     Logger.Info("User with given credentials doesn't exists");
@@ -46,23 +47,29 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                var userIsActive = ClientSingleton.Instance.Users
-                    .GetList()
-                    .FirstOrDefault(x => x.User.Id == user.Id);
-                if (userIsActive != null)
-                {
-                    Logger.Info("User is already active");
-                    ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
-                    return;
-                }
+                 var userIsActive = ClientSingleton.Instance.Users
+                     .GetList()
+                     .FirstOrDefault(x => x.User.Id == user.Id);
+                // if (userIsActive != null)
+                // {
+                //     Logger.Info("User is already active");
+                //     ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
+                //     return;
+                // }
 
                 string hashedPass = Scrypt.Hash(req.Password, user.UserAuth.Salt);
                 if (user.UserAuth.Hash.Equals(hashedPass))
                 {
+                    if (userIsActive != null)
+                        ClientSingleton.Instance.Users
+                            .GetList()
+                            .FirstOrDefault(x => x.User.Id == user.Id)
+                            .Connections.Add(conn);
+                    else
+                        ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
+
                     var response = new LoginResponse(Result.Success, req);
                     response.Data.FillData(user, _context);
-
-                    ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
 
                     if (req.RememberMe)
                     {

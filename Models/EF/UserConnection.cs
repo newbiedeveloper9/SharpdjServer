@@ -10,7 +10,6 @@ namespace Server.Models
 {
     public class UserConnection
     {
-        [Key, Column("UserConnectionId")]
         public int Id { get; set; }
         public User User { get; set; }
         public string Ip { get; set; }

@@ -9,7 +9,6 @@ namespace Server.Models
 {
     public class Room
     {
-        [Key, Column("RoomId")]
         public int Id { get; set; }
         public string Name { get; set; }
         public User Author { get; set; }

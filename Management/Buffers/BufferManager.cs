@@ -38,8 +38,8 @@ namespace Server.Management.Buffers
                     var success = actionBuffer.SendRequestToEveryone();
                     if (!success)
                     {
-                        Logger.Info("Buffer is probably EMPTY. Sending data has been skipped");
-    continue;
+                        //Logger.Debug("Buffer is probably EMPTY. Sending data has *been skipped");
+                        continue;
                     };
 
                     ClearBuffer(actionBuffer);

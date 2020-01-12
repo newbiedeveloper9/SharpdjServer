@@ -10,7 +10,6 @@ namespace Server.Models.EF
 {
     public class ServerRole
     {
-        [Key, Column("ServerRoleId")]
         public int Id { get; set; }
 
         public string Name { get; set; }

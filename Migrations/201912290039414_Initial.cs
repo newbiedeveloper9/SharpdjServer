@@ -11,23 +11,23 @@ namespace Server.Migrations
                 "dbo.Claims",
                 c => new
                     {
-                        ClaimId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
                     })
-                .PrimaryKey(t => t.ClaimId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.UserConnections",
                 c => new
                     {
-                        UserConnectionId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Ip = c.String(),
                         Port = c.Int(nullable: false),
                         Date = c.DateTime(nullable: false),
                         ConnectionType = c.Int(nullable: false),
                         User_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.UserConnectionId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.User_Id)
                 .Index(t => t.User_Id);
             
@@ -35,7 +35,7 @@ namespace Server.Migrations
                 "dbo.Users",
                 c => new
                     {
-                        UserId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Username = c.String(),
                         Email = c.String(),
                         Rank = c.Int(nullable: false),
@@ -44,7 +44,7 @@ namespace Server.Migrations
                         UserAuth_Id = c.Int(),
                         Conversation_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.UserId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.User_Id)
                 .ForeignKey("dbo.UserAuths", t => t.UserAuth_Id)
                 .ForeignKey("dbo.Conversations", t => t.Conversation_Id)
@@ -56,25 +56,25 @@ namespace Server.Migrations
                 "dbo.UserAuths",
                 c => new
                     {
-                        UserAuthId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Login = c.String(),
                         Hash = c.String(),
                         Salt = c.String(),
                         AuthenticationKey = c.String(),
-                        AuthenticationExpiration = c.DateTime(nullable: false),
+                        AuthenticationExpiration = c.DateTime(),
                     })
-                .PrimaryKey(t => t.UserAuthId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.ConversationMessages",
                 c => new
                     {
-                        ConversationMessageId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Text = c.String(),
                         Author_Id = c.Int(),
                         Conversation_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.ConversationMessageId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.Author_Id)
                 .ForeignKey("dbo.Conversations", t => t.Conversation_Id)
                 .Index(t => t.Author_Id)
@@ -84,22 +84,22 @@ namespace Server.Migrations
                 "dbo.Conversations",
                 c => new
                     {
-                        ConversationId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
                     })
-                .PrimaryKey(t => t.ConversationId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.Logs",
                 c => new
                     {
-                        LogId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Type = c.Int(nullable: false),
                         Date = c.DateTime(nullable: false),
                         ConnectionType = c.Int(nullable: false),
                         User_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.LogId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.User_Id)
                 .Index(t => t.User_Id);
             
@@ -107,12 +107,12 @@ namespace Server.Migrations
                 "dbo.MediaHistories",
                 c => new
                     {
-                        MediaHistoryId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         MediaType = c.Int(nullable: false),
                         Url = c.String(),
                         Room_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.MediaHistoryId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Rooms", t => t.Room_Id)
                 .Index(t => t.Room_Id);
             
@@ -120,11 +120,11 @@ namespace Server.Migrations
                 "dbo.RoleClaims",
                 c => new
                     {
-                        RoleClaimId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Role_Id = c.Int(),
                         Type_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.RoleClaimId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.ServerRoles", t => t.Role_Id)
                 .ForeignKey("dbo.Claims", t => t.Type_Id)
                 .Index(t => t.Role_Id)
@@ -134,22 +134,22 @@ namespace Server.Migrations
                 "dbo.ServerRoles",
                 c => new
                     {
-                        ServerRoleId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
                     })
-                .PrimaryKey(t => t.ServerRoleId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.RoomChatPosts",
                 c => new
                     {
-                        RoomChatPostId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Text = c.String(),
                         Color = c.String(),
                         Author_Id = c.Int(),
                         Room_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.RoomChatPostId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.Author_Id)
                 .ForeignKey("dbo.Rooms", t => t.Room_Id)
                 .Index(t => t.Author_Id)
@@ -159,26 +159,26 @@ namespace Server.Migrations
                 "dbo.RoomConfigs",
                 c => new
                     {
-                        RoomConfigId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         ChatType = c.Int(nullable: false),
                         PublicEnterMessage = c.String(),
                         PublicLeaveMessage = c.String(),
                         LocalEnterMessage = c.String(),
                         LocalLeaveMessage = c.String(),
                     })
-                .PrimaryKey(t => t.RoomConfigId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.Rooms",
                 c => new
                     {
-                        RoomId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
                         ImagePath = c.String(),
                         Author_Id = c.Int(),
                         RoomConfig_Id = c.Int(),
                     })
-                .PrimaryKey(t => t.RoomId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Users", t => t.Author_Id)
                 .ForeignKey("dbo.RoomConfigs", t => t.RoomConfig_Id)
                 .Index(t => t.Author_Id)
@@ -188,13 +188,13 @@ namespace Server.Migrations
                 "dbo.UserClaims",
                 c => new
                     {
-                        UserClaimId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Type_Id = c.Int(),
                         User_Id = c.Int(),
                         Room_Id = c.Int(),
                         Room_Id1 = c.Int(),
                     })
-                .PrimaryKey(t => t.UserClaimId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Claims", t => t.Type_Id)
                 .ForeignKey("dbo.Users", t => t.User_Id)
                 .ForeignKey("dbo.Rooms", t => t.Room_Id)

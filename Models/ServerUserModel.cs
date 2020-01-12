@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Network;
 using SCPackets;
 using Server.Models;
@@ -11,7 +12,7 @@ namespace Server.Management
     {
         private RoomUserConnection _activeRoom;
         public User User { get; set; }
-        public Connection Connection { get; set; }
+        public IList<Connection> Connections { get; set; }
 
         public RoomUserConnection ActiveRoom
         {
@@ -34,8 +35,10 @@ namespace Server.Management
 
         public ServerUserModel(User user, Connection connection)
         {
+            Connections = new List<Connection>();
+
             User = user;
-            Connection = connection;
+            Connections.Add(connection);
         }
     }
 
@@ -55,6 +58,17 @@ namespace Server.Management
         {
             return RoomSingleton.Instance.RoomInstances.GetList()
                 .FirstOrDefault(x => x.Id == roomUserConnection.RoomId);
+        }
+    }
+
+    public static class ServerUserModelHelper
+    {
+        public static List<Connection> GetAllConnections(this IEnumerable<ServerUserModel> users)
+        {
+            var connections = new List<Connection>();
+            foreach (var user in users)
+                connections.AddRange(user.Connections);
+            return connections;
         }
     }
 }

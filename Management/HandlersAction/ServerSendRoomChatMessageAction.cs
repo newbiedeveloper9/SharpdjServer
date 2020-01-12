@@ -49,7 +49,7 @@ namespace Server.Management.HandlersAction
                     .FirstOrDefault(x => x.Id == roomId);
 
                 roomContext.Posts.Add(post);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 roomInstance
                     .ActionHelper

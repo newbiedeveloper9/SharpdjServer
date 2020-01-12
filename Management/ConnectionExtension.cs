@@ -22,9 +22,9 @@ namespace Server.Management
             _conn.Send(packet, _sender);
         }
 
-        public bool SendRequestOrIsNull(object conditionToCheck)
+        public bool SendRequestOrIsNull(ServerUserModel user)
         {
-            if (conditionToCheck != null) return false;
+            if (user?.User != null) return false;
 
             _conn.Send(new NotLoggedInRequest());
             return true;
@@ -34,7 +34,7 @@ namespace Server.Management
         {
             return ClientSingleton.Instance.Users
                 .GetList()
-                .FirstOrDefault(x => x.Connection.Equals(conn));
+                .FirstOrDefault(x => x.Connections.Contains(conn));
         }
     }
 }

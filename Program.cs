@@ -15,7 +15,6 @@ namespace Server
                 var config = ServerConfig.LoadConfig();
                 var server = new Management.Server(config);
                 server.Start();
-                Logger.Trace("Server is running!");
                 Console.ReadLine();
             }
             catch (Exception e)

@@ -444,10 +444,10 @@
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="address" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="connectionCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="maxConnections" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="connectionsCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="keepConnections" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="maxConnectionss" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="onConnectionsOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionssOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="sslProtocols" minOccurs="0" maxOccurs="1" type="System.Security.Authentication.SslProtocols" />
           <xs:element name="maxQueueSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
@@ -502,24 +502,24 @@
             <xs:documentation>Network address.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="connectionCacheSize" type="xs:integer">
+        <xs:attribute name="connectionsCacheSize" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Size of the connection cache (number of connections which are kept alive).</xs:documentation>
+            <xs:documentation>Size of the connections cache (number of connectionss which are kept alive).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keepConnection" type="xs:boolean">
+        <xs:attribute name="keepConnections" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Indicates whether to keep connection open whenever possible.</xs:documentation>
+            <xs:documentation>Indicates whether to keep connections open whenever possible.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="maxConnections" type="xs:integer">
+        <xs:attribute name="maxConnectionss" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Maximum current connections. 0 = no maximum.</xs:documentation>
+            <xs:documentation>Maximum current connectionss. 0 = no maximum.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onConnectionOverflow" type="NLog.Targets.NetworkTargetConnectionsOverflowAction">
+        <xs:attribute name="onConnectionsOverflow" type="NLog.Targets.NetworkTargetConnectionssOverflowAction">
           <xs:annotation>
-            <xs:documentation>Action that should be taken if the will be more connections than .</xs:documentation>
+            <xs:documentation>Action that should be taken if the will be more connectionss than .</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="onOverflow" type="NLog.Targets.NetworkTargetOverflowAction">
@@ -539,7 +539,7 @@
         </xs:attribute>
         <xs:attribute name="keepAliveTimeSeconds" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>The number of seconds a connection will remain idle before the first keep-alive probe is sent</xs:documentation>
+            <xs:documentation>The number of seconds a connections will remain idle before the first keep-alive probe is sent</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="ndlcItemSeparator" type="xs:string">
@@ -610,7 +610,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:simpleType name="NLog.Targets.NetworkTargetConnectionsOverflowAction">
+  <xs:simpleType name="NLog.Targets.NetworkTargetConnectionssOverflowAction">
     <xs:restriction base="xs:string">
       <xs:enumeration value="AllowNewConnnection" />
       <xs:enumeration value="DiscardMessage" />
@@ -906,12 +906,12 @@
           <xs:element name="dbUserName" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbProvider" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="dbPassword" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="keepConnections" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="dbDatabase" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="connectionStringName" minOccurs="0" maxOccurs="1" type="xs:string" />
-          <xs:element name="connectionString" minOccurs="0" maxOccurs="1" type="Layout" />
+          <xs:element name="connectionsStringName" minOccurs="0" maxOccurs="1" type="xs:string" />
+          <xs:element name="connectionsString" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbHost" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="installConnectionString" minOccurs="0" maxOccurs="1" type="Layout" />
+          <xs:element name="installConnectionsString" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="install-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
           <xs:element name="uninstall-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
           <xs:element name="optimizeBufferReuse" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -931,7 +931,7 @@
         </xs:attribute>
         <xs:attribute name="dbUserName" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database user name. If the ConnectionString is not provided this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database user name. If the ConnectionsString is not provided this value will be used to construct the "User ID=" part of the connections string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbProvider" type="xs:string">
@@ -941,37 +941,37 @@
         </xs:attribute>
         <xs:attribute name="dbPassword" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database password. If the ConnectionString is not provided this value will be used to construct the "Password=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database password. If the ConnectionsString is not provided this value will be used to construct the "Password=" part of the connections string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keepConnection" type="xs:boolean">
+        <xs:attribute name="keepConnections" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Indicates whether to keep the database connection open between the log events.</xs:documentation>
+            <xs:documentation>Indicates whether to keep the database connections open between the log events.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbDatabase" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database name. If the ConnectionString is not provided this value will be used to construct the "Database=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database name. If the ConnectionsString is not provided this value will be used to construct the "Database=" part of the connections string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="connectionStringName" type="xs:string">
+        <xs:attribute name="connectionsStringName" type="xs:string">
           <xs:annotation>
-            <xs:documentation>Name of the connection string (as specified in &lt;connectionStrings&gt; configuration section.</xs:documentation>
+            <xs:documentation>Name of the connections string (as specified in &lt;connectionsStrings&gt; configuration section.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
+        <xs:attribute name="connectionsString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
+            <xs:documentation>Connections string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbHost" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database host name. If the ConnectionString is not provided this value will be used to construct the "Server=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database host name. If the ConnectionsString is not provided this value will be used to construct the "Server=" part of the connections string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="installConnectionString" type="SimpleLayoutAttribute">
+        <xs:attribute name="installConnectionsString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string using for installation and uninstallation. If not provided, regular ConnectionString is being used.</xs:documentation>
+            <xs:documentation>Connections string using for installation and uninstallation. If not provided, regular ConnectionsString is being used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="optimizeBufferReuse" type="xs:boolean">
@@ -1002,7 +1002,7 @@
   <xs:complexType name="NLog.Targets.DatabaseCommandInfo">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="commandType" minOccurs="0" maxOccurs="1" type="System.Data.CommandType" />
-      <xs:element name="connectionString" minOccurs="0" maxOccurs="1" type="Layout" />
+      <xs:element name="connectionsString" minOccurs="0" maxOccurs="1" type="Layout" />
       <xs:element name="ignoreFailures" minOccurs="0" maxOccurs="1" type="xs:boolean" />
       <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseParameterInfo" />
       <xs:element name="text" minOccurs="0" maxOccurs="1" type="Layout" />
@@ -1012,9 +1012,9 @@
         <xs:documentation>Type of the command.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
+    <xs:attribute name="connectionsString" type="SimpleLayoutAttribute">
       <xs:annotation>
-        <xs:documentation>Connection string to run the command against. If not provided, connection string from the target is used.</xs:documentation>
+        <xs:documentation>Connections string to run the command against. If not provided, connections string from the target is used.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="ignoreFailures" type="xs:boolean">
@@ -2046,11 +2046,11 @@
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="address" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="connectionCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="maxConnections" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="connectionsCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="keepConnections" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="maxConnectionss" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="maxQueueSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="onConnectionsOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionssOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="sslProtocols" minOccurs="0" maxOccurs="1" type="System.Security.Authentication.SslProtocols" />
           <xs:element name="keepAliveTimeSeconds" minOccurs="0" maxOccurs="1" type="xs:integer" />
@@ -2091,19 +2091,19 @@
             <xs:documentation>Network address.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="connectionCacheSize" type="xs:integer">
+        <xs:attribute name="connectionsCacheSize" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Size of the connection cache (number of connections which are kept alive).</xs:documentation>
+            <xs:documentation>Size of the connections cache (number of connectionss which are kept alive).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keepConnection" type="xs:boolean">
+        <xs:attribute name="keepConnections" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Indicates whether to keep connection open whenever possible.</xs:documentation>
+            <xs:documentation>Indicates whether to keep connections open whenever possible.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="maxConnections" type="xs:integer">
+        <xs:attribute name="maxConnectionss" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Maximum current connections. 0 = no maximum.</xs:documentation>
+            <xs:documentation>Maximum current connectionss. 0 = no maximum.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="maxQueueSize" type="xs:integer">
@@ -2111,9 +2111,9 @@
             <xs:documentation>Maximum queue size.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onConnectionOverflow" type="NLog.Targets.NetworkTargetConnectionsOverflowAction">
+        <xs:attribute name="onConnectionsOverflow" type="NLog.Targets.NetworkTargetConnectionssOverflowAction">
           <xs:annotation>
-            <xs:documentation>Action that should be taken if the will be more connections than .</xs:documentation>
+            <xs:documentation>Action that should be taken if the will be more connectionss than .</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="onOverflow" type="NLog.Targets.NetworkTargetOverflowAction">
@@ -2128,7 +2128,7 @@
         </xs:attribute>
         <xs:attribute name="keepAliveTimeSeconds" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>The number of seconds a connection will remain idle before the first keep-alive probe is sent</xs:documentation>
+            <xs:documentation>The number of seconds a connections will remain idle before the first keep-alive probe is sent</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="optimizeBufferReuse" type="xs:boolean">
@@ -2150,10 +2150,10 @@
           <xs:element name="maxMessageSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="newLine" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="address" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="connectionCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-          <xs:element name="maxConnections" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="onConnectionOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionsOverflowAction" />
+          <xs:element name="connectionsCacheSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="keepConnections" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="maxConnectionss" minOccurs="0" maxOccurs="1" type="xs:integer" />
+          <xs:element name="onConnectionsOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetConnectionssOverflowAction" />
           <xs:element name="onOverflow" minOccurs="0" maxOccurs="1" type="NLog.Targets.NetworkTargetOverflowAction" />
           <xs:element name="sslProtocols" minOccurs="0" maxOccurs="1" type="System.Security.Authentication.SslProtocols" />
           <xs:element name="maxQueueSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
@@ -2208,24 +2208,24 @@
             <xs:documentation>Network address.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="connectionCacheSize" type="xs:integer">
+        <xs:attribute name="connectionsCacheSize" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Size of the connection cache (number of connections which are kept alive).</xs:documentation>
+            <xs:documentation>Size of the connections cache (number of connectionss which are kept alive).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keepConnection" type="xs:boolean">
+        <xs:attribute name="keepConnections" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Indicates whether to keep connection open whenever possible.</xs:documentation>
+            <xs:documentation>Indicates whether to keep connections open whenever possible.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="maxConnections" type="xs:integer">
+        <xs:attribute name="maxConnectionss" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>Maximum current connections. 0 = no maximum.</xs:documentation>
+            <xs:documentation>Maximum current connectionss. 0 = no maximum.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onConnectionOverflow" type="NLog.Targets.NetworkTargetConnectionsOverflowAction">
+        <xs:attribute name="onConnectionsOverflow" type="NLog.Targets.NetworkTargetConnectionssOverflowAction">
           <xs:annotation>
-            <xs:documentation>Action that should be taken if the will be more connections than .</xs:documentation>
+            <xs:documentation>Action that should be taken if the will be more connectionss than .</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="onOverflow" type="NLog.Targets.NetworkTargetOverflowAction">
@@ -2245,7 +2245,7 @@
         </xs:attribute>
         <xs:attribute name="keepAliveTimeSeconds" type="xs:integer">
           <xs:annotation>
-            <xs:documentation>The number of seconds a connection will remain idle before the first keep-alive probe is sent</xs:documentation>
+            <xs:documentation>The number of seconds a connections will remain idle before the first keep-alive probe is sent</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="ndlcItemSeparator" type="xs:string">

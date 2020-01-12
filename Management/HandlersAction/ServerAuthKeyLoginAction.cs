@@ -46,7 +46,7 @@ namespace Server.Management.HandlersAction
                 #region Validation
                 var validation = new DictionaryConditionsValidation<Result>();
                 validation.Conditions.Add(Result.Error, user == null);
-                validation.Conditions.Add(Result.AlreadyLogged, active != null);
+               // validation.Conditions.Add(Result.AlreadyLogged, active != null);
                 validation.Conditions.Add(Result.Expired, expiration < DateTime.Now);
 
                 var validate = validation.Validate();
@@ -58,11 +58,22 @@ namespace Server.Management.HandlersAction
                 }
                 #endregion Validation
 
+                //todo if active then edit object, else create new like below. same for login
+                if (active != null)
+                {
+                    ClientSingleton.Instance.Users
+                        .GetList()
+                        .FirstOrDefault(x => x.User.Id == user.Id)
+                        .Connections.Add(conn);
+                }
+                else
+                {
+                    ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
+                }
+
                 //Login Success, filling data
                 var response = new AuthKeyLoginResponse(Result.Success, request);
                 response.Data.FillData(user, _context);
-
-                ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
 
                 ext.SendPacket(response);
                 Logger.Info("Success");

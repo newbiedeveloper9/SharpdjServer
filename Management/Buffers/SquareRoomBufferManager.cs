@@ -34,9 +34,9 @@ namespace Server.Management.Buffers
                 (sender, args) =>
                 {
                     actionBuffer.Connections =
-                        ClientSingleton.Instance.Users.GetList()
-                        .Select(x => x.Connection)
-                        .ToList();
+                        ClientSingleton.Instance.Users
+                            .GetList()
+                            .GetAllConnections();
 
                     var packet = actionBuffer.RequestPacket;
                     actionBuffer.CanSend = (packet.InsertRooms.Count > 0 ||

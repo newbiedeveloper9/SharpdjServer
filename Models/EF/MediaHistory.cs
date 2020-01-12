@@ -10,7 +10,6 @@ namespace Server.Models
 {
     public class MediaHistory
     {
-        [Key, Column("MediaHistoryId")]
         public int Id { get; set; }
         public MediaType MediaType { get; set; }
         public string Url { get; set; }

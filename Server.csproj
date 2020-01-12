@@ -142,9 +142,9 @@
     <Compile Include="Management\ServerPacketsToHandleList.cs" />
     <Compile Include="Management\HandlersAction\ServerLoginAction.cs" />
     <Compile Include="Management\Server.cs" />
-    <Compile Include="Migrations\201912192330170_Initial.cs" />
-    <Compile Include="Migrations\201912192330170_Initial.Designer.cs">
-      <DependentUpon>201912192330170_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201912290039414_Initial.cs" />
+    <Compile Include="Migrations\201912290039414_Initial.Designer.cs">
+      <DependentUpon>201912290039414_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\EF\Claim.cs" />
@@ -171,6 +171,7 @@
     <Compile Include="Security\Scrypt.cs" />
     <Compile Include="Management\ServerConfig.cs" />
     <Compile Include="Management\Strategy\TrackJustOnce.cs" />
+    <Compile Include="SignInManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -196,8 +197,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201912192330170_Initial.resx">
-      <DependentUpon>201912192330170_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201912290039414_Initial.resx">
+      <DependentUpon>201912290039414_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

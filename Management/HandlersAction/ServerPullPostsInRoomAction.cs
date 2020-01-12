@@ -44,6 +44,12 @@ namespace Server.Management.HandlersAction
                     .Include(x => x.Posts)
                     .FirstOrDefaultAsync(x => x.Id == request.RoomId)
                     .Result;
+                if (roomContext == null)
+                {
+                    Logger.Error("roomId not found");
+                    conn.Send(new PullPostsInRoomResponse(Result.Error));
+                    return;
+                }
 
                 //Get 50 newer posts
                 var postsServer = roomContext.Posts
@@ -60,12 +66,10 @@ namespace Server.Management.HandlersAction
                     return;
                 }
 
-                var response = new PullPostsInRoomResponse(Result.Success)
-                {
-                    Posts = roomChatPosts
-                        .Select(x => x.ToOutsideModel())
-                        .ToList()
-                };
+                var response = new PullPostsInRoomResponse(Result.Success);
+                response.Posts = roomChatPosts
+                    .Select(x => x.ToOutsideModel())
+                    .ToList();
 
                 conn.Send(response);
                 Logger.Info("Success");

@@ -10,7 +10,6 @@ namespace Server.Models
 {
     public class Log
     {
-        [Key, Column("LogId")]
         public int Id { get; set; }
         public LogType Type { get; set; }
         public User User { get; set; }

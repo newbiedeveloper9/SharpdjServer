@@ -42,6 +42,7 @@ namespace Server.Management
         public void Start()
         {
             _connectionContainer.Start();
+            Logger.Info("Server is running!");
         }
 
         private void ServerConnectionLost(Connection connection, ConnectionType connectionType, CloseReason closeReason)

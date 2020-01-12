@@ -26,18 +26,10 @@ namespace Server.Models.InstanceHelpers
         public void MessageDistribute(SendRoomChatMessageRequest request, UserClientModel author)
         {
             var message = new RoomChatNewMessageRequest(request, author);
-            foreach (var user in _users)
-            {
-                user.Connection.Send(message);
-            }
+            foreach (var connection in GetConnections)
+                connection.Send(message);
         }
 
-        public List<Connection> GetConnections
-        {
-            get
-            {
-                return _users.Select(serverUserModel => serverUserModel.Connection).ToList();
-            }
-        }
+        public IEnumerable<Connection> GetConnections => _users.GetAllConnections();
     }
 }

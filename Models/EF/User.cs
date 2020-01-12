@@ -14,7 +14,6 @@ namespace Server.Models
 {
     public class User
     {
-        [Key, Column("UserId")]
         public int Id { get; set; }
         public string Username { get; set; }
 

@@ -35,7 +35,9 @@ namespace Server.Management.HandlersAction
                     .GetList()
                     .FirstOrDefault(x => x.Id == request.RoomId);
 
-                var connected = room?.Users.GetList().Contains(active);
+                var connected = room?.Users
+                    .GetList()
+                    .Any(x=>x.User.Id == active.User.Id);
 
                 #region validation
                 var validation = new DictionaryConditionsValidation<Result>();

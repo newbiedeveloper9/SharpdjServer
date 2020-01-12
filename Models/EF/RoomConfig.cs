@@ -5,7 +5,6 @@ namespace Server.Models
 {
     public class RoomConfig
     {
-        [Key, Column("RoomConfigId")]
         public int Id { get; set; }
 
         public ChatType ChatType { get; set; } = ChatType.All;

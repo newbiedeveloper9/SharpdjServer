@@ -10,7 +10,6 @@ namespace Server.Models.EF
 {
     public class UserClaim
     {
-        [Key, Column("UserClaimId")]
         public int Id { get; set; }
 
         public User User { get; set; }
