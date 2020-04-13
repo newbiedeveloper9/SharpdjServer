@@ -9,17 +9,17 @@ using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management
 {
-    class Server
+    class ServerApp
     {
-        private readonly ServerConfig _config;
+        private readonly IServerConfig _config;
         private readonly ServerConnectionContainer _connectionContainer;
         private readonly ServerPacketsToHandleList _packetsList;
         private readonly ServerContext _context;
 
-        public Server(ServerConfig config)
+        public ServerApp(IServerConfig config)
         {
-            _context = new ServerContext();
             _config = config;
+            _context = new ServerContext();
 
             Log.Information("Starting server on socket {@IP}:{@Port}...",
                 _config.Ip, _config.Port);
@@ -27,11 +27,6 @@ namespace SharpDj.Server.Management
             _packetsList = new ServerPacketsToHandleList(_context);
             _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(config.Ip, config.Port, config.RSAKeySize, false);
 
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             _connectionContainer.ConnectionLost += ServerConnectionLost;
             _connectionContainer.ConnectionEstablished += ServerConnectionEstablished;
         }

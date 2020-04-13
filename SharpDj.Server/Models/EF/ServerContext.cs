@@ -5,18 +5,14 @@ namespace SharpDj.Server.Models.EF
 {
     public class ServerContext : DbContext
     {
-        public ServerContext() 
-            : base()
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(
-                    "Server = (localdb)\\mssqllocaldb; Database=SdjDB;MultipleActiveResultSets=true");
+                    "server=(localdb)\\mssqllocaldb; Database=SdjServerDB; MultipleActiveResultSets=true");
             }
+
             base.OnConfiguring(optionsBuilder);
         }
 

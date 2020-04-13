@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Serilog;
@@ -11,29 +8,33 @@ namespace SharpDj.Server
 {
     public class ConsoleApp
     {
-        readonly ServerConfig _config;
-
-        public ConsoleApp(ServerConfig config)
-        {
-            this._config = config;
-
-            BuildDi(new ContainerBuilder());
-        }
+        private IContainer container;
 
         public async Task Run()
         {
             Log.Information("Starting server...");
-            var server = new Management.Server(_config);
-            server.Start();
+            try
+            {
+                container = BuildDi();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "An error occured while building Dependency Injection");
+            }
         }
 
-        public IContainer BuildDi(ContainerBuilder builder)
+        public IContainer BuildDi()
         {
-            var dataAccess = Assembly.GetExecutingAssembly();
+            var builder = new ContainerBuilder();
 
-            builder.RegisterAssemblyTypes(dataAccess)
-                .Where(x => x.Name.EndsWith("Action"))
-                .AsImplementedInterfaces();
+            builder.RegisterInstance(ServerConfig.LoadConfig())
+                .SingleInstance()
+                .As<IServerConfig>();
+
+            builder.RegisterType<ServerApp>()
+                .AsSelf()
+                .AutoActivate()
+                .OnActivated(x=>x.Instance.Start());
 
             return builder.Build();
         }

@@ -51,7 +51,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 var validate = validation.Validate();
                 if (validate != null)
                 {
-                    Log.Information("Validation failed. {@Result}", (Result)validate);
+                    Log.Information("Validation has failed. {@Result}", (Result)validate);
                     ext.SendPacket(new CreateRoomResponse((Result)validate, req));
                     return;
                 }

@@ -10,7 +10,7 @@ using SharpDj.Server.Models.EF;
 namespace SharpDj.Server.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20200412230334_Initial")]
+    [Migration("20200413012453_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

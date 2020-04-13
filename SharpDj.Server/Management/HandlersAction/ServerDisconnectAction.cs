@@ -5,6 +5,7 @@ using SharpDj.Server.Management.Singleton;
 using SharpDj.Server.Models.EF;
 using System;
 using System.Linq;
+using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
@@ -32,7 +33,8 @@ namespace SharpDj.Server.Management.HandlersAction
                     {
                         if (!forced)
                             userContext?.UserAuth.ClearAuthKey(_context);
-                        Serilog.Log.Information("User has disconnected");
+                        Log.Information("{@User} has disconnected",
+                            user.User.Username);
 
                         ext.SendPacket(new DisconnectResponse(Result.Success, request));
                         return;
@@ -47,12 +49,12 @@ namespace SharpDj.Server.Management.HandlersAction
                     userContext?.UserAuth.ClearAuthKey(_context);
 
                 ext.SendPacket(response);
-                Serilog.Log.Information("Status: {@Result}", response.Result);
+                Log.Information("Status: {@Result}", response.Result);
             }
             catch (Exception e)
             {
                 ext.SendPacket(new DisconnectResponse(Result.Error, request));
-                Console.WriteLine(e);
+                Log.Error(e.StackTrace);
             }
         }
 

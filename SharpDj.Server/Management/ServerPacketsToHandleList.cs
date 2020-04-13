@@ -36,8 +36,8 @@ namespace SharpDj.Server.Management
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at the beginning 
-                user = null;
+                //var user = _context.Users.FirstOrDefault(); //Will create entire EF structure at the beginning 
+                //user = null;
 
                 InitializeRooms();
                 RoomSingleton.Instance.RoomInstances.AfterAdd += RoomAfterCreationNewRoom;

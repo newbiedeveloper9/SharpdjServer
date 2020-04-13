@@ -42,7 +42,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 var validate = validation.Validate();
                 if (validate != null)
                 {
-                    Log.Information("Validation failed. {@Result}", (Result)validate);
+                    Log.Information("Validation has failed. {@Result}", (Result)validate);
                     ext.SendPacket(new ConnectToRoomResponse((Result)validate, request));
                     return;
                 }
