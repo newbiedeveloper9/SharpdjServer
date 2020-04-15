@@ -3,7 +3,7 @@ using System.Linq;
 using Network;
 using SCPackets.Buffers;
 using Serilog;
-using SharpDj.Server.Management.Singleton;
+using SharpDj.Server.Singleton;
 
 namespace SharpDj.Server.Management.Buffers
 {

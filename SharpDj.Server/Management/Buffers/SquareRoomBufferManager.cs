@@ -1,6 +1,6 @@
 ﻿using SCPackets.Buffers;
-using SharpDj.Server.Management.Singleton;
 using SharpDj.Server.Models;
+using SharpDj.Server.Singleton;
 
 namespace SharpDj.Server.Management.Buffers
 {

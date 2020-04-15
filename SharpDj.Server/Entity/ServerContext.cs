@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class ServerContext : DbContext
     {

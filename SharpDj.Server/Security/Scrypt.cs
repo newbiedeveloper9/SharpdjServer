@@ -4,13 +4,13 @@ using CryptSharp.Utility;
 
 namespace SharpDj.Server.Security
 {
-    class Scrypt
+    public static class Scrypt
     {
         public static string Hash(string secret, string salt)
         {
             var keyBytes = Encoding.UTF8.GetBytes(secret);
             var saltBytes = Encoding.UTF8.GetBytes(salt);
-            int cost = 8192;
+            int cost = 2048;
 #if DEBUG
              cost = 2;
             // 4096, 8192, 16_384, 32_768, 65_536, 131_072, 262_144
@@ -28,7 +28,7 @@ namespace SharpDj.Server.Security
         public static string GenerateSalt()
         {
             Random rnd = new Random();
-            int length = rnd.Next(24, 32);
+            int length = rnd.Next(28, 32);
             return Guid.NewGuid().ToString("n").Substring(0, length);
         }
     }

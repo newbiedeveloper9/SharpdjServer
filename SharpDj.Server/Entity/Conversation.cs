@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class Conversation
     {

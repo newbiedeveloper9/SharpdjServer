@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets;
 using SCPackets.RegisterPacket;
-using SharpDj.Server.Models.EF;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Security;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    class ServerRegisterAction
+    class ServerRegisterAction : ActionAbstract<RegisterRequest>
     {
         private readonly ServerContext _context;
 
@@ -18,7 +19,8 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public void Action(RegisterRequest req, Connection conn)
+
+        public override async Task Action(RegisterRequest req, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
 
@@ -31,11 +33,11 @@ namespace SharpDj.Server.Management.HandlersAction
                 validation.Conditions.Add(Result.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32));
                 validation.Conditions.Add(Result.AlreadyExist, AccountExist(req.Login, req.Email));
 
-                var result = validation.Validate();
+                var result = validation.AnyError();
                 if (result != null)
                 {
                     Log.Information("User with given credentials already exist");
-                    ext.SendPacket(new RegisterResponse((Result) result, req));
+                    ext.SendPacket(new RegisterResponse((Result)result, req));
                     return;
                 }
 
@@ -52,7 +54,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     Username = req.Username
                 };
                 _context.Users.Add(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 ext.SendPacket(new RegisterResponse(Result.Success, req));
                 Log.Information("Success register: {@User}", user.ToString());

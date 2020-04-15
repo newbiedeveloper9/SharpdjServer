@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using SCPackets.CreateRoom.Container;
+using SCPackets.Models;
+using SharpDj.Server.Models;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class Room
     {

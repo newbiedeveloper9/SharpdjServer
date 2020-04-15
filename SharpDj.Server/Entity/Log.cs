@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class Log
     {

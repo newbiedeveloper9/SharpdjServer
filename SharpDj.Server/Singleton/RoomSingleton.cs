@@ -2,7 +2,7 @@
 using SCPackets;
 using SharpDj.Server.Models;
 
-namespace SharpDj.Server.Management.Singleton
+namespace SharpDj.Server.Singleton
 {
     public sealed class RoomSingleton
     {
@@ -17,6 +17,5 @@ namespace SharpDj.Server.Management.Singleton
         }
 
         public ListWrapper<RoomInstance> RoomInstances { get; set; }
-
     }
 }

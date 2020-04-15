@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Network;
+using Network.Interfaces;
 using SCPackets.ConnectToRoom;
-using SharpDj.Server.Management.Singleton;
+using SCPackets.RegisterPacket;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
-using SharpDj.Server.Models.EF;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
+using Result = SCPackets.ConnectToRoom.Result;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerConnectToRoomAction
+    public class ServerConnectToRoomAction : ActionAbstract<ConnectToRoomRequest>
     {
         private readonly ServerContext _context;
+
 
         public ServerConnectToRoomAction(ServerContext context)
         {
             _context = context;
         }
 
-        public void Action(ConnectToRoomRequest request, Connection connection)
+        public override async Task Action(ConnectToRoomRequest request, Connection connection)
         {
             var ext = new ConnectionExtension(connection, this);
             try
@@ -39,7 +44,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 validation.Conditions.Add(Result.Error, room == null);
                 validation.Conditions.Add(Result.AlreadyConnected, connected == true);
 
-                var validate = validation.Validate();
+                var validate = validation.AnyError();
                 if (validate != null)
                 {
                     Log.Information("Validation has failed. {@Result}", (Result)validate);

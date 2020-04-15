@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.Disconnect;
-using SharpDj.Server.Management.Singleton;
-using SharpDj.Server.Models.EF;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using SharpDj.Server.Entity;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerDisconnectAction
+    public class ServerDisconnectAction : ActionAbstract<DisconnectRequest>
     {
         private readonly ServerContext _context;
 
@@ -17,7 +18,7 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public void Action(DisconnectRequest request, Connection connection, bool forced = false)
+        public async Task Action(DisconnectRequest request, Connection connection, bool forced = false)
         {
             var ext = new ConnectionExtension(connection, this);
 
@@ -58,9 +59,9 @@ namespace SharpDj.Server.Management.HandlersAction
             }
         }
 
-        public void Action(DisconnectRequest request, Connection connection)
+        public override async Task Action(DisconnectRequest request, Connection connection)
         {
-            Action(request, connection, false);
+            await Action(request, connection, false);
         }
     }
 }

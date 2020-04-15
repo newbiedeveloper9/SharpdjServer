@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using SharpDj.Server.Application;
 using SharpDj.Server.Management;
 
 namespace SharpDj.Server
@@ -38,7 +39,6 @@ namespace SharpDj.Server
             var tmp = new[] { "exit", "quit", "q", "close", "stop" };
             while (true)
             {
-                Console.Write(">");
                 var line = Console.ReadLine();
                 if (tmp.Any(x => x.Equals(line))) break;
             }

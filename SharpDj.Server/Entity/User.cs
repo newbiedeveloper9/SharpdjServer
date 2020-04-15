@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using SCPackets.Models;
 using Rank = SCPackets.Models.Rank;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class User
     {

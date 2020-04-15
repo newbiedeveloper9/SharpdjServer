@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.PullPostsInRoom;
-using SharpDj.Server.Management.Singleton;
-using SharpDj.Server.Models.EF;
+using SharpDj.Server.Entity;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerPullPostsInRoomAction
+    public class ServerPullPostsInRoomAction : ActionAbstract<PullPostsInRoomRequest>
     {
         private ServerContext _context;
 
@@ -18,7 +19,7 @@ namespace SharpDj.Server.Management.HandlersAction
             _context = context;
         }
 
-        public void Action(PullPostsInRoomRequest request, Connection conn)
+        public override async Task Action(PullPostsInRoomRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try

@@ -8,10 +8,10 @@ namespace SharpDj.Server.Management
 {
     public class ServerConfig : IServerConfig
     {
-        [JsonRequired] public int Port { get; set; } = 5666;
-
+        public int Port { get; set; } = 5666;
         [JsonRequired] public string Ip { get; set; } = "127.0.0.1";
-        [JsonRequired] public int RSAKeySize { get; set; } = 2048;
+        public int RSAKeySize { get; set; } = 2048;
+        public bool Logging { get; set; } = false;
 
         public ServerConfig()
         {
@@ -36,8 +36,7 @@ namespace SharpDj.Server.Management
             while (true)
                 try
                 {
-                    return JsonConvert.DeserializeObject<ServerConfig>(
-                        File.ReadAllText(path));
+                    return JsonConvert.DeserializeObject<ServerConfig>(File.ReadAllText(path));
                 }
                 catch (Exception ex)
                 {
@@ -52,5 +51,6 @@ namespace SharpDj.Server.Management
         int Port { get; set; }
         string Ip { get; set; }
         int RSAKeySize { get; set; }
+        bool Logging { get; set; }
     }
 }

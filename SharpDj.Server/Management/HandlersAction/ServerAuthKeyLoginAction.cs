@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
+using Network.Interfaces;
 using SCPackets.AuthKeyLogin;
-using SharpDj.Server.Management.Singleton;
+using SCPackets.RegisterPacket;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
-using SharpDj.Server.Models.EF;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
+using Result = SCPackets.AuthKeyLogin.Result;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerAuthKeyLoginAction
+    public class ServerAuthKeyLoginAction : ActionAbstract<AuthKeyLoginRequest>
     {
         private ServerContext _context;
 
@@ -18,7 +22,8 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public void Action(AuthKeyLoginRequest request, Connection conn)
+
+        public override async Task Action(AuthKeyLoginRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try
@@ -46,7 +51,7 @@ namespace SharpDj.Server.Management.HandlersAction
                // validation.Conditions.Add(Result.AlreadyLogged, active != null);
                 validation.Conditions.Add(Result.Expired, expiration < DateTime.Now);
 
-                var validate = validation.Validate();
+                var validate = validation.AnyError();
                 if (validate != null)
                 {
                     Log.Information("Validation has failed. {@Result}",  (Result)validate);

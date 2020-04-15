@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.LoginPacket;
 using SCPackets.LoginPacket.Container;
 using SCPackets.Models;
-using SharpDj.Server.Management.Singleton;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
-using SharpDj.Server.Models.EF;
 using SharpDj.Server.Security;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerLoginAction
+    public class ServerLoginAction : ActionAbstract<LoginRequest>
     {
         private readonly ServerContext _context;
 
@@ -21,7 +22,7 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public void Action(LoginRequest req, Connection conn)
+        public override async Task Action(LoginRequest req, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try
@@ -75,7 +76,7 @@ namespace SharpDj.Server.Management.HandlersAction
                         var authKey = Scrypt.GenerateSalt();
                         user.UserAuth.AuthenticationKey = authKey;
                         user.UserAuth.AuthenticationExpiration = DateTime.Now.AddDays(30);
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync().ConfigureAwait(false);
 
                         response.AuthenticationKey = authKey;
                     }

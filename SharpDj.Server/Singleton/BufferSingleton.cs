@@ -1,7 +1,7 @@
 ﻿using System;
 using SharpDj.Server.Management.Buffers;
 
-namespace SharpDj.Server.Management.Singleton
+namespace SharpDj.Server.Singleton
 {
     public sealed class BufferSingleton
     {

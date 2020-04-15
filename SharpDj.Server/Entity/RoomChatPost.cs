@@ -1,6 +1,6 @@
 ﻿using SCPackets.Models;
 
-namespace SharpDj.Server.Models.EF
+namespace SharpDj.Server.Entity
 {
     public class RoomChatPost
     {

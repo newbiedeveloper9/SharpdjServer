@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.SendRoomChatMessage;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
-using SharpDj.Server.Models.EF;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerSendRoomChatMessageAction
+    public class ServerSendRoomChatMessageAction : ActionAbstract<SendRoomChatMessageRequest>
     {
         private readonly ServerContext _context;
 
@@ -18,7 +19,7 @@ namespace SharpDj.Server.Management.HandlersAction
             _context = context;
         }
 
-        public async void Action(SendRoomChatMessageRequest request, Connection conn)
+        public override async Task Action(SendRoomChatMessageRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets;
 using SCPackets.NotLoggedIn;
 using SCPackets.UpdateRoomData;
-using SharpDj.Server.Management.Singleton;
-using SharpDj.Server.Models.EF;
+using SharpDj.Server.Entity;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerUpdateRoomAction
+    public class ServerUpdateRoomAction : ActionAbstract<UpdateRoomDataRequest>
     {
         private readonly ServerContext _context;
 
@@ -19,17 +20,13 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public void Action(UpdateRoomDataRequest req, Connection connection)
+        public override async Task Action(UpdateRoomDataRequest req, Connection connection)
         {
             var ext = new ConnectionExtension(connection, this);
             try
             {
                 var active = ConnectionExtension.GetClient(connection);
-                if (active == null)
-                {
-                    connection.Send(new NotLoggedInRequest());
-                    return;
-                }
+                if (ext.SendRequestOrIsNull(active)) return;
 
                 var room = _context.Rooms.Include(x => x.Author)
                     .FirstOrDefault(x => x.Id == req.Room.Id);
@@ -53,7 +50,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     (!DataValidation.LengthIsValid(req.Room.PublicEnterMessage, 0, 512) ||
                      !DataValidation.LengthIsValid(req.Room.PublicLeaveMessage, 0, 512)));
 
-                var validate = validation.Validate();
+                var validate = validation.AnyError();
                 if (validate != null)
                 {
                     Log.Information("Validation has failed. {@Result}", (Result)validate);

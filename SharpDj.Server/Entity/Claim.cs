@@ -1,6 +1,6 @@
-﻿namespace SharpDj.Server.Models.EF
+﻿namespace SharpDj.Server.Entity
 {
-    public class ServerRole
+    public class Claim
     {
         public int Id { get; set; }
 

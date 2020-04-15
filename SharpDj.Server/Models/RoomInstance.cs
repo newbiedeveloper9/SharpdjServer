@@ -5,10 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using SCPackets;
 using SCPackets.Models;
-using SharpDj.Server.Management.Singleton;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Management.Strategy;
-using SharpDj.Server.Models.EF;
 using SharpDj.Server.Models.InstanceHelpers;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Models

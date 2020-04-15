@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
-using Serilog;
+using SharpDj.Server.Entity;
 using SharpDj.Server.Management;
+using SharpDj.Server.Management.HandlersAction;
+using Log = Serilog.Log;
 
-namespace SharpDj.Server
+namespace SharpDj.Server.Application
 {
     public class ConsoleApp
     {
@@ -15,15 +18,15 @@ namespace SharpDj.Server
             Log.Information("Starting server...");
             try
             {
-                container = BuildDi();
+                container = BuildContainer();
             }
             catch (Exception e)
             {
-                Log.Error(e, "An error occured while building Dependency Injection");
+                Log.Error(e, "An error occured while building a {@Container}", "CONTAINER");
             }
         }
 
-        public IContainer BuildDi()
+        public IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
 
@@ -31,10 +34,23 @@ namespace SharpDj.Server
                 .SingleInstance()
                 .As<IServerConfig>();
 
+            builder.RegisterType<ServerContext>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .Where(x => x.Name.EndsWith("Action"))
+                .As<IAction>()
+                .SingleInstance();
+
             builder.RegisterType<ServerApp>()
                 .AsSelf()
                 .AutoActivate()
                 .OnActivated(x=>x.Instance.Start());
+
+            builder.RegisterType<Setup>()
+                .AsSelf()
+                .AutoActivate();
 
             return builder.Build();
         }

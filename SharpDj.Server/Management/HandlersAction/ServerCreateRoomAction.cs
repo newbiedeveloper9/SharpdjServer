@@ -1,36 +1,36 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Network;
+using Network.Interfaces;
 using SCPackets;
 using SCPackets.CreateRoom;
-using SCPackets.CreateRoom.Container;
 using SCPackets.NotLoggedIn;
-using SharpDj.Server.Management.Singleton;
-using SharpDj.Server.Models.EF;
+using SCPackets.RegisterPacket;
+using SharpDj.Server.Entity;
+using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
+using Result = SCPackets.CreateRoom.Container.Result;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    class ServerCreateRoomAction
+    class ServerCreateRoomAction : ActionAbstract<CreateRoomRequest>
     {
         private readonly ServerContext _context;
+
         public ServerCreateRoomAction(ServerContext context)
         {
             _context = context;
         }
 
-        public void Action(CreateRoomRequest req, Connection conn)
+        public override async Task Action(CreateRoomRequest req, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
 
             try
             {
                 var author = ConnectionExtension.GetClient(conn);
-                if (author == null)
-                {
-                    conn.Send(new NotLoggedInRequest());
-                    return;
-                }
+                if (ext.SendRequestOrIsNull(author)) return;
 
                 #region Validation
                 var roomExist = _context.Rooms.Any(x => x.Name.Equals(req.RoomModel.Name));
@@ -48,7 +48,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     (!DataValidation.LengthIsValid(req.RoomModel.PublicEnterMessage, 0, 512) ||
                      !DataValidation.LengthIsValid(req.RoomModel.PublicLeaveMessage, 0, 512)));
 
-                var validate = validation.Validate();
+                var validate = validation.AnyError();
                 if (validate != null)
                 {
                     Log.Information("Validation has failed. {@Result}", (Result)validate);
@@ -64,11 +64,12 @@ namespace SharpDj.Server.Management.HandlersAction
                 _context.SaveChanges();
                 RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
 
-                ext.SendPacket(new CreateRoomResponse(Result.Success, req) { Room = room.ToRoomModel() });
+                ext.SendPacket(
+                    new CreateRoomResponse(Result.Success, req) {Room = room.ToRoomModel()});
                 Log.Information("Room has been created");
             }
             catch (Exception ex)
-            { 
+            {
                 Log.Error(ex.Message);
                 ext.SendPacket(new CreateRoomResponse(Result.Error, req));
             }

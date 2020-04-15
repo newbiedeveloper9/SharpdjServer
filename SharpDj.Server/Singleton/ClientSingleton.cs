@@ -2,7 +2,7 @@
 using SCPackets;
 using SharpDj.Server.Models;
 
-namespace SharpDj.Server.Management.Singleton
+namespace SharpDj.Server.Singleton
 {
     public sealed class ClientSingleton
     {

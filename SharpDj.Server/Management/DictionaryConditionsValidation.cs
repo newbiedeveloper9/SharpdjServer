@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SharpDj.Server.Management
 {
-    public class DictionaryConditionsValidation<TEnum> where TEnum:Enum
+    public class DictionaryConditionsValidation<TEnum> where TEnum : Enum
     {
         public Dictionary<TEnum, bool> Conditions { get; set; }
 
@@ -13,14 +14,12 @@ namespace SharpDj.Server.Management
             Conditions = new Dictionary<TEnum, bool>();
         }
 
-        public Enum Validate()
+        public Enum AnyError()
         {
-            foreach (var result in Conditions.Where(result => result.Value))
-            {
-                return result.Key;
-            }
-
-            return null;
+            var error = Conditions.FirstOrDefault(x => x.Value);
+            if (error.Equals(default(KeyValuePair<TEnum, bool>)))
+                return null;
+            return error.Key;
         }
     }
 }
