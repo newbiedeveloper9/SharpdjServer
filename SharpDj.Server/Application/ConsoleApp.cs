@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
+using AutoMapper.Contrib.Autofac.DependencyInjection;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
@@ -29,6 +30,8 @@ namespace SharpDj.Server.Application
         public IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
+
+            builder.AddAutoMapper();
 
             builder.RegisterInstance(ServerConfig.LoadConfig())
                 .SingleInstance()

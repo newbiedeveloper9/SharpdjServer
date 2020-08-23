@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Network;
 using Network.Enums;
-using SCPackets.Disconnect;
+using SCPackets.Packets.Disconnect;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
@@ -32,14 +32,11 @@ namespace SharpDj.Server.Application
                 _config.Ip, _config.Port);
 
             _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(config.Ip, config.Port, config.RSAKeySize, false);
-
             _connectionContainer.ConnectionLost += async (connection, type, closeReason) =>
                     await ServerConnectionLost(connection, type, closeReason);
-            _connectionContainer.ConnectionEstablished += async (connection, type) =>
-                    await ServerConnectionEstablished(connection, type);
+            _connectionContainer.ConnectionEstablished += ServerConnectionEstablished;
 
             _actionRegisterList = _componentContext.Resolve<IEnumerable<IAction>>();
-
         }
 
         public void Start()
@@ -55,7 +52,7 @@ namespace SharpDj.Server.Application
             Log.Warning("{@IP} connection lost", connection.IPRemoteEndPoint);
         }
 
-        private async Task ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
+        private void ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
         {
             try
             {
@@ -67,12 +64,7 @@ namespace SharpDj.Server.Application
                 connection.LogIntoStream(Console.OpenStandardOutput());
 
                 foreach (var action in _actionRegisterList)
-                {
                     action.RegisterPacket(connection);
-                }
-                //_packetsList.RegisterPackets(connection);
-                //_packetsList.
-
             }
             catch (Exception ex)
             {

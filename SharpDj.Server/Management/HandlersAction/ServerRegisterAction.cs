@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets;
-using SCPackets.RegisterPacket;
+using SCPackets.Packets.Register;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Security;
 using Log = Serilog.Log;
@@ -26,18 +26,18 @@ namespace SharpDj.Server.Management.HandlersAction
 
             try
             {
-                var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.PasswordError, (req.Password.Length < 6 || req.Password.Length > 48));
-                validation.Conditions.Add(Result.EmailError, !DataValidation.EmailIsValid(req.Email));
-                validation.Conditions.Add(Result.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32));
-                validation.Conditions.Add(Result.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32));
-                validation.Conditions.Add(Result.AlreadyExist, AccountExist(req.Login, req.Email));
+                var validation = new DictionaryConditionsValidation<RegisterResult>();
+                validation.Conditions.Add(RegisterResult.PasswordError, (req.Password.Length < 6 || req.Password.Length > 48));
+                validation.Conditions.Add(RegisterResult.EmailError, !DataValidation.EmailIsValid(req.Email));
+                validation.Conditions.Add(RegisterResult.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32));
+                validation.Conditions.Add(RegisterResult.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32));
+                validation.Conditions.Add(RegisterResult.AlreadyExist, AccountExist(req.Login, req.Email));
 
                 var result = validation.AnyError();
                 if (result != null)
                 {
                     Log.Information("User with given credentials already exist");
-                    ext.SendPacket(new RegisterResponse((Result)result, req));
+                    ext.SendPacket(new RegisterResponse((RegisterResult)result, req));
                     return;
                 }
 
@@ -56,13 +56,13 @@ namespace SharpDj.Server.Management.HandlersAction
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                ext.SendPacket(new RegisterResponse(Result.Success, req));
+                ext.SendPacket(new RegisterResponse(RegisterResult.Success, req));
                 Log.Information("Success register: {@User}", user.ToString());
             }
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                ext.SendPacket(new RegisterResponse(Result.Error, req));
+                ext.SendPacket(new RegisterResponse(RegisterResult.Error, req));
             }
         }
 

@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets;
-using SCPackets.NotLoggedIn;
-using SCPackets.UpdateRoomData;
+using SCPackets.Packets.UpdateRoom;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerUpdateRoomAction : ActionAbstract<UpdateRoomDataRequest>
+    public class ServerUpdateRoomAction : ActionAbstract<UpdateRoomRequest>
     {
         private readonly ServerContext _context;
 
@@ -20,7 +19,7 @@ namespace SharpDj.Server.Management.HandlersAction
         {
             _context = context;
         }
-        public override async Task Action(UpdateRoomDataRequest req, Connection connection)
+        public override async Task Action(UpdateRoomRequest req, Connection connection)
         {
             var ext = new ConnectionExtension(connection, this);
             try
@@ -29,57 +28,57 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (ext.SendRequestOrIsNull(active)) return;
 
                 var room = _context.Rooms.Include(x => x.Author)
-                    .FirstOrDefault(x => x.Id == req.Room.Id);
-                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == req.Room.Id);
+                    .FirstOrDefault(x => x.Id == req.RoomDetails.Id);
+                var roomInstance = RoomSingleton.Instance.RoomInstances.GetList().FirstOrDefault(x => x.Id == req.RoomDetails.Id);
 
                 var roomExist = _context.Rooms.Any(x =>
-                    (x.Name.Equals(req.Room.Name) && x.Name != room.Name));
+                    (x.Name.Equals(req.RoomDetails.Name) && x.Name != room.Name));
 
 
-                var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.Error, roomInstance == null);
-                validation.Conditions.Add(Result.AlreadyExist, roomExist);
-                validation.Conditions.Add(Result.NameError, !DataValidation.LengthIsValid(req.Room.Name, 2, 40));
-                validation.Conditions.Add(Result.ImageError, !DataValidation.ImageIsValid(req.Room.ImageUrl));
+                var validation = new DictionaryConditionsValidation<UpdateRoomResult>();
+                validation.Conditions.Add(UpdateRoomResult.Error, roomInstance == null);
+                validation.Conditions.Add(UpdateRoomResult.AlreadyExist, roomExist);
+                validation.Conditions.Add(UpdateRoomResult.NameError, !DataValidation.LengthIsValid(req.RoomDetails.Name, 2, 40));
+                validation.Conditions.Add(UpdateRoomResult.ImageError, !DataValidation.ImageIsValid(req.RoomDetails.ImageUrl));
 
-                validation.Conditions.Add(Result.LocalMessageError,
-                    (!DataValidation.LengthIsValid(req.Room.LocalEnterMessage, 0, 512) ||
-                     !DataValidation.LengthIsValid(req.Room.LocalLeaveMessage, 0, 512)));
+                validation.Conditions.Add(UpdateRoomResult.LocalMessageError,
+                    (!DataValidation.LengthIsValid(req.RoomDetails.LocalEnterMessage, 0, 512) ||
+                     !DataValidation.LengthIsValid(req.RoomDetails.LocalLeaveMessage, 0, 512)));
 
-                validation.Conditions.Add(Result.PublicMessageError,
-                    (!DataValidation.LengthIsValid(req.Room.PublicEnterMessage, 0, 512) ||
-                     !DataValidation.LengthIsValid(req.Room.PublicLeaveMessage, 0, 512)));
+                validation.Conditions.Add(UpdateRoomResult.PublicMessageError,
+                    (!DataValidation.LengthIsValid(req.RoomDetails.PublicEnterMessage, 0, 512) ||
+                     !DataValidation.LengthIsValid(req.RoomDetails.PublicLeaveMessage, 0, 512)));
 
                 var validate = validation.AnyError();
                 if (validate != null)
                 {
-                    Log.Information("Validation has failed. {@Result}", (Result)validate);
-                    ext.SendPacket(new UpdateRoomDataResponse((Result)validate, req));
+                    Log.Information("Validation has failed. {@LoginResult}", (UpdateRoomResult)validate);
+                    ext.SendPacket(new UpdateRoomResponse((UpdateRoomResult)validate, req));
                     return;
                 }
 
                 if (room?.Author.Id == active.User.Id)
                 {
-                    roomInstance.ImportByRoomModel(req.Room, active.User);
-                    room.ImportByRoomModel(req.Room, active.User);
+                    roomInstance.ImportByRoomModel(req.RoomDetails, active.User);
+                    room.ImportByRoomModel(req.RoomDetails, active.User);
 
                     _context.SaveChanges();
 
-                    var response = new UpdateRoomDataResponse(Result.Success, req) { Room = room.ToRoomModel() };
+                    var response = new UpdateRoomResponse(UpdateRoomResult.Success, req) { RoomDetails = room.ToRoomModel() };
                     ext.SendPacket(response);
 
                     roomInstance.SendUpdateRequest();
                 }
                 else
                 {
-                    ext.SendPacket(new UpdateRoomDataResponse(Result.Error, req));
+                    ext.SendPacket(new UpdateRoomResponse(UpdateRoomResult.Error, req));
                     return;
                 }
             }
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                ext.SendPacket(new UpdateRoomDataResponse(Result.Error, req));
+                ext.SendPacket(new UpdateRoomResponse(UpdateRoomResult.Error, req));
             }
         }
     }

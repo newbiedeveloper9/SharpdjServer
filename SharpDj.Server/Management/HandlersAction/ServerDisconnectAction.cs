@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Network;
-using SCPackets.Disconnect;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SCPackets.Packets.Disconnect;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
@@ -37,24 +37,24 @@ namespace SharpDj.Server.Management.HandlersAction
                         Log.Information("{@User} has disconnected",
                             user.User.Username);
 
-                        ext.SendPacket(new DisconnectResponse(Result.Success, request));
+                        ext.SendPacket(new DisconnectResponse(DisconnectResult.Success, request));
                         return;
                     }
                 }
 
                 var response = ClientSingleton.Instance.Users.Remove(user)
-                    ? new DisconnectResponse(Result.Success, request)
-                    : new DisconnectResponse(Result.Error, request);
+                    ? new DisconnectResponse(DisconnectResult.Success, request)
+                    : new DisconnectResponse(DisconnectResult.Error, request);
 
-                if (response.Result == Result.Success && !forced)
+                if (response.Result == DisconnectResult.Success && !forced)
                     userContext?.UserAuth.ClearAuthKey(_context);
 
                 ext.SendPacket(response);
-                Log.Information("Status: {@Result}", response.Result);
+                Log.Information("Status: {@LoginResult}", response.Result);
             }
             catch (Exception e)
             {
-                ext.SendPacket(new DisconnectResponse(Result.Error, request));
+                ext.SendPacket(new DisconnectResponse(DisconnectResult.Error, request));
                 Log.Error(e.StackTrace);
             }
         }

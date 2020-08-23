@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SCPackets;
+using SCPackets.Domain;
 using SCPackets.Models;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Management.Strategy;
@@ -20,16 +21,16 @@ namespace SharpDj.Server.Models
         public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
 
         public ITrackStrategy TrackStrategy { get; set; }
-        public TrackModel CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
+        public Track CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
 
         public RoomHelper ActionHelper { get; }
-        public ListWrapper<TrackModel> Tracks { get; set; }
+        public ListWrapper<Track> Tracks { get; set; }
         public ListWrapper<ServerUserModel> Users { get; set; }
 
 
         public RoomInstance()
         {
-            Tracks = new ListWrapper<TrackModel>();
+            Tracks = new ListWrapper<Track>();
             Users = new ListWrapper<ServerUserModel>();
             TrackStrategy = new TrackJustOnce();
             ActionHelper = new RoomHelper(Users.GetList());
@@ -39,7 +40,7 @@ namespace SharpDj.Server.Models
         }
 
         /// <summary>
-        /// <para>It's called only after room data is updated</para>
+        /// <para>It's called only after roomDetails data is updated</para>
         /// <para>Using buffer system</para>
         /// </summary>
         public void SendUpdateRequest()
@@ -54,7 +55,7 @@ namespace SharpDj.Server.Models
             var clientUser = e.Item.User.ToUserClient();
             var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
             if (buffer == null)
-                Log.Debug($"ROOM ID: [{Id}]| Buffer cannot find room by id");
+                Log.Debug($"ROOM ID: [{Id}]| Buffer cannot find roomDetails by id");
 
             if (e.State == ListWrapper<ServerUserModel>.UpdateEventArgs.UpdateState.Remove)
                 buffer.RequestPacket.RemoveUsers.Add(clientUser);
@@ -104,16 +105,16 @@ namespace SharpDj.Server.Models
         }
         #endregion Events
 
-        public RoomOutsideModel ToRoomOutsideModel()
+        public PreviewRoom ToRoomOutsideModel()
         {
-            var next = new TrackModel();
-            var current = new TrackModel();
-            var previous = new TrackModel();
+            var next = new Track();
+            var current = new Track();
+            var previous = new Track();
 
             if (Tracks.Count > 1)
                 next = Tracks.GetList().ElementAtOrDefault(1);
 
-            return new RoomOutsideModel()
+            return new PreviewRoom()
             {
                 Id = Id,
                 Name = Name,

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Network;
 using Network.Packets;
-using SCPackets.NotLoggedIn;
+using SCPackets.Packets.NotLoggedIn;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 

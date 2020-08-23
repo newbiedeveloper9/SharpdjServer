@@ -3,13 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Network;
 using Network.Interfaces;
-using SCPackets.ConnectToRoom;
-using SCPackets.RegisterPacket;
+using SCPackets.Packets.ConnectToRoom;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
-using Result = SCPackets.ConnectToRoom.Result;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
@@ -40,15 +38,15 @@ namespace SharpDj.Server.Management.HandlersAction
                     .Any(x=>x.User.Id == active.User.Id);
 
                 #region validation
-                var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.Error, room == null);
-                validation.Conditions.Add(Result.AlreadyConnected, connected == true);
+                var validation = new DictionaryConditionsValidation<ConnectToRoomResult>();
+                validation.Conditions.Add(ConnectToRoomResult.Error, room == null);
+                validation.Conditions.Add(ConnectToRoomResult.AlreadyConnected, connected == true);
 
                 var validate = validation.AnyError();
                 if (validate != null)
                 {
-                    Log.Information("Validation has failed. {@Result}", (Result)validate);
-                    ext.SendPacket(new ConnectToRoomResponse((Result)validate, request));
+                    Log.Information("Validation has failed. {@LoginResult}", (ConnectToRoomResult)validate);
+                    ext.SendPacket(new ConnectToRoomResponse((ConnectToRoomResult)validate, request));
                     return;
                 }
                 #endregion validation
@@ -59,13 +57,13 @@ namespace SharpDj.Server.Management.HandlersAction
                     .GetList()
                     .Select(serverUserModel => serverUserModel.User.ToUserClient());
 
-                ext.SendPacket(new ConnectToRoomResponse(Result.Success,
+                ext.SendPacket(new ConnectToRoomResponse(ConnectToRoomResult.Success,
                     room.ToRoomOutsideModel(), userList.ToList(), request));
             }
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                ext.SendPacket(new ConnectToRoomResponse(Result.Error, request));
+                ext.SendPacket(new ConnectToRoomResponse(ConnectToRoomResult.Error, request));
             }
         }
     }

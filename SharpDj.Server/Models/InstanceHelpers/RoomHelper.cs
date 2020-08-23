@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Network;
 using SCPackets.Models;
-using SCPackets.RoomChatNewMessageClient;
-using SCPackets.SendRoomChatMessage;
+using SCPackets.Packets.CreateRoomMessage;
+using SCPackets.Packets.RoomChatNewMessageClient;
 
 namespace SharpDj.Server.Models.InstanceHelpers
 {
@@ -15,9 +15,9 @@ namespace SharpDj.Server.Models.InstanceHelpers
             _users = users;
         }
 
-        public void MessageDistribute(SendRoomChatMessageRequest request, UserClientModel author)
+        public void MessageDistribute(CreateRoomMessageRequest request, UserClient author)
         {
-            var message = new RoomChatNewMessageRequest(request, author);
+            var message = new RoomNewMessageRequest(request, author);
             foreach (var connection in GetConnections)
                 connection.Send(message);
         }

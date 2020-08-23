@@ -3,9 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
-using SCPackets.LoginPacket;
-using SCPackets.LoginPacket.Container;
 using SCPackets.Models;
+using SCPackets.Packets.Login;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
 using SharpDj.Server.Security;
@@ -32,7 +31,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (connectionIsActive != null)
                 {
                     Log.Information($"Given connection is already logged in to account {connectionIsActive.User.Username}");
-                    ext.SendPacket(new LoginResponse(Result.AlreadyLoggedError, req));
+                    ext.SendPacket(new LoginResponse(LoginResult.AlreadyLoggedError, req));
                     return;
                 }
 
@@ -43,7 +42,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (user == null)
                 {
                     Log.Information("User with given credentials doesn't exists");
-                    ext.SendPacket(new LoginResponse(Result.Error, req));
+                    ext.SendPacket(new LoginResponse(LoginResult.Error, req));
                     return;
                 }
 
@@ -53,7 +52,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 // if (userIsActive != null)
                 // {
                 //     Logger.Info("User is already active");
-                //     ext.SendPacket(new LoginResponse(Result.AlreadyLogged, req));
+                //     ext.SendPacket(new LoginResponse(LoginResult.AlreadyLogged, req));
                 //     return;
                 // }
 
@@ -68,7 +67,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     else
                         ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
 
-                    var response = new LoginResponse(Result.Success, req);
+                    var response = new LoginResponse(LoginResult.Success, req);
                     response.Data.FillData(user, _context);
 
                     if (req.RememberMe)
@@ -86,21 +85,21 @@ namespace SharpDj.Server.Management.HandlersAction
                 }
                 else
                 {
-                    ext.SendPacket(new LoginResponse(Result.CredentialsError, req));
+                    ext.SendPacket(new LoginResponse(LoginResult.CredentialsError, req));
                     Log.Information("An error has occurred");
                 }
             }
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                ext.SendPacket(new LoginResponse(Result.Error, req));
+                ext.SendPacket(new LoginResponse(LoginResult.Error, req));
             }
         }
     }
 
     public static class LoginHelper
     {
-        public static void FillData(this LoginDataModel data, User user, ServerContext _context)
+        public static void FillData(this PreviewLogin data, User user, ServerContext _context)
         {
             data.User = user.ToUserClient();
 
@@ -109,7 +108,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 data.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
 
             //Pull his rooms
-            var userRooms = _context.Rooms.Include(x => x.RoomConfig)
+            var userRooms = _context.Rooms.Include(x => x.Config)
                 .Where(x => x.Author.Id.Equals(user.Id));
 
             foreach (var room in userRooms)

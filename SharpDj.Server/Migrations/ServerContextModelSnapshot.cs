@@ -146,7 +146,7 @@ namespace SharpDj.Server.Migrations
                     b.ToTable("RoleClaims");
                 });
 
-            modelBuilder.Entity("SharpDj.Server.Models.EF.Room", b =>
+            modelBuilder.Entity("SharpDj.Server.Models.EF.RoomDetails", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -202,7 +202,7 @@ namespace SharpDj.Server.Migrations
                     b.ToTable("RoomChatPosts");
                 });
 
-            modelBuilder.Entity("SharpDj.Server.Models.EF.RoomConfig", b =>
+            modelBuilder.Entity("SharpDj.Server.Models.EF.Config", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -393,7 +393,7 @@ namespace SharpDj.Server.Migrations
 
             modelBuilder.Entity("SharpDj.Server.Models.EF.MediaHistory", b =>
                 {
-                    b.HasOne("SharpDj.Server.Models.EF.Room", null)
+                    b.HasOne("SharpDj.Server.Models.EF.RoomDetails", null)
                         .WithMany("Media")
                         .HasForeignKey("RoomId");
                 });
@@ -409,13 +409,13 @@ namespace SharpDj.Server.Migrations
                         .HasForeignKey("TypeId");
                 });
 
-            modelBuilder.Entity("SharpDj.Server.Models.EF.Room", b =>
+            modelBuilder.Entity("SharpDj.Server.Models.EF.RoomDetails", b =>
                 {
                     b.HasOne("SharpDj.Server.Models.EF.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("SharpDj.Server.Models.EF.RoomConfig", "RoomConfig")
+                    b.HasOne("SharpDj.Server.Models.EF.Config", "Config")
                         .WithMany()
                         .HasForeignKey("RoomConfigId");
                 });
@@ -426,7 +426,7 @@ namespace SharpDj.Server.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("SharpDj.Server.Models.EF.Room", null)
+                    b.HasOne("SharpDj.Server.Models.EF.RoomDetails", null)
                         .WithMany("Posts")
                         .HasForeignKey("RoomId");
                 });
@@ -448,11 +448,11 @@ namespace SharpDj.Server.Migrations
 
             modelBuilder.Entity("SharpDj.Server.Models.EF.UserClaim", b =>
                 {
-                    b.HasOne("SharpDj.Server.Models.EF.Room", null)
+                    b.HasOne("SharpDj.Server.Models.EF.RoomDetails", null)
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoomId");
 
-                    b.HasOne("SharpDj.Server.Models.EF.Room", null)
+                    b.HasOne("SharpDj.Server.Models.EF.RoomDetails", null)
                         .WithMany("UserClaims")
                         .HasForeignKey("RoomId1");
 

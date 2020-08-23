@@ -1,4 +1,4 @@
-﻿using SCPackets.Buffers;
+﻿using SCPackets.Packets.Buffers;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 

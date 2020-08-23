@@ -9,12 +9,12 @@ namespace SharpDj.Server.Entity
         public string Color { get; set; }
         public User Author { get; set; }
 
-        public RoomPostModel ToOutsideModel()
+        public ChatMessage ToOutsideModel()
         {
-            return new RoomPostModel()
+            return new ChatMessage()
             {
                 Author = Author.ToUserClient(),
-                Color = new ColorModel(Color),
+                Color = new Color(Color),
                 Message = Text,
                 Id = Id
             };

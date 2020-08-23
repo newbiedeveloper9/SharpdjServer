@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
-using SCPackets.SendRoomChatMessage;
+using SCPackets.Packets.CreateRoomMessage;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    public class ServerSendRoomChatMessageAction : ActionAbstract<SendRoomChatMessageRequest>
+    public class ServerSendRoomChatMessageAction : ActionAbstract<CreateRoomMessageRequest>
     {
         private readonly ServerContext _context;
 
@@ -19,7 +19,7 @@ namespace SharpDj.Server.Management.HandlersAction
             _context = context;
         }
 
-        public override async Task Action(SendRoomChatMessageRequest request, Connection conn)
+        public override async Task Action(CreateRoomMessageRequest request, Connection conn)
         {
             var ext = new ConnectionExtension(conn, this);
             try
@@ -32,8 +32,8 @@ namespace SharpDj.Server.Management.HandlersAction
                 var roomInstance = active.ActiveRoom.GetActiveRoom();
                 if (roomInstance == null)
                 {
-                    Log.Information("Room with given id doesn't exist");
-                    conn.Send(new SendRoomChatMessageResponse(Result.Error));
+                    Log.Information("RoomDetails with given id doesn't exist");
+                    conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Error));
                     return;
                 }
 
@@ -54,14 +54,14 @@ namespace SharpDj.Server.Management.HandlersAction
                 roomInstance
                     .ActionHelper
                     .MessageDistribute(request, active.User.ToUserClient());
-                conn.Send(new SendRoomChatMessageResponse(Result.Success));
+                conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Success));
 
-                Log.Information("User {@user} send a message to room {@room}", active.User, roomInstance.Name);
+                Log.Information("User {@user} send a message to roomDetails {@roomDetails}", active.User, roomInstance.Name);
             }
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                conn.Send(new SendRoomChatMessageResponse(Result.Error));
+                conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Error));
             }
         }
     }

@@ -4,13 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using Network.Interfaces;
-using SCPackets.AuthKeyLogin;
-using SCPackets.RegisterPacket;
+using SCPackets.Packets.AuthKeyLogin;
 using SharpDj.Server.Entity;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
-using Result = SCPackets.AuthKeyLogin.Result;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
@@ -31,7 +29,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 var active = ConnectionExtension.GetClient(conn);
                 if (active != null)
                 {
-                    ext.SendPacket(new AuthKeyLoginResponse(Result.AlreadyLogged, request));
+                    ext.SendPacket(new AuthKeyLoginResponse(AuthKeyLoginResult.AlreadyLogged, request));
                     return;
                 }
 
@@ -46,16 +44,16 @@ namespace SharpDj.Server.Management.HandlersAction
                 var expiration = user?.UserAuth.AuthenticationExpiration;
 
                 #region Validation
-                var validation = new DictionaryConditionsValidation<Result>();
-                validation.Conditions.Add(Result.Error, user == null);
-               // validation.Conditions.Add(Result.AlreadyLogged, active != null);
-                validation.Conditions.Add(Result.Expired, expiration < DateTime.Now);
+                var validation = new DictionaryConditionsValidation<AuthKeyLoginResult>();
+                validation.Conditions.Add(AuthKeyLoginResult.Error, user == null);
+               // validation.Conditions.Add(LoginResult.AlreadyLogged, active != null);
+                validation.Conditions.Add(AuthKeyLoginResult.Expired, expiration < DateTime.Now);
 
                 var validate = validation.AnyError();
                 if (validate != null)
                 {
-                    Log.Information("Validation has failed. {@Result}",  (Result)validate);
-                    ext.SendPacket(new AuthKeyLoginResponse((Result)validate, request));
+                    Log.Information("Validation has failed. {@LoginResult}",  (AuthKeyLoginResult)validate);
+                    ext.SendPacket(new AuthKeyLoginResponse((AuthKeyLoginResult)validate, request));
                     return;
                 }
                 #endregion Validation
@@ -72,7 +70,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
                 }
 
-                var response = new AuthKeyLoginResponse(Result.Success, request);
+                var response = new AuthKeyLoginResponse(AuthKeyLoginResult.Success, request);
                 response.Data.FillData(user, _context);
 
                 ext.SendPacket(response);
@@ -81,7 +79,7 @@ namespace SharpDj.Server.Management.HandlersAction
             catch (Exception e)
             {
                 Log.Error(e.StackTrace);
-                ext.SendPacket(new AuthKeyLoginResponse(Result.Error, request));
+                ext.SendPacket(new AuthKeyLoginResponse(AuthKeyLoginResult.Error, request));
             }
         }
     }

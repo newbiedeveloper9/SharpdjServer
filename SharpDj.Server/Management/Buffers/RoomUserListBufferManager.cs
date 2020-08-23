@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Network;
-using SCPackets.Buffers;
+using SCPackets.Packets.Buffers;
 using Serilog;
 using SharpDj.Server.Singleton;
 

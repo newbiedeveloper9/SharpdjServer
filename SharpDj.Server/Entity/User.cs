@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SCPackets.Models;
-using Rank = SCPackets.Models.Rank;
+using Rank = SCPackets.Enums.Rank;
 
 namespace SharpDj.Server.Entity
 {
@@ -25,9 +25,9 @@ namespace SharpDj.Server.Entity
             return $"[{Id}][\"{UserAuth?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
         }
 
-        public UserClientModel ToUserClient()
+        public UserClient ToUserClient()
         {
-            return new UserClientModel(this.Id, this.Username, this.Rank);
+            return new UserClient(this.Id, this.Username, this.Rank);
         }
     }
 }
