@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Network;
 using Network.Interfaces;
 using SCPackets.Packets.ConnectToRoom;
-using SharpDj.Server.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
@@ -33,23 +33,8 @@ namespace SharpDj.Server.Management.HandlersAction
                     .GetList()
                     .FirstOrDefault(x => x.Id == request.RoomId);
 
-                var connected = room?.Users
-                    .GetList()
-                    .Any(x=>x.User.Id == active.User.Id);
-
-                #region validation
-                var validation = new DictionaryConditionsValidation<ConnectToRoomResult>();
-                validation.Conditions.Add(ConnectToRoomResult.Error, room == null);
-                validation.Conditions.Add(ConnectToRoomResult.AlreadyConnected, connected == true);
-
-                var validate = validation.AnyError();
-                if (validate != null)
-                {
-                    Log.Information("Validation has failed. {@LoginResult}", (ConnectToRoomResult)validate);
-                    ext.SendPacket(new ConnectToRoomResponse((ConnectToRoomResult)validate, request));
+                if (!Validate(ext, room, active, request))
                     return;
-                }
-                #endregion validation
 
                 active.ActiveRoom = new RoomUserConnection(room.Id);
 
@@ -65,6 +50,27 @@ namespace SharpDj.Server.Management.HandlersAction
                 Log.Error(e.StackTrace);
                 ext.SendPacket(new ConnectToRoomResponse(ConnectToRoomResult.Error, request));
             }
+        }
+
+        private bool Validate(ConnectionExtension ext, RoomInstance room, ServerUserModel loggedInUser, ConnectToRoomRequest request)
+        {
+            var connected = room?.Users
+                .GetList()
+                .Any(x => x.User.Id == loggedInUser.User.Id);
+
+            var validation = new DictionaryConditionsValidation<ConnectToRoomResult>();
+            validation.Conditions.Add(ConnectToRoomResult.Error, room == null);
+            validation.Conditions.Add(ConnectToRoomResult.AlreadyConnected, connected == true);
+
+            var validate = validation.AnyError();
+            if (validate != null)
+            {
+                Log.Information("Validation has failed. {@LoginResult}", (ConnectToRoomResult)validate);
+                ext.SendPacket(new ConnectToRoomResponse((ConnectToRoomResult)validate, request));
+                return false;
+            }
+
+            return true;
         }
     }
 }

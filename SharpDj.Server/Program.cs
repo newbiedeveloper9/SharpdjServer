@@ -36,11 +36,11 @@ namespace SharpDj.Server
 
         private static void Listening()
         {
-            var tmp = new[] { "exit", "quit", "q", "close", "stop" };
+            var closeCommands = new[] {"exit", "quit", "q", "close", "stop"};
             while (true)
             {
-                var line = Console.ReadLine();
-                if (tmp.Any(x => x.Equals(line))) break;
+                var currentCommand = Console.ReadLine();
+                if (closeCommands.Any(x => x.Equals(currentCommand))) break;
             }
         }
     }

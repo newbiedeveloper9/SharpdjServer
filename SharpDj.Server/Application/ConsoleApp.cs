@@ -3,7 +3,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Mapper;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
 using Log = Serilog.Log;
@@ -12,14 +13,14 @@ namespace SharpDj.Server.Application
 {
     public class ConsoleApp
     {
-        private IContainer container;
+        private IContainer _container;
 
         public async Task Run()
         {
             Log.Information("Starting server...");
             try
             {
-                container = BuildContainer();
+                _container = BuildContainer();
             }
             catch (Exception e)
             {
@@ -36,6 +37,11 @@ namespace SharpDj.Server.Application
             builder.RegisterInstance(ServerConfig.LoadConfig())
                 .SingleInstance()
                 .As<IServerConfig>();
+
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .AsClosedTypesOf(typeof(IDualMapper<,>));
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .AsClosedTypesOf(typeof(IDualMapper<,,>));
 
             builder.RegisterType<ServerContext>()
                 .AsSelf()

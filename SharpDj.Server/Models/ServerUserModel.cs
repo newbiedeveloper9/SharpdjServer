@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Network;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Entity;
 using SharpDj.Server.Singleton;
 
 namespace SharpDj.Server.Models

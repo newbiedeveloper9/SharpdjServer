@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SCPackets.Models;
-using Rank = SCPackets.Enums.Rank;
+using SharpDj.Common.Enums;
 
-namespace SharpDj.Server.Entity
+namespace SharpDj.Domain.Entity
 {
     public class User
     {

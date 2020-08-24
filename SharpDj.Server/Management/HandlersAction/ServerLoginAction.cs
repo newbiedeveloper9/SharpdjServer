@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.Models;
 using SCPackets.Packets.Login;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Models;
 using SharpDj.Server.Security;
 using SharpDj.Server.Singleton;
@@ -60,12 +61,16 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (user.UserAuth.Hash.Equals(hashedPass))
                 {
                     if (userIsActive != null)
+                    {
                         ClientSingleton.Instance.Users
                             .GetList()
                             .FirstOrDefault(x => x.User.Id == user.Id)
                             .Connections.Add(conn);
+                    }
                     else
+                    {
                         ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
+                    }
 
                     var response = new LoginResponse(LoginResult.Success, req);
                     response.Data.FillData(user, _context);
@@ -105,14 +110,19 @@ namespace SharpDj.Server.Management.HandlersAction
 
             //Pull all rooms
             foreach (var roomModel in RoomSingleton.Instance.RoomInstances.GetList())
+            {
                 data.RoomOutsideModelList.Add(roomModel.ToRoomOutsideModel());
+            }
 
             //Pull his rooms
-            var userRooms = _context.Rooms.Include(x => x.Config)
+            var userRooms = _context.Rooms
+                .Include(x => x.Config)
                 .Where(x => x.Author.Id.Equals(user.Id));
 
             foreach (var room in userRooms)
-                data.UserRoomList.Add(room.ToRoomModel());
+            {
+                //TODO data.UserRoomList.Add(room.ToRoomModel());
+            }
         }
     }
 }

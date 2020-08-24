@@ -2,9 +2,9 @@
 using Network;
 using SCPackets.Models;
 using SCPackets.Packets.CreateRoomMessage;
-using SCPackets.Packets.RoomChatNewMessageClient;
+using SCPackets.Packets.RoomNewMessageRequest;
 
-namespace SharpDj.Server.Models.InstanceHelpers
+namespace SharpDj.Server.Models
 {
     public class RoomHelper
     {

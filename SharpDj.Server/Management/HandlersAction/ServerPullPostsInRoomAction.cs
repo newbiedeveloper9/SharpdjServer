@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.Packets.PullRoomChat;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Mapper;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
@@ -12,11 +13,13 @@ namespace SharpDj.Server.Management.HandlersAction
 {
     public class ServerPullPostsInRoomAction : ActionAbstract<PullRoomChatRequest>
     {
-        private ServerContext _context;
+        private readonly ServerContext _context;
+        private readonly ChatMessageMapperService _chatMessageMapperService;
 
-        public ServerPullPostsInRoomAction(ServerContext context)
+        public ServerPullPostsInRoomAction(ServerContext context, ChatMessageMapperService chatMessageMapperService)
         {
             _context = context;
+            _chatMessageMapperService = chatMessageMapperService;
         }
 
         public override async Task Action(PullRoomChatRequest chatRequest, Connection conn)
@@ -32,7 +35,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     .FirstOrDefault(x => x.Id == active.ActiveRoom.RoomId);
                 if (roomInstance == null)
                 {
-                    Log.Information("RoomDetails with given id doesn't exist");
+                    Log.Information("Room with given id doesn't exist");
                     conn.Send(new PullRoomChatResponse(PullRoomChatResult.Error));
                     return;
                 }
@@ -43,7 +46,7 @@ namespace SharpDj.Server.Management.HandlersAction
                     .Result;
                 if (room == null)
                 {
-                    Log.Error("roomId not found. {@RoomDetails}", room);
+                    Log.Error("Room with id{@RoomId} not found.", chatRequest.RoomId);
                     conn.Send(new PullRoomChatResponse(PullRoomChatResult.Error));
                     return;
                 }
@@ -65,7 +68,7 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 var response = new PullRoomChatResponse(PullRoomChatResult.Success);
                 response.Posts = roomChatPosts
-                    .Select(x => x.ToOutsideModel())
+                    .Select(x => _chatMessageMapperService.MapToDTO(x))
                     .ToList();
 
                 conn.Send(response);

@@ -5,19 +5,25 @@ using Network;
 using Network.Interfaces;
 using SCPackets;
 using SCPackets.Packets.CreateRoom;
-using SharpDj.Server.Entity;
+using SharpDj.Common;
+using SharpDj.Domain.Entity;
+using SharpDj.Domain.Mapper;
+using SharpDj.Infrastructure;
+using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Management.HandlersAction
 {
-    class ServerCreateRoomAction : ActionAbstract<CreateRoomRequest>, 
+    public class ServerCreateRoomAction : ActionAbstract<CreateRoomRequest>
     {
         private readonly ServerContext _context;
+        private readonly RoomMapperService _roomMapperService;
 
-        public ServerCreateRoomAction(ServerContext context)
+        public ServerCreateRoomAction(ServerContext context, RoomMapperService roomMapperService)
         {
             _context = context;
+            _roomMapperService = roomMapperService;
         }
 
         public override async Task Action(CreateRoomRequest req, Connection conn)
@@ -27,42 +33,23 @@ namespace SharpDj.Server.Management.HandlersAction
             try
             {
                 var author = ConnectionExtension.GetClient(conn);
-                if (ext.SendRequestOrIsNull(author)) return;
-
-                #region Validation
-                var roomExist = _context.Rooms.Any(x => x.Name.Equals(req.RoomDetailsModel.Name));
-
-                var validation = new DictionaryConditionsValidation<CreateRoomResult>();
-                validation.Conditions.Add(CreateRoomResult.AlreadyExist, roomExist);
-                validation.Conditions.Add(CreateRoomResult.NameError, !DataValidation.LengthIsValid(req.RoomDetailsModel.Name, 2, 40));
-                validation.Conditions.Add(CreateRoomResult.ImageError, !DataValidation.ImageIsValid(req.RoomDetailsModel.ImageUrl));
-
-                validation.Conditions.Add(CreateRoomResult.LocalMessageError,
-                    (!DataValidation.LengthIsValid(req.RoomDetailsModel.LocalEnterMessage, 0, 512) ||
-                     !DataValidation.LengthIsValid(req.RoomDetailsModel.LocalLeaveMessage, 0, 512)));
-
-                validation.Conditions.Add(CreateRoomResult.PublicMessageError,
-                    (!DataValidation.LengthIsValid(req.RoomDetailsModel.PublicEnterMessage, 0, 512) ||
-                     !DataValidation.LengthIsValid(req.RoomDetailsModel.PublicLeaveMessage, 0, 512)));
-
-                var validate = validation.AnyError();
-                if (validate != null)
-                {
-                    Log.Information("Validation has failed. {@LoginResult}", (CreateRoomResult)validate);
-                    ext.SendPacket(new CreateRoomResponse((CreateRoomResult)validate, req));
+                if (ext.SendRequestOrIsNull(author) || !Validate(req, ext))
                     return;
-                }
-                #endregion Validation
 
-                var room = new Room();
-                room.ImportByRoomModel(req.RoomDetailsModel, author.User);
+                var room = _roomMapperService.MapToEntity(req.RoomDetailsModel,
+                    new RoomMapperService.RoomMapperBag(author.User));
 
                 _context.Rooms.Add(room);
-                _context.SaveChanges();
-                RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
+                await _context.SaveChangesAsync();
+
+                RoomSingleton.Instance.RoomInstances.Add((RoomInstance)room);
 
                 ext.SendPacket(
-                    new CreateRoomResponse(CreateRoomResult.Success, req) {RoomDetails = room.ToRoomModel()});
+                    new CreateRoomResponse(CreateRoomResult.Success, req)
+                    {
+                        RoomDetails = req.RoomDetailsModel
+                    });
+
                 Log.Information("RoomDetails has been created");
             }
             catch (Exception ex)
@@ -70,6 +57,35 @@ namespace SharpDj.Server.Management.HandlersAction
                 Log.Error(ex.Message);
                 ext.SendPacket(new CreateRoomResponse(CreateRoomResult.Error, req));
             }
+        }
+
+        private bool Validate(CreateRoomRequest request, ConnectionExtension ext)
+        {
+            var roomExist = _context.Rooms.Any(x => x.Name.Equals(request.RoomDetailsModel.Name));
+
+            var validation = new DictionaryConditionsValidation<CreateRoomResult>();
+            validation.Conditions.Add(CreateRoomResult.AlreadyExist, roomExist);
+            validation.Conditions.Add(CreateRoomResult.NameError, !DataValidation.LengthIsValid(request.RoomDetailsModel.Name, 2, 40));
+            validation.Conditions.Add(CreateRoomResult.ImageError, !DataValidation.ImageIsValid(request.RoomDetailsModel.ImageUrl));
+
+            var roomConfig = request.RoomDetailsModel.RoomConfigDTO;
+            validation.Conditions.Add(CreateRoomResult.LocalMessageError,
+                (!DataValidation.LengthIsValid(roomConfig.LocalEnterMessage, 0, 512) ||
+                 !DataValidation.LengthIsValid(roomConfig.LocalLeaveMessage, 0, 512)));
+
+            validation.Conditions.Add(CreateRoomResult.PublicMessageError,
+                (!DataValidation.LengthIsValid(roomConfig.PublicEnterMessage, 0, 512) ||
+                 !DataValidation.LengthIsValid(roomConfig.PublicLeaveMessage, 0, 512)));
+
+            var validate = validation.AnyError();
+            if (validate != null)
+            {
+                Log.Information("Validation has failed. {@LoginResult}", (CreateRoomResult)validate);
+                ext.SendPacket(new CreateRoomResponse((CreateRoomResult)validate, request));
+                return false;
+            }
+
+            return true;
         }
     }
 }

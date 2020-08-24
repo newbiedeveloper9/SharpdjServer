@@ -1,6 +1,8 @@
 ﻿using System;
 using SCPackets;
-using SharpDj.Server.Entity;
+using SharpDj.Common;
+using SharpDj.Domain.Mapper;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
@@ -40,7 +42,7 @@ namespace SharpDj.Server.Application
         {
             foreach (var room in _context.Rooms)
             {
-                RoomSingleton.Instance.RoomInstances.Add(room.ToRoomInstance());
+                RoomSingleton.Instance.RoomInstances.Add((RoomInstance)room);
                 BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(room.Id);
             }
         }

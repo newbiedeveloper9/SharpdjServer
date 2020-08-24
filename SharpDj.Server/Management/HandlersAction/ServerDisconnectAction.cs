@@ -4,7 +4,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SCPackets.Packets.Disconnect;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Singleton;
 using Log = Serilog.Log;
 
@@ -33,7 +34,10 @@ namespace SharpDj.Server.Management.HandlersAction
                     if (removed)
                     {
                         if (!forced)
-                            userContext?.UserAuth.ClearAuthKey(_context);
+                        {
+                            ClearAuthKey(userContext?.UserAuth, _context);
+                        }
+
                         Log.Information("{@User} has disconnected",
                             user.User.Username);
 
@@ -47,7 +51,9 @@ namespace SharpDj.Server.Management.HandlersAction
                     : new DisconnectResponse(DisconnectResult.Error, request);
 
                 if (response.Result == DisconnectResult.Success && !forced)
-                    userContext?.UserAuth.ClearAuthKey(_context);
+                {
+                    ClearAuthKey(userContext?.UserAuth, _context);
+                }
 
                 ext.SendPacket(response);
                 Log.Information("Status: {@LoginResult}", response.Result);
@@ -62,6 +68,12 @@ namespace SharpDj.Server.Management.HandlersAction
         public override async Task Action(DisconnectRequest request, Connection connection)
         {
             await Action(request, connection, false);
+        }
+
+        public void ClearAuthKey(UserAuth auth, ServerContext context)
+        {
+            auth.AuthenticationKey = string.Empty;
+            auth.AuthenticationExpiration = DateTime.Now.AddYears(-20);
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using SCPackets.Domain;
 using SCPackets.Models;
+using SharpDj.Common.DTO;
 
 namespace SharpDj.Server.Management.Strategy
 {
     public interface ITrackStrategy
     {
-        void NextTrack(List<Track> tracks);
+        void NextTrack(List<TrackDTO> tracks);
     }
 }

@@ -5,7 +5,7 @@ using Autofac;
 using Network;
 using Network.Enums;
 using SCPackets.Packets.Disconnect;
-using SharpDj.Server.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
 using ConnectionType = Network.Enums.ConnectionType;
@@ -64,7 +64,9 @@ namespace SharpDj.Server.Application
                 connection.LogIntoStream(Console.OpenStandardOutput());
 
                 foreach (var action in _actionRegisterList)
+                {
                     action.RegisterPacket(connection);
+                }
             }
             catch (Exception ex)
             {

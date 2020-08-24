@@ -3,13 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SCPackets;
-using SCPackets.Domain;
-using SCPackets.Models;
-using SharpDj.Server.Entity;
+using SharpDj.Common;
+using SharpDj.Common.Enums;
+using SharpDj.Domain.Entity;
 using SharpDj.Server.Management.Strategy;
-using SharpDj.Server.Models.InstanceHelpers;
 using SharpDj.Server.Singleton;
+using SharpDj.Common.DTO;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Models
@@ -21,16 +20,16 @@ namespace SharpDj.Server.Models
         public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
 
         public ITrackStrategy TrackStrategy { get; set; }
-        public Track CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
+        public TrackDTO CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
 
         public RoomHelper ActionHelper { get; }
-        public ListWrapper<Track> Tracks { get; set; }
+        public ListWrapper<TrackDTO> Tracks { get; set; }
         public ListWrapper<ServerUserModel> Users { get; set; }
 
 
         public RoomInstance()
         {
-            Tracks = new ListWrapper<Track>();
+            Tracks = new ListWrapper<TrackDTO>();
             Users = new ListWrapper<ServerUserModel>();
             TrackStrategy = new TrackJustOnce();
             ActionHelper = new RoomHelper(Users.GetList());
@@ -88,7 +87,7 @@ namespace SharpDj.Server.Models
 
         private void TimeReachedZero(object sender, EventArgs e)
         {
-            TrackStrategy.NextTrack(Tracks.__nothing__);
+            TrackStrategy.NextTrack(Tracks.Wrapper);
             if (CurrentTrack != null)
                 TimeLeft = CurrentTrack.Duration;
 
@@ -105,16 +104,16 @@ namespace SharpDj.Server.Models
         }
         #endregion Events
 
-        public PreviewRoom ToRoomOutsideModel()
+        public PreviewRoomDTO ToRoomOutsideModel()
         {
-            var next = new Track();
-            var current = new Track();
-            var previous = new Track();
+            var next = new TrackDTO();
+            var current = new TrackDTO();
+            var previous = new TrackDTO();
 
             if (Tracks.Count > 1)
                 next = Tracks.GetList().ElementAtOrDefault(1);
 
-            return new PreviewRoom()
+            return new PreviewRoomDTO()
             {
                 Id = Id,
                 Name = Name,

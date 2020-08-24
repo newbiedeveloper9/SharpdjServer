@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets.Packets.CreateRoomMessage;
-using SharpDj.Server.Entity;
+using SharpDj.Domain.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Models;
 using Log = Serilog.Log;
 
@@ -32,7 +33,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 var roomInstance = active.ActiveRoom.GetActiveRoom();
                 if (roomInstance == null)
                 {
-                    Log.Information("RoomDetails with given id doesn't exist");
+                    Log.Information("RoomDetails with id @RoomId doesn't exist.", roomId);
                     conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Error));
                     return;
                 }
@@ -49,14 +50,14 @@ namespace SharpDj.Server.Management.HandlersAction
                     .FirstOrDefault(x => x.Id == roomId);
 
                 roomContext.Posts.Add(post);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 roomInstance
                     .ActionHelper
                     .MessageDistribute(request, active.User.ToUserClient());
                 conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Success));
 
-                Log.Information("User {@user} send a message to roomDetails {@roomDetails}", active.User, roomInstance.Name);
+                Log.Information("User {@User} send a message to roomDetails {@RoomDetails}", active.User, roomInstance.Name);
             }
             catch (Exception e)
             {

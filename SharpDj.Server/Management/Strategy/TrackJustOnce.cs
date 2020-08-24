@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using SCPackets.Domain;
 using SCPackets.Models;
+using SharpDj.Common.DTO;
 
 namespace SharpDj.Server.Management.Strategy
 {
     public class TrackJustOnce : ITrackStrategy
     {
-        public void NextTrack(List<Track> tracks)
+        public void NextTrack(List<TrackDTO> tracks)
         {
             if (tracks.Count > 0)
                 tracks?.RemoveAt(0);

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Network;
 using SCPackets;
 using SCPackets.Packets.Register;
-using SharpDj.Server.Entity;
+using SharpDj.Common;
+using SharpDj.Domain.Entity;
+using SharpDj.Infrastructure;
 using SharpDj.Server.Security;
 using Log = Serilog.Log;
 
@@ -26,20 +29,8 @@ namespace SharpDj.Server.Management.HandlersAction
 
             try
             {
-                var validation = new DictionaryConditionsValidation<RegisterResult>();
-                validation.Conditions.Add(RegisterResult.PasswordError, (req.Password.Length < 6 || req.Password.Length > 48));
-                validation.Conditions.Add(RegisterResult.EmailError, !DataValidation.EmailIsValid(req.Email));
-                validation.Conditions.Add(RegisterResult.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32));
-                validation.Conditions.Add(RegisterResult.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32));
-                validation.Conditions.Add(RegisterResult.AlreadyExist, AccountExist(req.Login, req.Email));
-
-                var result = validation.AnyError();
-                if (result != null)
-                {
-                    Log.Information("User with given credentials already exist");
-                    ext.SendPacket(new RegisterResponse((RegisterResult)result, req));
+                if (!Validate(req, ext))
                     return;
-                }
 
                 string salt = Scrypt.GenerateSalt();
                 var user = new User()
@@ -64,6 +55,29 @@ namespace SharpDj.Server.Management.HandlersAction
                 Log.Error(e.StackTrace);
                 ext.SendPacket(new RegisterResponse(RegisterResult.Error, req));
             }
+        }
+
+        private bool Validate(RegisterRequest req, ConnectionExtension ext)
+        {
+            var validation = new DictionaryConditionsValidation<RegisterResult>();
+            validation.Conditions = new Dictionary<RegisterResult, bool>()
+            {
+                {RegisterResult.PasswordError, (req.Password.Length < 6 || req.Password.Length > 48)},
+                {RegisterResult.EmailError, !DataValidation.EmailIsValid(req.Email)},
+                {RegisterResult.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32)},
+                {RegisterResult.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32)},
+                {RegisterResult.AlreadyExist, AccountExist(req.Login, req.Email)}
+            };
+
+            var result = validation.AnyError();
+            if (result != null)
+            {
+                Log.Information("Register validation failed. @Result", result);
+                ext.SendPacket(new RegisterResponse((RegisterResult)result, req));
+                return false;
+            }
+
+            return true;
         }
 
         private bool AccountExist(string login, string email)
