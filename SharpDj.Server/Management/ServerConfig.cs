@@ -40,7 +40,7 @@ namespace SharpDj.Server.Management
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Config error.");
+                    Log.Error(ex, "ConfigEntity error.");
                     Console.ReadLine();
                 }
         }

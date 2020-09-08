@@ -13,8 +13,8 @@ namespace SharpDj.Server.Management.Buffers
         public TReq RequestPacket { get; set; }
 
         /// <summary>
-        /// <para>After <see cref="OnBeforeSendBuffer"/> is done, this property change to <see langword="TRUE"/>. </para>
-        /// <para>It sends <see cref="RequestPacket"/> only if this variable is <see langword="TRUE"/>. </para>
+        /// After <see cref="OnBeforeSendBuffer"/> is done, this property change to <see langword="TRUE"/>. 
+        /// It sends <see cref="RequestPacket"/> only if this variable is <see langword="TRUE"/>.
         /// </summary>  
         public bool CanSend { get; set; } = true;
 
@@ -24,29 +24,32 @@ namespace SharpDj.Server.Management.Buffers
             RequestPacket = packet;
         }
 
-        /// <summary>
-        /// <para>Checks if Request is ready, then sends to every connection in <see cref="Connections"/>.</para>
-        /// <para>It invokes <see cref="OnBeforeSendBuffer(EventArgs)"/> at the beginning.</para>
-        ///     <returns> <para>
-        ///         <see langword="TRUE"/> if success, otherwise returns <see langword="FALSE"/>
-        ///     </para></returns>
-        /// </summary>
-
+        ///<summary>
+        ///Checks if Request is ready, then sends to every connection in <see cref="Connections"/>.
+        ///It invokes <see cref="OnBeforeSendBuffer(EventArgs)"/> at the beginning.
+        ///</summary>
         public bool SendRequestToEveryone()
         {
             OnBeforeSendBuffer(EventArgs.Empty);
-            if (!CanSend) return false;
+            if (!CanSend)
+            {
+                return false;
+            }
 
             foreach (var connection in Connections)
+            {
                 connection.Send(RequestPacket);
+            }
+
             Log.Information("Buffer data has been sent");
+
             return true;
         }
 
         public event EventHandler BeforeSendBuffer;
 
         /// <summary>
-        /// <para>Set custom logic to do, before packet is sent</para>
+        /// Set custom logic to do, before packet is sent
         /// </summary>
         protected virtual void OnBeforeSendBuffer(EventArgs e)
         {

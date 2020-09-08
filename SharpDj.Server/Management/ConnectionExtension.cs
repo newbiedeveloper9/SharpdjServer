@@ -27,7 +27,7 @@ namespace SharpDj.Server.Management
 
         public bool SendRequestOrIsNull(ServerUserModel user)
         {
-            if (user?.User != null) return false;
+            if (user?.UserEntity != null) return false;
 
             _conn.Send(new NotLoggedInRequest());
             return true;

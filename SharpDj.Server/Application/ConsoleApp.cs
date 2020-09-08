@@ -38,19 +38,24 @@ namespace SharpDj.Server.Application
                 .SingleInstance()
                 .As<IServerConfig>();
 
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+            //builder.RegisterGeneric(typeof(IDualMapper<,>)).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
                 .AsClosedTypesOf(typeof(IDualMapper<,>));
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+
+            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
                 .AsClosedTypesOf(typeof(IDualMapper<,,>));
+
+            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
+                .AsClosedTypesOf(typeof(ActionAbstract<>));
 
             builder.RegisterType<ServerContext>()
                 .AsSelf()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+            /*builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(x => x.Name.EndsWith("Action"))
                 .As<IAction>()
-                .SingleInstance();
+                .SingleInstance();*/
 
             builder.RegisterType<ServerApp>()
                 .AsSelf()

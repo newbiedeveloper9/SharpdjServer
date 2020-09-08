@@ -1,6 +1,6 @@
 ﻿namespace SharpDj.Domain.Entity
 {
-    public class RoomConfig
+    public class RoomConfigEntity
     {
         public int Id { get; set; }
 

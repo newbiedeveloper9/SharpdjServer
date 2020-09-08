@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SharpDj.Domain.Entity
 {
-    public class UserAuth
+    public class UserAuthEntity
     {
         public int Id { get; set; }
         public string Login { get; set; }

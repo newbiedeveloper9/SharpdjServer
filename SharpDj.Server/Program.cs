@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,7 @@ namespace SharpDj.Server
 {
     internal class Program
     {
-        private static void Main()
+        private static async Task Main()
         {
             try
             {
@@ -23,7 +24,7 @@ namespace SharpDj.Server
                     .CreateLogger();
                 Log.Logger = log;
 
-                new ConsoleApp().Run().ConfigureAwait(false);
+                await new ConsoleApp().Run().ConfigureAwait(false);
                 Listening();
             }
             catch (Exception e)

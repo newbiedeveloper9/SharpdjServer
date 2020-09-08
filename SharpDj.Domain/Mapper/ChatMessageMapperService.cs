@@ -6,9 +6,9 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class ChatMessageMapperService : IDualMapper<RoomChatPost, ChatMessage>
+    public class ChatMessageMapperService : IDualMapper<RoomChatPostEntity, ChatMessage>
     {
-        public ChatMessage MapToDTO(RoomChatPost entity)
+        public ChatMessage MapToDTO(RoomChatPostEntity entity)
         {
             return new ChatMessage()
             {
@@ -19,13 +19,13 @@ namespace SharpDj.Domain.Mapper
             };
         }
 
-        public RoomChatPost MapToEntity(ChatMessage dto)
+        public RoomChatPostEntity MapToEntity(ChatMessage dto)
         {
-            return new RoomChatPost()
+            return new RoomChatPostEntity()
             {
                 Id = dto.Id,
                 Color = dto.Color.Hex,
-                Author = new User()
+                Author = new UserEntity()
                 {
                     Id = (int)dto.Author.Id,
                     Username = dto.Author.Username,

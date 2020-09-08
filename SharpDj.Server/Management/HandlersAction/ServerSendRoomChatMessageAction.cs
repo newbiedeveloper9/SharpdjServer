@@ -38,9 +38,9 @@ namespace SharpDj.Server.Management.HandlersAction
                     return;
                 }
 
-                var post = new RoomChatPost()
+                var post = new RoomChatPostEntity()
                 {
-                    Author = active.User,
+                    Author = active.UserEntity,
                     Color = request.Post.Color.ToString(),
                     Text = request.Post.Message
                 };
@@ -54,10 +54,10 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 roomInstance
                     .ActionHelper
-                    .MessageDistribute(request, active.User.ToUserClient());
+                    .MessageDistribute(request, active.UserEntity.ToUserClient());
                 conn.Send(new CreateRoomMessageResponse(CreateRoomMessageResult.Success));
 
-                Log.Information("User {@User} send a message to roomDetails {@RoomDetails}", active.User, roomInstance.Name);
+                Log.Information("UserEntity {@UserEntity} send a message to roomDetails {@RoomDetails}", active.UserEntity, roomInstance.Name);
             }
             catch (Exception e)
             {

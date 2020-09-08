@@ -57,7 +57,7 @@ namespace SharpDj.Server.Application
             try
             {
                 Log.Information(
-                    "{@Count} {@Type} connected on port {@IP}",
+                    "{@Count} {@TypeEntity} connected on port {@IP}",
                     _connectionContainer.Count, connection.GetType(), connection.IPRemoteEndPoint.Port);
 
                 connection.EnableLogging = _config.Logging;

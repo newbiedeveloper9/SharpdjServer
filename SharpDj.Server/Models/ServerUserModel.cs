@@ -9,7 +9,7 @@ namespace SharpDj.Server.Models
     public class ServerUserModel
     {
         private RoomUserConnection _activeRoom;
-        public User User { get; set; }
+        public UserEntity UserEntity { get; set; }
         public IList<Connection> Connections { get; set; }
 
         public RoomUserConnection ActiveRoom
@@ -31,11 +31,11 @@ namespace SharpDj.Server.Models
             }
         }
 
-        public ServerUserModel(User user, Connection connection)
+        public ServerUserModel(UserEntity userEntity, Connection connection)
         {
             Connections = new List<Connection>();
 
-            User = user;
+            UserEntity = userEntity;
             Connections.Add(connection);
         }
     }
@@ -52,7 +52,7 @@ namespace SharpDj.Server.Models
 
     public static class RoomUserConnectionHelper
     {
-        public static RoomInstance GetActiveRoom(this RoomUserConnection roomUserConnection)
+        public static RoomEntityInstance GetActiveRoom(this RoomUserConnection roomUserConnection)
         {
             return RoomSingleton.Instance.RoomInstances.GetList()
                 .FirstOrDefault(x => x.Id == roomUserConnection.RoomId);

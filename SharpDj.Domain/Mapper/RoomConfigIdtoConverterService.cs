@@ -6,22 +6,22 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomConfigIdtoConverterService : IDualMapper<RoomConfig, RoomConfigDTO>
+    public class RoomConfigIdtoConverterService : IDualMapper<RoomConfigEntity, RoomConfigDTO>
     {
-        public RoomConfigDTO MapToDTO(RoomConfig roomConfig)
+        public RoomConfigDTO MapToDTO(RoomConfigEntity roomConfigEntity)
         {
             return new RoomConfigDTO()
             {
-                PublicEnterMessage = roomConfig.PublicEnterMessage,
-                PublicLeaveMessage = roomConfig.PublicLeaveMessage,
-                LocalEnterMessage = roomConfig.LocalEnterMessage,
-                LocalLeaveMessage = roomConfig.LocalLeaveMessage
+                PublicEnterMessage = roomConfigEntity.PublicEnterMessage,
+                PublicLeaveMessage = roomConfigEntity.PublicLeaveMessage,
+                LocalEnterMessage = roomConfigEntity.LocalEnterMessage,
+                LocalLeaveMessage = roomConfigEntity.LocalLeaveMessage
             };
         }
 
-        public RoomConfig MapToEntity(RoomConfigDTO roomConfigDTO)
+        public RoomConfigEntity MapToEntity(RoomConfigDTO roomConfigDTO)
         {
-            return new RoomConfig()
+            return new RoomConfigEntity()
             {
                 PublicEnterMessage = roomConfigDTO.PublicEnterMessage,
                 PublicLeaveMessage = roomConfigDTO.PublicLeaveMessage,

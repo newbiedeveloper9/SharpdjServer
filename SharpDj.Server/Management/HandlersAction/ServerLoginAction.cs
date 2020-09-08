@@ -31,62 +31,62 @@ namespace SharpDj.Server.Management.HandlersAction
                 var connectionIsActive = ConnectionExtension.GetClient(conn);
                 if (connectionIsActive != null)
                 {
-                    Log.Information($"Given connection is already logged in to account {connectionIsActive.User.Username}");
+                    Log.Information($"Given connection is already logged in to account {connectionIsActive.UserEntity.Username}");
                     ext.SendPacket(new LoginResponse(LoginResult.AlreadyLoggedError, req));
                     return;
                 }
 
                 //Check if login/email exists in DB
-                User user = _context.Users
-                    .Include(x => x.UserAuth)
-                    .FirstOrDefault(x => (x.UserAuth.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
-                if (user == null)
+                UserEntity userEntity = _context.Users
+                    .Include(x => x.UserAuthEntity)
+                    .FirstOrDefault(x => (x.UserAuthEntity.Login.Equals(req.Login)) || (x.Email.Equals(req.Login)));
+                if (userEntity == null)
                 {
-                    Log.Information("User with given credentials doesn't exists");
+                    Log.Information("UserEntity with given credentials doesn't exists");
                     ext.SendPacket(new LoginResponse(LoginResult.Error, req));
                     return;
                 }
 
                 var userIsActive = ClientSingleton.Instance.Users
                     .GetList()
-                    .FirstOrDefault(x => x.User.Id == user.Id);
+                    .FirstOrDefault(x => x.UserEntity.Id == userEntity.Id);
                 // if (userIsActive != null)
                 // {
-                //     Logger.Info("User is already active");
+                //     Logger.Info("UserEntity is already active");
                 //     ext.SendPacket(new LoginResponse(LoginResult.AlreadyLogged, req));
                 //     return;
                 // }
 
-                string hashedPass = Scrypt.Hash(req.Password, user.UserAuth.Salt);
-                if (user.UserAuth.Hash.Equals(hashedPass))
+                string hashedPass = Scrypt.Hash(req.Password, userEntity.UserAuthEntity.Salt);
+                if (userEntity.UserAuthEntity.Hash.Equals(hashedPass))
                 {
                     if (userIsActive != null)
                     {
                         ClientSingleton.Instance.Users
                             .GetList()
-                            .FirstOrDefault(x => x.User.Id == user.Id)
+                            .FirstOrDefault(x => x.UserEntity.Id == userEntity.Id)
                             .Connections.Add(conn);
                     }
                     else
                     {
-                        ClientSingleton.Instance.Users.Add(new ServerUserModel(user, conn));
+                        ClientSingleton.Instance.Users.Add(new ServerUserModel(userEntity, conn));
                     }
 
                     var response = new LoginResponse(LoginResult.Success, req);
-                    response.Data.FillData(user, _context);
+                    response.Data.FillData(userEntity, _context);
 
                     if (req.RememberMe)
                     {
                         var authKey = Scrypt.GenerateSalt();
-                        user.UserAuth.AuthenticationKey = authKey;
-                        user.UserAuth.AuthenticationExpiration = DateTime.Now.AddDays(30);
+                        userEntity.UserAuthEntity.AuthenticationKey = authKey;
+                        userEntity.UserAuthEntity.AuthenticationExpiration = DateTime.Now.AddDays(30);
                         await _context.SaveChangesAsync().ConfigureAwait(false);
 
                         response.AuthenticationKey = authKey;
                     }
 
                     ext.SendPacket(response);
-                    Log.Information("Success login: {@User}", user.ToString());
+                    Log.Information("Success login: {@UserEntity}", userEntity.ToString());
                 }
                 else
                 {
@@ -104,9 +104,9 @@ namespace SharpDj.Server.Management.HandlersAction
 
     public static class LoginHelper
     {
-        public static void FillData(this PreviewLogin data, User user, ServerContext _context)
+        public static void FillData(this PreviewLogin data, UserEntity userEntity, ServerContext _context)
         {
-            data.User = user.ToUserClient();
+            data.User = userEntity.ToUserClient();
 
             //Pull all rooms
             foreach (var roomModel in RoomSingleton.Instance.RoomInstances.GetList())
@@ -116,8 +116,8 @@ namespace SharpDj.Server.Management.HandlersAction
 
             //Pull his rooms
             var userRooms = _context.Rooms
-                .Include(x => x.Config)
-                .Where(x => x.Author.Id.Equals(user.Id));
+                .Include(x => x.ConfigEntity)
+                .Where(x => x.Author.Id.Equals(userEntity.Id));
 
             foreach (var room in userRooms)
             {

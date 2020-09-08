@@ -33,10 +33,10 @@ namespace SharpDj.Server.Management.HandlersAction
                     return;
 
                 string salt = Scrypt.GenerateSalt();
-                var user = new User()
+                var user = new UserEntity()
                 {
                     Email = req.Email,
-                    UserAuth = new UserAuth()
+                    UserAuthEntity = new UserAuthEntity()
                     {
                         Salt = salt,
                         Hash = Scrypt.Hash(req.Password, salt),
@@ -48,7 +48,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 await _context.SaveChangesAsync();
 
                 ext.SendPacket(new RegisterResponse(RegisterResult.Success, req));
-                Log.Information("Success register: {@User}", user.ToString());
+                Log.Information("Success register: {@UserEntity}", user.ToString());
             }
             catch (Exception e)
             {
@@ -82,8 +82,8 @@ namespace SharpDj.Server.Management.HandlersAction
 
         private bool AccountExist(string login, string email)
         {
-            return _context.Users.Include(x => x.UserAuth)
-                        .Any(x => x.UserAuth.Login.Equals(login)) ||
+            return _context.Users.Include(x => x.UserAuthEntity)
+                        .Any(x => x.UserAuthEntity.Login.Equals(login)) ||
                     _context.Users.Any(x => x.Email.Equals(email));
         }
 

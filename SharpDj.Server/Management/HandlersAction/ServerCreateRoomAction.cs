@@ -37,12 +37,12 @@ namespace SharpDj.Server.Management.HandlersAction
                     return;
 
                 var room = _roomMapperService.MapToEntity(req.RoomDetailsModel,
-                    new RoomMapperService.RoomMapperBag(author.User));
+                    new RoomMapperService.RoomMapperBag(author.UserEntity));
 
                 _context.Rooms.Add(room);
                 await _context.SaveChangesAsync();
 
-                RoomSingleton.Instance.RoomInstances.Add((RoomInstance)room);
+                RoomSingleton.Instance.RoomInstances.Add((RoomEntityInstance)room);
 
                 ext.SendPacket(
                     new CreateRoomResponse(CreateRoomResult.Success, req)

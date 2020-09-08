@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using SharpDj.Domain.Entity;
 using Claim = System.Security.Claims.Claim;
 
@@ -6,36 +7,31 @@ namespace SharpDj.Infrastructure
 {
     public class ServerContext : DbContext
     {
-        public ServerContext()
-        {
-
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(
-                    "server=(localdb)\\mssqllocaldb; Database=SdjServerDB; MultipleActiveResultSets=true");
+                    "Server=(localdb)\\MSSQLLocalDB; Database=SdjServerDB; Trusted_Connection=true;",
+                    builder =>
+                    {
+                        //builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                    });
             }
 
             base.OnConfiguring(optionsBuilder);
         }
 
-        public DbSet<UserAuth> UserAuths { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<RoomConfig> RoomConfigs { get; set; }
-        public DbSet<RoomChatPost> RoomChatPosts { get; set; }
-        public DbSet<MediaHistory> MediaHistories { get; set; }
-        public DbSet<Log> Logs { get; set; }
-        public DbSet<ConversationMessage> ConversationMessages { get; set; }
-        public DbSet<Conversation> Conversations { get; set; }
-        public DbSet<UserConnection> Connections { get; set; }
-        public DbSet<UserClaim> UserClaims { get; set; }
-        public DbSet<RoleClaim> RoleClaims { get; set; }
-        public DbSet<Claim> Claims { get; set; }
-        public DbSet<ServerRole> ServerRoles { get; set; }
-        public DbSet<Room> Rooms { get; set; }
+        public DbSet<UserAuthEntity> UserAuths { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<RoomConfigEntity> RoomConfigs { get; set; }
+        public DbSet<RoomChatPostEntity> RoomChatPosts { get; set; }
+        public DbSet<RecordEntity> MediaHistories { get; set; }
+        public DbSet<LogEntity> Logs { get; set; }
+        public DbSet<ConversationMessageEntity> ConversationMessages { get; set; }
+        public DbSet<ConversationEntity> Conversations { get; set; }
+        public DbSet<UserConnectionEntity> Connections { get; set; }
+        public DbSet<RoomEntity> Rooms { get; set; }
 
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using SCPackets;
 using SharpDj.Common;
 using SharpDj.Domain.Mapper;
@@ -16,7 +17,6 @@ namespace SharpDj.Server.Application
         public Setup(ServerContext context)
         {
             _context = context;
-
             try
             {
                 Log.Information("Initializing rooms...");
@@ -30,7 +30,7 @@ namespace SharpDj.Server.Application
             }
         }
 
-        private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomInstance>.AfterAddEventArgs e)
+        private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomEntityInstance>.AfterAddEventArgs e)
         {
             BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(e.Item.Id);
 
@@ -42,7 +42,7 @@ namespace SharpDj.Server.Application
         {
             foreach (var room in _context.Rooms)
             {
-                RoomSingleton.Instance.RoomInstances.Add((RoomInstance)room);
+                RoomSingleton.Instance.RoomInstances.Add((RoomEntityInstance)room);
                 BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(room.Id);
             }
         }

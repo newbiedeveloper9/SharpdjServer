@@ -43,12 +43,12 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (!Validate(req, roomInstance, ext, room?.Name))
                     return;
 
-                if (room?.Author.Id == active.User.Id)
+                if (room?.Author.Id == active.UserEntity.Id)
                 {
-                    roomInstance = (RoomInstance)_roomMapperService
-                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.User));
+                    roomInstance = (RoomEntityInstance)_roomMapperService
+                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.UserEntity));
                     room = _roomMapperService
-                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.User));
+                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.UserEntity));
 
                     await _context.SaveChangesAsync();
 
@@ -72,7 +72,7 @@ namespace SharpDj.Server.Management.HandlersAction
             }
         }
 
-        private bool Validate(UpdateRoomRequest req, RoomInstance roomInstance, ConnectionExtension ext, string roomName)
+        private bool Validate(UpdateRoomRequest req, RoomEntityInstance roomEntityInstance, ConnectionExtension ext, string roomName)
         {
             var roomExist = _context.Rooms.Any(x =>
                        (x.Name.Equals(req.RoomDetails.Name) && x.Name != roomName));
@@ -80,7 +80,7 @@ namespace SharpDj.Server.Management.HandlersAction
             var roomConfig = req.RoomDetails.RoomConfigDTO;
 
             var validation = new DictionaryConditionsValidation<UpdateRoomResult>();
-            validation.Conditions.Add(UpdateRoomResult.Error, roomInstance == null);
+            validation.Conditions.Add(UpdateRoomResult.Error, roomEntityInstance == null);
             validation.Conditions.Add(UpdateRoomResult.AlreadyExist, roomExist);
             validation.Conditions.Add(UpdateRoomResult.NameError, !DataValidation.LengthIsValid(req.RoomDetails.Name, 2, 40));
             validation.Conditions.Add(UpdateRoomResult.ImageError, !DataValidation.ImageIsValid(req.RoomDetails.ImageUrl));

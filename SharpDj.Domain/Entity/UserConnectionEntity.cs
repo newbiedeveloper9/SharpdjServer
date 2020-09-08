@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SharpDj.Domain.Entity
 {
-    public class Log
+    public class UserConnectionEntity
     {
         public int Id { get; set; }
-        public LogType Type { get; set; }
-        public User User { get; set; }
+        public UserEntity UserEntity { get; set; }
+        public string Ip { get; set; }
+        public int Port { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [DataType(DataType.Date)]
@@ -16,10 +17,10 @@ namespace SharpDj.Domain.Entity
         public ConnectionType ConnectionType { get; set; } = ConnectionType.Desktop;
     }
 
-    public enum LogType
+    public enum ConnectionType
     {
-        Register,
-        Login,
-        JoinedRoom,
+        Desktop,
+        Web,
+        Mobile
     }
 }

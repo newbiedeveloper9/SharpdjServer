@@ -37,12 +37,12 @@ namespace SharpDj.Server.Management.HandlersAction
                 }
 
                 var userEntity = _context.Users
-                    .Include(x => x.UserAuth).
-                    FirstOrDefault(x => x.UserAuth.AuthenticationKey.Equals(request.AuthenticationKey));
+                    .Include(x => x.UserAuthEntity).
+                    FirstOrDefault(x => x.UserAuthEntity.AuthenticationKey.Equals(request.AuthenticationKey));
 
                 loggedInUser = ClientSingleton.Instance.Users
                     .GetList()
-                    .FirstOrDefault(x => x.User.Id == userEntity?.Id);
+                    .FirstOrDefault(x => x.UserEntity.Id == userEntity?.Id);
 
                 if (!Validate(ext, userEntity, request))
                     return;
@@ -51,7 +51,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 {
                     ClientSingleton.Instance.Users
                         .GetList()
-                        .FirstOrDefault(x => x.User.Id == userEntity.Id)
+                        .FirstOrDefault(x => x.UserEntity.Id == userEntity.Id)
                         .Connections.Add(conn);
                 }
                 else
@@ -72,12 +72,12 @@ namespace SharpDj.Server.Management.HandlersAction
             }
         }
 
-        private bool Validate(ConnectionExtension ext, User userEntity, AuthKeyLoginRequest request)
+        private bool Validate(ConnectionExtension ext, UserEntity userEntityEntity, AuthKeyLoginRequest request)
         {
             var validation = new DictionaryConditionsValidation<AuthKeyLoginResult>();
-            var expiration = userEntity?.UserAuth.AuthenticationExpiration;
+            var expiration = userEntityEntity?.UserAuthEntity.AuthenticationExpiration;
 
-            validation.Conditions.Add(AuthKeyLoginResult.Error, userEntity == null);
+            validation.Conditions.Add(AuthKeyLoginResult.Error, userEntityEntity == null);
             // validation.Conditions.Add(LoginResult.AlreadyLogged, active != null);
             validation.Conditions.Add(AuthKeyLoginResult.Expired, expiration < DateTime.Now);
 

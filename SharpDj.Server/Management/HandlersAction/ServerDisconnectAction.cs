@@ -26,8 +26,8 @@ namespace SharpDj.Server.Management.HandlersAction
             try
             {
                 var user = ConnectionExtension.GetClient(connection);
-                var userContext = _context.Users.Include(x => x.UserAuth).FirstOrDefault(x => x.Id == user.User.Id);
-                var isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.User.Id == user.User.Id);
+                var userContext = _context.Users.Include(x => x.UserAuthEntity).FirstOrDefault(x => x.Id == user.UserEntity.Id);
+                var isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.UserEntity.Id == user.UserEntity.Id);
                 if (isActive != null)
                 {
                     var removed = ClientSingleton.Instance.Users.Remove(isActive);
@@ -35,11 +35,11 @@ namespace SharpDj.Server.Management.HandlersAction
                     {
                         if (!forced)
                         {
-                            ClearAuthKey(userContext?.UserAuth, _context);
+                            ClearAuthKey(userContext?.UserAuthEntity, _context);
                         }
 
-                        Log.Information("{@User} has disconnected",
-                            user.User.Username);
+                        Log.Information("{@UserEntity} has disconnected",
+                            user.UserEntity.Username);
 
                         ext.SendPacket(new DisconnectResponse(DisconnectResult.Success, request));
                         return;
@@ -52,7 +52,7 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 if (response.Result == DisconnectResult.Success && !forced)
                 {
-                    ClearAuthKey(userContext?.UserAuth, _context);
+                    ClearAuthKey(userContext?.UserAuthEntity, _context);
                 }
 
                 ext.SendPacket(response);
@@ -70,10 +70,10 @@ namespace SharpDj.Server.Management.HandlersAction
             await Action(request, connection, false);
         }
 
-        public void ClearAuthKey(UserAuth auth, ServerContext context)
+        public void ClearAuthKey(UserAuthEntity authEntity, ServerContext context)
         {
-            auth.AuthenticationKey = string.Empty;
-            auth.AuthenticationExpiration = DateTime.Now.AddYears(-20);
+            authEntity.AuthenticationKey = string.Empty;
+            authEntity.AuthenticationExpiration = DateTime.Now.AddYears(-20);
         }
     }
 }

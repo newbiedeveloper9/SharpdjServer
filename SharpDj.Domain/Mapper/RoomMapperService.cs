@@ -6,7 +6,7 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomMapperService : IDualMapper<Room, RoomDetailsDTO, RoomMapperService.RoomMapperBag>
+    public class RoomMapperService : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapperService.RoomMapperBag>
     {
         private readonly RoomConfigIdtoConverterService _roomConfigIdtoConverterService;
 
@@ -15,34 +15,34 @@ namespace SharpDj.Domain.Mapper
             _roomConfigIdtoConverterService = roomConfigIdtoConverterService;
         }
 
-        public RoomDetailsDTO MapToDTO(Room entity, RoomMapperBag bag=null)
+        public RoomDetailsDTO MapToDTO(RoomEntity entity, RoomMapperBag bag=null)
         {
             return new RoomDetailsDTO()
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImagePath,
-                RoomConfigDTO = _roomConfigIdtoConverterService.MapToDTO(entity.Config)
+                RoomConfigDTO = _roomConfigIdtoConverterService.MapToDTO(entity.ConfigEntity)
             };
         }
 
-        public Room MapToEntity(RoomDetailsDTO dto, RoomMapperBag bag)
+        public RoomEntity MapToEntity(RoomDetailsDTO dto, RoomMapperBag bag)
         {
-            return new Room()
+            return new RoomEntity()
             {
                 Id = dto.Id,
                 Name = dto.Name,
                 Author = bag.Author,
                 ImagePath = dto.ImageUrl,
-                Config = _roomConfigIdtoConverterService.MapToEntity(dto.RoomConfigDTO)
+                ConfigEntity = _roomConfigIdtoConverterService.MapToEntity(dto.RoomConfigDTO)
             };
         }
 
         public class RoomMapperBag
         {
-            public User Author { get; set; }
+            public UserEntity Author { get; set; }
 
-            public RoomMapperBag(User author)
+            public RoomMapperBag(UserEntity author)
             {
                 Author = author;
             }

@@ -14,10 +14,10 @@ using Log = Serilog.Log;
 namespace SharpDj.Server.Models
 {
     [NotMapped]
-    public class RoomInstance : Room
+    public class RoomEntityInstance : RoomEntity
     {
         public int AmountOfPeople => Users.Count;
-        public int AmountOfAdministration => Users.GetList().Count(x => x.User.Rank > 0);
+        public int AmountOfAdministration => Users.GetList().Count(x => x.UserEntity.Rank > 0);
 
         public ITrackStrategy TrackStrategy { get; set; }
         public TrackDTO CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
@@ -27,7 +27,7 @@ namespace SharpDj.Server.Models
         public ListWrapper<ServerUserModel> Users { get; set; }
 
 
-        public RoomInstance()
+        public RoomEntityInstance()
         {
             Tracks = new ListWrapper<TrackDTO>();
             Users = new ListWrapper<ServerUserModel>();
@@ -51,7 +51,7 @@ namespace SharpDj.Server.Models
 
         private void UsersOnAfterUpdate(object sender, ListWrapper<ServerUserModel>.UpdateEventArgs e)
         {
-            var clientUser = e.Item.User.ToUserClient();
+            var clientUser = e.Item.UserEntity.ToUserClient();
             var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
             if (buffer == null)
                 Log.Debug($"ROOM ID: [{Id}]| Buffer cannot find roomDetails by id");

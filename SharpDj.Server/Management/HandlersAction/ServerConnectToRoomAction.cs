@@ -40,7 +40,7 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 var userList = room.Users
                     .GetList()
-                    .Select(serverUserModel => serverUserModel.User.ToUserClient());
+                    .Select(serverUserModel => serverUserModel.UserEntity.ToUserClient());
 
                 ext.SendPacket(new ConnectToRoomResponse(ConnectToRoomResult.Success,
                     room.ToRoomOutsideModel(), userList.ToList(), request));
@@ -52,14 +52,14 @@ namespace SharpDj.Server.Management.HandlersAction
             }
         }
 
-        private bool Validate(ConnectionExtension ext, RoomInstance room, ServerUserModel loggedInUser, ConnectToRoomRequest request)
+        private bool Validate(ConnectionExtension ext, RoomEntityInstance roomEntity, ServerUserModel loggedInUser, ConnectToRoomRequest request)
         {
-            var connected = room?.Users
+            var connected = roomEntity?.Users
                 .GetList()
-                .Any(x => x.User.Id == loggedInUser.User.Id);
+                .Any(x => x.UserEntity.Id == loggedInUser.UserEntity.Id);
 
             var validation = new DictionaryConditionsValidation<ConnectToRoomResult>();
-            validation.Conditions.Add(ConnectToRoomResult.Error, room == null);
+            validation.Conditions.Add(ConnectToRoomResult.Error, roomEntity == null);
             validation.Conditions.Add(ConnectToRoomResult.AlreadyConnected, connected == true);
 
             var validate = validation.AnyError();

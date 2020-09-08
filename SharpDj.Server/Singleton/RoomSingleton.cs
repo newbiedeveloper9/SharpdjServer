@@ -14,9 +14,9 @@ namespace SharpDj.Server.Singleton
 
         private RoomSingleton()
         {
-            RoomInstances = new ListWrapper<RoomInstance>();
+            RoomInstances = new ListWrapper<RoomEntityInstance>();
         }
 
-        public ListWrapper<RoomInstance> RoomInstances { get; set; }
+        public ListWrapper<RoomEntityInstance> RoomInstances { get; set; }
     }
 }

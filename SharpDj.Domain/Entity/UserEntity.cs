@@ -5,7 +5,7 @@ using SharpDj.Common.Enums;
 
 namespace SharpDj.Domain.Entity
 {
-    public class User
+    public class UserEntity
     {
         public int Id { get; set; }
         public string Username { get; set; }
@@ -14,15 +14,14 @@ namespace SharpDj.Domain.Entity
         public string Email { get; set; }
         public Rank Rank { get; set; }
 
-        public UserAuth UserAuth { get; set; }
+        public UserAuthEntity UserAuthEntity { get; set; }
 
-        public List<User> FriendList { get; set; }
-
+        public ICollection<UserEntity> Friends { get; set; }
         public string AvatarUrl { get; set; } = "";
 
         public override string ToString()
         {
-            return $"[{Id}][\"{UserAuth?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
+            return $"[{Id}][\"{UserAuthEntity?.Login}\"] Username: {Username}, Rank: {Rank}, Email: {Email}";
         }
 
         public UserClient ToUserClient()
