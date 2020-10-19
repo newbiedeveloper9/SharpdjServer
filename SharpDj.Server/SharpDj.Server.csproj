@@ -27,7 +27,7 @@
     <ProjectReference Include="..\..\SCPackets\SCPackets\SCPackets.csproj" />
     <ProjectReference Include="..\SharpDj.Common\SharpDj.Common.csproj" />
     <ProjectReference Include="..\SharpDj.Domain\SharpDj.Domain.csproj" />
-    <ProjectReference Include="..\SharpDj.Services\SharpDj.Infrastructure.csproj" />
+    <ProjectReference Include="..\SharpDj.Infrastructure\SharpDj.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

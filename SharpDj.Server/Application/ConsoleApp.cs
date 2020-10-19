@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
