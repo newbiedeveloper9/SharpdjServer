@@ -14,12 +14,12 @@ namespace SharpDj.Server.Management.HandlersAction
     public class ServerPullPostsInRoomAction : ActionAbstract<PullRoomChatRequest>
     {
         private readonly ServerContext _context;
-        private readonly ChatMessageMapperService _chatMessageMapperService;
+        private readonly ChatMessageMapper _chatMessageMapper;
 
-        public ServerPullPostsInRoomAction(ServerContext context, ChatMessageMapperService chatMessageMapperService)
+        public ServerPullPostsInRoomAction(ServerContext context, ChatMessageMapper chatMessageMapper)
         {
             _context = context;
-            _chatMessageMapperService = chatMessageMapperService;
+            _chatMessageMapper = chatMessageMapper;
         }
 
         public override async Task Action(PullRoomChatRequest chatRequest, Connection conn)
@@ -68,7 +68,7 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 var response = new PullRoomChatResponse(PullRoomChatResult.Success);
                 response.Posts = roomChatPosts
-                    .Select(x => _chatMessageMapperService.MapToDTO(x))
+                    .Select(x => _chatMessageMapper.MapToDTO(x))
                     .ToList();
 
                 conn.Send(response);

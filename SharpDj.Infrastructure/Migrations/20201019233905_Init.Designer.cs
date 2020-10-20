@@ -10,8 +10,8 @@ using SharpDj.Infrastructure;
 namespace SharpDj.Infrastructure.Migrations
 {
     [DbContext(typeof(ServerContext))]
-    [Migration("20200906170246_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20201019233905_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace SharpDj.Infrastructure.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-preview.8.20407.4");
+                .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
 
             modelBuilder.Entity("SharpDj.Domain.Entity.ConversationEntity", b =>
                 {
@@ -121,8 +121,8 @@ namespace SharpDj.Infrastructure.Migrations
                     b.Property<int?>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Color")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("RoomEntityId")
                         .HasColumnType("int");
@@ -300,6 +300,8 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.ConversationEntity", null)
                         .WithMany("Messages")
                         .HasForeignKey("ConversationEntityId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.LogEntity", b =>
@@ -307,6 +309,8 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.UserEntity", "UserEntity")
                         .WithMany()
                         .HasForeignKey("UserEntityId");
+
+                    b.Navigation("UserEntity");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.RecordEntity", b =>
@@ -325,6 +329,8 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.RoomEntity", null)
                         .WithMany("Posts")
                         .HasForeignKey("RoomEntityId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomEntity", b =>
@@ -336,6 +342,10 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.RoomConfigEntity", "ConfigEntity")
                         .WithMany()
                         .HasForeignKey("ConfigEntityId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("ConfigEntity");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.UserConnectionEntity", b =>
@@ -343,6 +353,8 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.UserEntity", "UserEntity")
                         .WithMany()
                         .HasForeignKey("UserEntityId");
+
+                    b.Navigation("UserEntity");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
@@ -358,6 +370,27 @@ namespace SharpDj.Infrastructure.Migrations
                     b.HasOne("SharpDj.Domain.Entity.UserEntity", null)
                         .WithMany("Friends")
                         .HasForeignKey("UserEntityId");
+
+                    b.Navigation("UserAuthEntity");
+                });
+
+            modelBuilder.Entity("SharpDj.Domain.Entity.ConversationEntity", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("SharpDj.Domain.Entity.RoomEntity", b =>
+                {
+                    b.Navigation("Media");
+
+                    b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
+                {
+                    b.Navigation("Friends");
                 });
 #pragma warning restore 612, 618
         }

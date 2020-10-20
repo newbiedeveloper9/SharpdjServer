@@ -6,7 +6,7 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomConfigIdtoConverterService : IDualMapper<RoomConfigEntity, RoomConfigDTO>
+    public class RoomConfigMapper : IDualMapper<RoomConfigEntity, RoomConfigDTO>
     {
         public RoomConfigDTO MapToDTO(RoomConfigEntity roomConfigEntity)
         {

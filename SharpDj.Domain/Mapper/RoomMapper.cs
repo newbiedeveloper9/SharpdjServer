@@ -6,13 +6,13 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomMapperService : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapperService.RoomMapperBag>
+    public class RoomMapper : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapper.RoomMapperBag>
     {
-        private readonly RoomConfigIdtoConverterService _roomConfigIdtoConverterService;
+        private readonly RoomConfigMapper _roomConfigMapper;
 
-        public RoomMapperService(RoomConfigIdtoConverterService roomConfigIdtoConverterService)
+        public RoomMapper(RoomConfigMapper roomConfigMapper)
         {
-            _roomConfigIdtoConverterService = roomConfigIdtoConverterService;
+            _roomConfigMapper = roomConfigMapper;
         }
 
         public RoomDetailsDTO MapToDTO(RoomEntity entity, RoomMapperBag bag=null)
@@ -22,7 +22,7 @@ namespace SharpDj.Domain.Mapper
                 Id = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImagePath,
-                RoomConfigDTO = _roomConfigIdtoConverterService.MapToDTO(entity.ConfigEntity)
+                RoomConfigDTO = _roomConfigMapper.MapToDTO(entity.ConfigEntity)
             };
         }
 
@@ -34,7 +34,7 @@ namespace SharpDj.Domain.Mapper
                 Name = dto.Name,
                 Author = bag.Author,
                 ImagePath = dto.ImageUrl,
-                ConfigEntity = _roomConfigIdtoConverterService.MapToEntity(dto.RoomConfigDTO)
+                ConfigEntity = _roomConfigMapper.MapToEntity(dto.RoomConfigDTO)
             };
         }
 

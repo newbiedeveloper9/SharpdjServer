@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Autofac;
-using AutoMapper.Contrib.Autofac.DependencyInjection;
 using SharpDj.Domain.Mapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Management;
@@ -10,7 +9,7 @@ using Log = Serilog.Log;
 
 namespace SharpDj.Server.Application
 {
-    public class ConsoleApp
+    public class MainApp
     {
         private IContainer _container;
 
@@ -24,46 +23,42 @@ namespace SharpDj.Server.Application
             catch (Exception e)
             {
                 Log.Error(e, "An error occured while building a {@Container}", "CONTAINER");
+                return;
             }
+
+            await using var scope = _container.BeginLifetimeScope();
+
+            var server = scope.Resolve<ServerApp>();
+            server.Start();
         }
 
-        public IContainer BuildContainer()
+        private IContainer BuildContainer()
         {
+            var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             var builder = new ContainerBuilder();
-
-            builder.AddAutoMapper();
 
             builder.RegisterInstance(ServerConfig.LoadConfig())
                 .SingleInstance()
                 .As<IServerConfig>();
 
-            //builder.RegisterGeneric(typeof(IDualMapper<,>)).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
+            builder.RegisterAssemblyTypes(appAssemblies)
                 .AsClosedTypesOf(typeof(IDualMapper<,>));
-
-            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
+            builder.RegisterAssemblyTypes(appAssemblies)
                 .AsClosedTypesOf(typeof(IDualMapper<,,>));
 
-            builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
+            builder.RegisterAssemblyTypes()
                 .AsClosedTypesOf(typeof(ActionAbstract<>));
 
             builder.RegisterType<ServerContext>()
                 .AsSelf()
                 .InstancePerLifetimeScope();
 
-            /*builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(x => x.Name.EndsWith("Action"))
-                .As<IAction>()
-                .SingleInstance();*/
-
-            builder.RegisterType<ServerApp>()
-                .AsSelf()
-                .AutoActivate()
-                .OnActivated(x=>x.Instance.Start());
-
             builder.RegisterType<Setup>()
                 .AsSelf()
                 .AutoActivate();
+
+            builder.RegisterType<ServerApp>()
+                .AsSelf();
 
             return builder.Build();
         }

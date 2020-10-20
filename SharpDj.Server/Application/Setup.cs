@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using SCPackets;
 using SharpDj.Common;
 using SharpDj.Domain.Mapper;
@@ -17,16 +19,21 @@ namespace SharpDj.Server.Application
         public Setup(ServerContext context)
         {
             _context = context;
+
             try
             {
+                Log.Information("Checking database health...");
+                if (CheckDatabaseHealth() == false)
+                    return;
                 Log.Information("Initializing rooms...");
                 InitializeRooms();
+                Log.Information("Set up events...");
                 RoomSingleton.Instance.RoomInstances.AfterAdd += RoomAfterCreationNewRoom;
-                
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Error(ex.StackTrace, "An error occurred during setup");
+                Log.Fatal(e, "An error occurred while trying to setup server...");
+                throw;
             }
         }
 
@@ -45,6 +52,11 @@ namespace SharpDj.Server.Application
                 RoomSingleton.Instance.RoomInstances.Add((RoomEntityInstance)room);
                 BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(room.Id);
             }
+        }
+
+        private bool CheckDatabaseHealth()
+        {
+            return _context.Database.CanConnect();
         }
     }
 }

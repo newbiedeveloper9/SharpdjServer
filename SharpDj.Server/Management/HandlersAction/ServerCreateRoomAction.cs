@@ -18,12 +18,12 @@ namespace SharpDj.Server.Management.HandlersAction
     public class ServerCreateRoomAction : ActionAbstract<CreateRoomRequest>
     {
         private readonly ServerContext _context;
-        private readonly RoomMapperService _roomMapperService;
+        private readonly RoomMapper _roomMapper;
 
-        public ServerCreateRoomAction(ServerContext context, RoomMapperService roomMapperService)
+        public ServerCreateRoomAction(ServerContext context, RoomMapper roomMapper)
         {
             _context = context;
-            _roomMapperService = roomMapperService;
+            _roomMapper = roomMapper;
         }
 
         public override async Task Action(CreateRoomRequest req, Connection conn)
@@ -36,8 +36,8 @@ namespace SharpDj.Server.Management.HandlersAction
                 if (ext.SendRequestOrIsNull(author) || !Validate(req, ext))
                     return;
 
-                var room = _roomMapperService.MapToEntity(req.RoomDetailsModel,
-                    new RoomMapperService.RoomMapperBag(author.UserEntity));
+                var room = _roomMapper.MapToEntity(req.RoomDetailsModel,
+                    new RoomMapper.RoomMapperBag(author.UserEntity));
 
                 _context.Rooms.Add(room);
                 await _context.SaveChangesAsync();

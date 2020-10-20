@@ -41,7 +41,7 @@ namespace SharpDj.Server.Management.HandlersAction
                 var post = new RoomChatPostEntity()
                 {
                     Author = active.UserEntity,
-                    Color = request.Post.Color.ToString(),
+                    Color = request.Post.Color.RGB,
                     Text = request.Post.Message
                 };
 

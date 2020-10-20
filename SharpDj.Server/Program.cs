@@ -16,32 +16,39 @@ namespace SharpDj.Server
     {
         private static async Task Main()
         {
-            try
-            {
-                var log = new LoggerConfiguration()
-                    .WriteTo.Console()
-                    .WriteTo.File(@"logs\.txt", rollingInterval: RollingInterval.Day)
-                    .CreateLogger();
-                Log.Logger = log;
-
-                await new ConsoleApp().Run().ConfigureAwait(false);
-                Listening();
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.StackTrace);
-            }
+            AppDomain.MonitoringIsEnabled = true;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+            SetupLogging();
+            await new MainApp().Run().ConfigureAwait(false);
+            Listening();
 
             Log.Information("The process scope has ended.");
         }
 
+        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Log.Error(e.ExceptionObject.ToString());
+        }
+
+        private static void SetupLogging()
+        {
+            var log = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File(@"logs\.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            Log.Logger = log;
+        }
+
         private static void Listening()
         {
-            var closeCommands = new[] {"exit", "quit", "q", "close", "stop"};
+            var closeCommands = new[] { "exit", "quit", "q", "close", "stop" };
             while (true)
             {
                 var currentCommand = Console.ReadLine();
-                if (closeCommands.Any(x => x.Equals(currentCommand))) break;
+                if (closeCommands.Any(x => x.Equals(currentCommand)))
+                {
+                    break;
+                }
             }
         }
     }

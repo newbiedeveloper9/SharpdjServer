@@ -17,7 +17,6 @@ namespace SharpDj.Server.Application
     {
         private readonly IServerConfig _config;
         private readonly ServerContext _context;
-        private readonly IComponentContext _componentContext;
 
         private readonly ServerConnectionContainer _connectionContainer;
         private readonly IEnumerable<IAction> _actionRegisterList;
@@ -26,7 +25,6 @@ namespace SharpDj.Server.Application
         {
             _config = config;
             _context = context;
-            _componentContext = componentContext;
 
             Log.Information("Starting server on socket {@IP}:{@Port}...",
                 _config.Ip, _config.Port);
@@ -36,7 +34,7 @@ namespace SharpDj.Server.Application
                     await ServerConnectionLost(connection, type, closeReason);
             _connectionContainer.ConnectionEstablished += ServerConnectionEstablished;
 
-            _actionRegisterList = _componentContext.Resolve<IEnumerable<IAction>>();
+            _actionRegisterList = componentContext.Resolve<IEnumerable<IAction>>();
         }
 
         public void Start()
@@ -70,7 +68,7 @@ namespace SharpDj.Server.Application
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace);
+                Log.Error(ex, "An error occurred while trying to establish connection");
             }
         }
     }

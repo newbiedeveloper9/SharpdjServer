@@ -8,4 +8,8 @@
     <PackageReference Include="Network" Version="6.1.4.20" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

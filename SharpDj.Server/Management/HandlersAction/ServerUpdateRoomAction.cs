@@ -17,12 +17,12 @@ namespace SharpDj.Server.Management.HandlersAction
     public class ServerUpdateRoomAction : ActionAbstract<UpdateRoomRequest>
     {
         private readonly ServerContext _context;
-        private readonly RoomMapperService _roomMapperService;
+        private readonly RoomMapper _roomMapper;
 
-        public ServerUpdateRoomAction(ServerContext context, RoomMapperService roomMapperService)
+        public ServerUpdateRoomAction(ServerContext context, RoomMapper roomMapper)
         {
             _context = context;
-            _roomMapperService = roomMapperService;
+            _roomMapper = roomMapper;
         }
         public override async Task Action(UpdateRoomRequest req, Connection connection)
         {
@@ -45,16 +45,16 @@ namespace SharpDj.Server.Management.HandlersAction
 
                 if (room?.Author.Id == active.UserEntity.Id)
                 {
-                    roomInstance = (RoomEntityInstance)_roomMapperService
-                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.UserEntity));
-                    room = _roomMapperService
-                        .MapToEntity(req.RoomDetails, new RoomMapperService.RoomMapperBag(active.UserEntity));
+                    roomInstance = (RoomEntityInstance)_roomMapper
+                        .MapToEntity(req.RoomDetails, new RoomMapper.RoomMapperBag(active.UserEntity));
+                    room = _roomMapper
+                        .MapToEntity(req.RoomDetails, new RoomMapper.RoomMapperBag(active.UserEntity));
 
                     await _context.SaveChangesAsync();
 
                     var response = new UpdateRoomResponse(UpdateRoomResult.Success, req)
                     {
-                        RoomDetails = _roomMapperService.MapToDTO(room)
+                        RoomDetails = _roomMapper.MapToDTO(room)
                     };
                     ext.SendPacket(response);
 
