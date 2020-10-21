@@ -3,12 +3,12 @@ using System.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SCPackets;
+using Serilog;
 using SharpDj.Common;
 using SharpDj.Domain.Mapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
-using Log = Serilog.Log;
 
 namespace SharpDj.Server.Application
 {

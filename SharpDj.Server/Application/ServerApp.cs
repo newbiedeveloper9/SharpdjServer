@@ -5,6 +5,7 @@ using Autofac;
 using Network;
 using Network.Enums;
 using SCPackets.Packets.Disconnect;
+using SharpDj.Domain.Builders;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
@@ -18,7 +19,7 @@ namespace SharpDj.Server.Application
         private readonly IServerConfig _config;
         private readonly ServerContext _context;
 
-        private readonly ServerConnectionContainer _connectionContainer;
+        private readonly ServerConnectionContainer _serverContainer;
         private readonly IEnumerable<IAction> _actionRegisterList;
 
         public ServerApp(IServerConfig config, ServerContext context, IComponentContext componentContext)
@@ -29,17 +30,21 @@ namespace SharpDj.Server.Application
             Log.Information("Starting server on socket {@IP}:{@Port}...",
                 _config.Ip, _config.Port);
 
-            _connectionContainer = ConnectionFactory.CreateSecureServerConnectionContainer(config.Ip, config.Port, config.RSAKeySize, false);
-            _connectionContainer.ConnectionLost += async (connection, type, closeReason) =>
+            _serverContainer = new ServerBuilder()
+                .ConfigureServer(_config.Ip, _config.Port)
+                .SetRSA(config.RSAKeySize)
+                .Build();
+
+            _serverContainer.ConnectionLost += async (connection, type, closeReason) =>
                     await ServerConnectionLost(connection, type, closeReason);
-            _connectionContainer.ConnectionEstablished += ServerConnectionEstablished;
+            _serverContainer.ConnectionEstablished += ServerServerEstablished;
 
             _actionRegisterList = componentContext.Resolve<IEnumerable<IAction>>();
         }
 
         public void Start()
         {
-            _connectionContainer.Start();
+            _serverContainer.Start();
             Log.Information("Server is running!");
         }
 
@@ -50,13 +55,13 @@ namespace SharpDj.Server.Application
             Log.Warning("{@IP} connection lost", connection.IPRemoteEndPoint);
         }
 
-        private void ServerConnectionEstablished(Connection connection, ConnectionType connectionType)
+        private void ServerServerEstablished(Connection connection, ConnectionType connectionType)
         {
             try
             {
                 Log.Information(
                     "{@Count} {@TypeEntity} connected on port {@IP}",
-                    _connectionContainer.Count, connection.GetType(), connection.IPRemoteEndPoint.Port);
+                    _serverContainer.Count, connection.GetType(), connection.IPRemoteEndPoint.Port);
 
                 connection.EnableLogging = _config.Logging;
                 connection.LogIntoStream(Console.OpenStandardOutput());

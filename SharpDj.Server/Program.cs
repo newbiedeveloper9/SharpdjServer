@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Exceptions;
+using Serilog.Formatting.Json;
 using SharpDj.Server.Application;
 using SharpDj.Server.Management;
 
@@ -14,12 +17,19 @@ namespace SharpDj.Server
 {
     internal class Program
     {
+        private static IContainer _container;
+
         private static async Task Main()
         {
-            AppDomain.MonitoringIsEnabled = true;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+
+            _container = _container.BuildContainer();
+            await using var scope = _container.BeginLifetimeScope();
+
             SetupLogging();
-            await new MainApp().Run().ConfigureAwait(false);
+            var setup = scope.Resolve<Setup>();
+            var server = scope.Resolve<ServerApp>();
+            server.Start();
             Listening();
 
             Log.Information("The process scope has ended.");
@@ -32,11 +42,19 @@ namespace SharpDj.Server
 
         private static void SetupLogging()
         {
-            var log = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File(@"logs\.txt", rollingInterval: RollingInterval.Day)
+            using var scope = _container.BeginLifetimeScope();
+            var configuration = scope.Resolve<IConfiguration>();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.WithExceptionDetails()
+                .ReadFrom.Configuration(configuration)
+                .WriteTo.File(
+                    new JsonFormatter(renderMessage: true),
+                    @"logs\\log..txt", 
+                    rollingInterval:RollingInterval.Day)
                 .CreateLogger();
-            Log.Logger = log;
         }
 
         private static void Listening()

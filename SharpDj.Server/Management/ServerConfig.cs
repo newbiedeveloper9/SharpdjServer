@@ -8,9 +8,9 @@ namespace SharpDj.Server.Management
 {
     public class ServerConfig : IServerConfig
     {
-        [JsonRequired] public int Port { get; set; } = 5666;
+        [JsonRequired] public short Port { get; set; } = 5666;
         [JsonRequired] public string Ip { get; set; } = "127.0.0.1";
-        public int RSAKeySize { get; set; } = 2048;
+        public short? RSAKeySize { get; set; } = null;
         public bool Logging { get; set; } = false;
 
         public static ServerConfig LoadConfig(string configFile = "config.json")
@@ -54,9 +54,9 @@ namespace SharpDj.Server.Management
 
     public interface IServerConfig
     {
-        int Port { get; set; }
+        short Port { get; set; }
         string Ip { get; set; }
-        int RSAKeySize { get; set; }
+        short? RSAKeySize { get; set; }
         bool Logging { get; set; }
     }
 }
