@@ -7,15 +7,11 @@ namespace SharpDj.Domain.Entity
 {
     public class UserEntity
     {
-        public int Id { get; set; }
+        public ulong Id { get; set; }
         public string Username { get; set; }
-
-        [EmailAddress]
-        public string Email { get; set; }
         public Rank Rank { get; set; }
-
+        public string Email { get; set; }
         public UserAuthEntity UserAuthEntity { get; set; }
-
         public ICollection<UserEntity> Friends { get; set; }
         public string AvatarUrl { get; set; } = "";
 

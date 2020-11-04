@@ -6,7 +6,7 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomMapper : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapper.RoomMapperBag>
+    public class RoomMapper : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapperBag>
     {
         private readonly RoomConfigMapper _roomConfigMapper;
 
@@ -36,16 +36,6 @@ namespace SharpDj.Domain.Mapper
                 ImagePath = dto.ImageUrl,
                 ConfigEntity = _roomConfigMapper.MapToEntity(dto.RoomConfigDTO)
             };
-        }
-
-        public class RoomMapperBag
-        {
-            public UserEntity Author { get; set; }
-
-            public RoomMapperBag(UserEntity author)
-            {
-                Author = author;
-            }
         }
     }
 }

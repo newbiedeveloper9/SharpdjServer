@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SharpDj.Domain.Entity;
+using SharpDj.Domain.Repository;
 using Claim = System.Security.Claims.Claim;
 
 namespace SharpDj.Infrastructure
 {
-    public class ServerContext : DbContext
+    public class ServerContext : DbContext, IUnitOfWork
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -25,14 +28,13 @@ namespace SharpDj.Infrastructure
         public DbSet<UserAuthEntity> UserAuths { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoomConfigEntity> RoomConfigs { get; set; }
-        public DbSet<RoomChatPostEntity> RoomChatPosts { get; set; }
-        public DbSet<RecordEntity> MediaHistories { get; set; }
-        public DbSet<LogEntity> Logs { get; set; }
-        public DbSet<ConversationMessageEntity> ConversationMessages { get; set; }
-        public DbSet<ConversationEntity> Conversations { get; set; }
+        public DbSet<RoomChatMessageEntity> RoomChatPosts { get; set; }
         public DbSet<UserConnectionEntity> Connections { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
 
-
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
     }
 }

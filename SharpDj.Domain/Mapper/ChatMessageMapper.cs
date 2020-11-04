@@ -6,26 +6,26 @@ using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class ChatMessageMapper : IDualMapper<RoomChatPostEntity, ChatMessage>
+    public class ChatMessageMapper : IDualMapper<RoomChatMessageEntity, ChatMessage>
     {
-        public ChatMessage MapToDTO(RoomChatPostEntity entity)
+        public ChatMessage MapToDTO(RoomChatMessageEntity entity)
         {
             return new ChatMessage()
             {
-                Author = entity.Author.ToUserClient(),
+                Author = entity.User.ToUserClient(),
                 Color = new Color().SetColor(entity.Color),
                 Message = entity.Text,
                 Id = entity.Id
             };
         }
 
-        public RoomChatPostEntity MapToEntity(ChatMessage dto)
+        public RoomChatMessageEntity MapToEntity(ChatMessage dto)
         {
-            return new RoomChatPostEntity()
+            return new RoomChatMessageEntity()
             {
                 Id = dto.Id,
                 Color = dto.Color.RGB,
-                Author = new UserEntity()
+                User = new UserEntity()
                 {
                     Id = (int)dto.Author.Id,
                     Username = dto.Author.Username,

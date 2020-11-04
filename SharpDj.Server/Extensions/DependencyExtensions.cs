@@ -8,6 +8,10 @@ using Microsoft.Extensions.Configuration;
 using SharpDj.Domain.Mapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application;
+using SharpDj.Server.Application.Bags;
+using SharpDj.Server.Application.Handlers;
+using SharpDj.Server.Application.Handlers.CoR;
+using SharpDj.Server.Application.Management.Config;
 using SharpDj.Server.Extensions;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
@@ -18,9 +22,9 @@ namespace SharpDj.Server
     {
         private static ContainerBuilder RegisterServerConfig(this ContainerBuilder builder)
         {
-            builder.RegisterInstance(ServerConfig.LoadConfig())
+            builder.RegisterInstance(Config.LoadConfig())
                 .SingleInstance()
-                .As<IServerConfig>();
+                .As<IConfig>();
 
             return builder;
         }
@@ -30,13 +34,13 @@ namespace SharpDj.Server
             builder.RegisterType<Setup>()
                 .AsSelf();
 
-            builder.RegisterType<ServerApp>()
+            builder.RegisterType<App>()
                 .AsSelf();
 
             return builder;
         }
 
-        private static ContainerBuilder RegisterMappers(this ContainerBuilder builder)
+        private static ContainerBuilder RegisterAssemblies(this ContainerBuilder builder)
         {
             var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -44,6 +48,23 @@ namespace SharpDj.Server
                 .AsClosedTypesOf(typeof(IDualMapper<,>));
             builder.RegisterAssemblyTypes(appAssemblies)
                 .AsClosedTypesOf(typeof(IDualMapper<,,>));
+
+            builder.RegisterAssemblyTypes(appAssemblies)
+                .AsClosedTypesOf(typeof(IDictionaryConverter<>));
+
+            builder.RegisterAssemblyTypes(appAssemblies)
+                .InNamespaceOf<AbstractHandler>()
+                .PublicOnly()
+                .Where(x => x.Name.EndsWith("Handler"))
+                .SingleInstance()
+                .AsSelf();
+
+            builder.RegisterAssemblyTypes(appAssemblies)
+                .InNamespace("SharpDj.Server.Application.Handlers")
+                .PublicOnly()
+                .Where(x => x.Name.StartsWith("Server") && x.Name.EndsWith("Action"))
+                .SingleInstance()
+                .As<IAction>();
 
             return builder;
         }
@@ -61,18 +82,15 @@ namespace SharpDj.Server
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterAssemblyTypes()
-                .AsClosedTypesOf(typeof(ActionAbstract<>));
-
             builder.RegisterType<ServerContext>()
                 .AsSelf()
                 .InstancePerLifetimeScope();
 
             builder.RegisterAppSettings()
                 .RegisterServerConfig()
-                .RegisterMappers()
+                .RegisterAssemblies()
                 .RegisterServer();
-                
+
 
             container = builder.Build();
             return container;

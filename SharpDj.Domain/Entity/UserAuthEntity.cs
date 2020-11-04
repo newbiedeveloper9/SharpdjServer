@@ -6,7 +6,7 @@ namespace SharpDj.Domain.Entity
 {
     public class UserAuthEntity
     {
-        public int Id { get; set; }
+        public ulong Id { get; set; }
         public string Login { get; set; }
         public string Hash { get; set; }
         public string Salt { get; set; }

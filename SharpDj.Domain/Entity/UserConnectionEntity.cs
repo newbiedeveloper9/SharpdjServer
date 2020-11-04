@@ -6,10 +6,10 @@ namespace SharpDj.Domain.Entity
 {
     public class UserConnectionEntity
     {
-        public int Id { get; set; }
+        public ulong Id { get; set; }
         public UserEntity UserEntity { get; set; }
         public string Ip { get; set; }
-        public int Port { get; set; }
+        public int ServerPort { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [DataType(DataType.Date)]

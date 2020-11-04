@@ -111,7 +111,7 @@ namespace SharpDj.Infrastructure.Migrations
                     b.ToTable("MediaHistories");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatPostEntity", b =>
+            modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatMessageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -239,7 +239,7 @@ namespace SharpDj.Infrastructure.Migrations
                     b.Property<string>("Ip")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Port")
+                    b.Property<int>("ServerPort")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserEntityId")
@@ -293,7 +293,7 @@ namespace SharpDj.Infrastructure.Migrations
 
             modelBuilder.Entity("SharpDj.Domain.Entity.ConversationMessageEntity", b =>
                 {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "Author")
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -301,7 +301,7 @@ namespace SharpDj.Infrastructure.Migrations
                         .WithMany("Messages")
                         .HasForeignKey("ConversationEntityId");
 
-                    b.Navigation("Author");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.LogEntity", b =>
@@ -320,9 +320,9 @@ namespace SharpDj.Infrastructure.Migrations
                         .HasForeignKey("RoomEntityId");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatPostEntity", b =>
+            modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatMessageEntity", b =>
                 {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "Author")
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -330,12 +330,12 @@ namespace SharpDj.Infrastructure.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("RoomEntityId");
 
-                    b.Navigation("Author");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomEntity", b =>
                 {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "Author")
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -343,7 +343,7 @@ namespace SharpDj.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ConfigEntityId");
 
-                    b.Navigation("Author");
+                    b.Navigation("User");
 
                     b.Navigation("ConfigEntity");
                 });

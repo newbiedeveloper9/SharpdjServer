@@ -9,7 +9,7 @@ namespace SharpDj.Common
 {
     public class ListWrapper<TObj>
     {
-        public List<TObj> Wrapper { get; set; }
+        public List<TObj> Wrapper { get; private set; }
 
         public ListWrapper()
         {
@@ -17,7 +17,7 @@ namespace SharpDj.Common
         }
 
         #region Implementation
-        [PacketIgnoreProperty] 
+        [PacketIgnoreProperty]
         public int Count => Wrapper.Count();
 
         public IReadOnlyCollection<TObj> GetList() =>
@@ -50,6 +50,16 @@ namespace SharpDj.Common
 
         #endregion Implementation
 
+        #region LINQ
+
+        public TObj FirstOrDefault(Func<TObj, bool> predicate)
+        {
+            return Wrapper.FirstOrDefault(predicate);
+        }
+
+        #endregion LINQ
+
+
         #region Events
         public event EventHandler<UpdateEventArgs> AfterUpdate;
         protected virtual void OnAfterUpdate(UpdateEventArgs e)
@@ -57,7 +67,7 @@ namespace SharpDj.Common
             var handler = AfterUpdate;
             handler?.Invoke(this, e);
 
-            if(e.State == UpdateEventArgs.UpdateState.Remove)
+            if (e.State == UpdateEventArgs.UpdateState.Remove)
                 OnAfterRemove(new AfterRemoveEventArgs(e.Item));
             else
                 OnAfterAdd(new AfterAddEventArgs(e.Item));
