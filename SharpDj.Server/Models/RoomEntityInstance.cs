@@ -1,18 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using SharpDj.Common;
-using SharpDj.Common.Enums;
-using SharpDj.Domain.Entity;
-using SharpDj.Server.Management.Strategy;
-using SharpDj.Server.Singleton;
 using SharpDj.Common.DTO;
-using SharpDj.Server.Application.Models;
-using Log = Serilog.Log;
+using SharpDj.Common.ListWrapper;
+using SharpDj.Domain.Entity;
+using SharpDj.Server.Models;
+using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Models
+namespace SharpDj.Server.Application.Models
 {
     [NotMapped]
     public class RoomEntityInstance : RoomEntity
@@ -20,20 +18,18 @@ namespace SharpDj.Server.Models
         public int AmountOfPeople => Users.Count();
         public int AmountOfAdministration => Users.Count(x => x.UserEntity.Rank > 0);
 
-        public ITrackStrategy TrackStrategy { get; }
         public TrackDTO CurrentTrack => Tracks.FirstOrDefault();
 
-        public RoomHelper ActionHelper { get; }
+        public RoomHelper TemporaryRoomHelper { get; } //remove it
         public ListWrapper<TrackDTO> Tracks { get; }
         public ListWrapper<ServerUserModel> Users { get; }
 
 
-        public RoomEntityInstance( )
+        public RoomEntityInstance()
         {
             Tracks = new ListWrapper<TrackDTO>();
             Users = new ListWrapper<ServerUserModel>();
-            TrackStrategy = new TrackJustOnce();
-            ActionHelper = new RoomHelper(Users);
+            TemporaryRoomHelper = new RoomHelper(Users);
 
             TimeLeftReached += TimeReachedZero;
             Users.AfterUpdate += UsersOnAfterUpdate;
@@ -49,14 +45,16 @@ namespace SharpDj.Server.Models
             squareBuffer.UpdatedRooms.Add(ToRoomOutsideModel());
         }
 
-        private void UsersOnAfterUpdate(object sender, ListWrapper<ServerUserModel>.UpdateEventArgs e)
+        private void UsersOnAfterUpdate(object sender, UpdateEventArgs<ServerUserModel> e)
         {
             var clientUser = e.Item.UserEntity.ToUserClient();
             var buffer = BufferSingleton.Instance.RoomUserListBufferManager.GetByRoomId(Id);
             if (buffer == null)
-                Log.Debug($"ROOM ID: [{Id}]| Buffer cannot find roomDetails by id");
+            {
+                Log.Debug($"ROOM ID: [@RoomId]| Buffer cannot find roomDetails by id", Id);
+            }
 
-            if (e.State == ListWrapper<ServerUserModel>.UpdateEventArgs.UpdateState.Remove)
+            if (e.State == UpdateEventArgs<ServerUserModel>.UpdateState.Remove)
                 buffer.RequestPacket.RemoveUsers.Add(clientUser);
             else
                 buffer.RequestPacket.InsertUsers.Add(clientUser);
@@ -87,9 +85,11 @@ namespace SharpDj.Server.Models
 
         private void TimeReachedZero(object sender, EventArgs e)
         {
-            TrackStrategy.NextTrack(Tracks.Wrapper);
+            //TrackStrategy.NextTrack(Tracks.Wrapper); xd
             if (CurrentTrack != null)
+            {
                 TimeLeft = CurrentTrack.Duration;
+            }
 
             BufferSingleton.Instance.SquareRoomBufferManager.GetRequest().UpdatedRooms.Add(ToRoomOutsideModel());
         }

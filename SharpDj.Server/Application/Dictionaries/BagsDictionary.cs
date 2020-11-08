@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SharpDj.Server.Management.HandlersAction;
+using SharpDj.Server.Application.Dictionaries.Bags;
 
-namespace SharpDj.Server.Application.Bags
+namespace SharpDj.Server.Application.Dictionaries
 {
     public class BagsDictionary : IDictionaryConverter<IActionBag>
     {

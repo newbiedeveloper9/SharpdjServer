@@ -1,5 +1,6 @@
 ﻿using SharpDj.Common.DTO;
 using System.Threading.Tasks;
+using SharpDj.Domain.Interfaces;
 
 namespace SharpDj.Domain.Services
 {

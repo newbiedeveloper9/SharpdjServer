@@ -2,10 +2,9 @@
 using System.Linq;
 using Network;
 using SCPackets.Packets.Buffers;
-using Serilog;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Management.Buffers
+namespace SharpDj.Server.Application.Management.Buffers
 {
     public class RoomUserListBufferManager : BufferManager<RoomUserListBufferRequest>
     {
@@ -32,7 +31,7 @@ namespace SharpDj.Server.Management.Buffers
                 var roomInstance = RoomSingleton.Instance.RoomInstances
                     .FirstOrDefault(x => x.Id == roomId);
 
-                buffer.Connections = new List<Connection>(roomInstance.ActionHelper.GetConnections);
+                buffer.Connections = new List<Connection>(roomInstance.TemporaryRoomHelper.GetConnections);
 
                 var packet = buffer.RequestPacket;
                 buffer.CanSend = (packet.InsertUsers.Any() ||

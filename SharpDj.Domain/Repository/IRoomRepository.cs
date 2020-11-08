@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using SharpDj.Domain.Entity;
+using SharpDj.Domain.SeedWork;
 
 namespace SharpDj.Domain.Repository
 {

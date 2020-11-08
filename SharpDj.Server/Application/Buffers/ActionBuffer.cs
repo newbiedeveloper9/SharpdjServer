@@ -4,7 +4,7 @@ using Network;
 using Network.Packets;
 using Serilog;
 
-namespace SharpDj.Server.Management.Buffers
+namespace SharpDj.Server.Application.Management.Buffers
 {
     public class ActionBuffer<TReq> where TReq : RequestPacket
 

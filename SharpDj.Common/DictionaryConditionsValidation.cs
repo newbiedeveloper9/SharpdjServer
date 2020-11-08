@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace SharpDj.Server.Management
+namespace SharpDj.Server.Application.Management
 {
     public class DictionaryConditionsValidation<TEnum> where TEnum : Enum
     {

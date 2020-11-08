@@ -1,6 +1,4 @@
-﻿using SharpDj.Domain.SeedWork;
-
-namespace SharpDj.Domain.Repository
+﻿namespace SharpDj.Domain.SeedWork
 {
     public interface IRepository
     {

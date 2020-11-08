@@ -1,4 +1,5 @@
 ﻿using SharpDj.Domain.Entity;
+using SharpDj.Domain.SeedWork;
 
 namespace SharpDj.Domain.Repository
 {

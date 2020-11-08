@@ -4,11 +4,11 @@ using Serilog;
 using SharpDj.Common;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
-using SharpDj.Server.Application.Bags;
-using SharpDj.Server.Management;
-using SharpDj.Server.Management.HandlersAction;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SharpDj.Server.Application.Dictionaries;
+using SharpDj.Server.Application.Dictionaries.Bags;
+using SharpDj.Server.Application.Management;
 
 namespace SharpDj.Server.Application.Handlers
 {

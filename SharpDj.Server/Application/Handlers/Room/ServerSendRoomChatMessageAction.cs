@@ -3,13 +3,12 @@ using SCPackets.Packets.CreateRoomMessage;
 using Serilog;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
-using SharpDj.Server.Application.Bags;
-using SharpDj.Server.Application.Dictionaries.Bags;
-using SharpDj.Server.Management.HandlersAction;
-using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SharpDj.Server.Application.Dictionaries;
+using SharpDj.Server.Application.Dictionaries.Bags;
+using SharpDj.Server.Application.Models;
 
 namespace SharpDj.Server.Application.Handlers
 {
@@ -48,7 +47,7 @@ namespace SharpDj.Server.Application.Handlers
             room.Posts.Add(chatMessage);
             await _roomRepository.UpdateRoom(room);
 
-            activeRoomInstance.ActionHelper.MessageDistribute(request, currentUser.UserEntity.ToUserClient());
+            activeRoomInstance.TemporaryRoomHelper.MessageDistribute(request, currentUser.UserEntity.ToUserClient());
 
             await connection.SendAsync<CreateRoomMessageResponse>(
                 new CreateRoomMessageResponse(CreateRoomMessageResult.Success, request));

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SharpDj.Server.Application.Bags
+namespace SharpDj.Server.Application.Dictionaries
 {
     public interface IDictionaryConverter<TBase>
     {

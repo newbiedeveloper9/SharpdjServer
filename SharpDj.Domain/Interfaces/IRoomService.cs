@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SharpDj.Common.DTO;
 
-namespace SharpDj.Domain.Services
+namespace SharpDj.Domain.Interfaces
 {
     public interface IRoomService
     {

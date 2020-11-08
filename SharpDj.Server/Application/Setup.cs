@@ -1,11 +1,12 @@
 ﻿using System;
 using Serilog;
 using SharpDj.Common;
+using SharpDj.Common.ListWrapper;
 using SharpDj.Infrastructure;
-using SharpDj.Server.Models;
+using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Management
+namespace SharpDj.Server.Application.Management
 {
     public class Setup
     {
@@ -23,7 +24,7 @@ namespace SharpDj.Server.Management
                 Log.Information("Initializing rooms...");
                 InitializeRooms();
                 Log.Information("Set up events...");
-                RoomSingleton.Instance.RoomInstances.AfterAdd += RoomAfterCreationNewRoom;
+                RoomSingleton.Instance.RoomInstances.AfterAdd += RoomInstancesOnAfterAdd;
             }
             catch (Exception e)
             {
@@ -32,7 +33,7 @@ namespace SharpDj.Server.Management
             }
         }
 
-        private void RoomAfterCreationNewRoom(object sender, ListWrapper<RoomEntityInstance>.AfterAddEventArgs e)
+        private void RoomInstancesOnAfterAdd(object sender, AfterAddEventArgs<RoomEntityInstance> e)
         {
             BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(e.Item.Id);
 

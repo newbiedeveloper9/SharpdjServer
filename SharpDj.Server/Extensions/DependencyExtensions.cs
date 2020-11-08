@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Autofac;
-using Autofac.Builder;
 using Microsoft.Extensions.Configuration;
 using SharpDj.Domain.Interfaces;
-using SharpDj.Domain.Mapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application;
-using SharpDj.Server.Application.Bags;
+using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Handlers;
 using SharpDj.Server.Application.Handlers.CoR;
+using SharpDj.Server.Application.Management;
 using SharpDj.Server.Application.Management.Config;
-using SharpDj.Server.Extensions;
-using SharpDj.Server.Management;
-using SharpDj.Server.Management.HandlersAction;
 
-namespace SharpDj.Server
+namespace SharpDj.Server.Extensions
 {
     public static class DependencyExtensions
     {

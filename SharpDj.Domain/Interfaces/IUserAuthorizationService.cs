@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SharpDj.Common.DTO;
-using SharpDj.Domain.Entity;
 
-namespace SharpDj.Domain.Services
+namespace SharpDj.Domain.Interfaces
 {
     public interface IUserAuthorizationService
     {

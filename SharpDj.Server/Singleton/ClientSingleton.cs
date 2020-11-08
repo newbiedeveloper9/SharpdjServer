@@ -1,8 +1,8 @@
 ﻿using System;
 using SCPackets;
 using SharpDj.Common;
+using SharpDj.Common.ListWrapper;
 using SharpDj.Server.Application.Models;
-using SharpDj.Server.Models;
 
 namespace SharpDj.Server.Singleton
 {
@@ -12,6 +12,7 @@ namespace SharpDj.Server.Singleton
             new Lazy<ClientSingleton>(() => new ClientSingleton());
 
         public static ClientSingleton Instance => lazy.Value;
+        public ListWrapper<ServerUserModel> Users { get; set; }
 
         private ClientSingleton()
         {
@@ -19,15 +20,13 @@ namespace SharpDj.Server.Singleton
             Users.AfterRemove += AfterUserDisconnect;
         }
 
-        private void AfterUserDisconnect(object sender, ListWrapper<ServerUserModel>.AfterRemoveEventArgs e)
+        private void AfterUserDisconnect(object sender, AfterRemoveEventArgs<ServerUserModel> e)
         {
             foreach (var room in RoomSingleton.Instance.RoomInstances.GetList())
             {
                 room.Users.Remove(e.Item);
             }
         }
-
-        public ListWrapper<ServerUserModel> Users { get; set; }
     }
 
 }

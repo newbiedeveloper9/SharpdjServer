@@ -12,7 +12,8 @@ using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Json;
 using SharpDj.Server.Application;
-using SharpDj.Server.Management;
+using SharpDj.Server.Application.Management;
+using SharpDj.Server.Extensions;
 
 namespace SharpDj.Server
 {
