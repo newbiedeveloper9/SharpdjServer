@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace SharpDj.Domain.Mapper
+﻿namespace SharpDj.Domain.Interfaces
 {
     public interface IDualMapper<TEntity, TDto>
     {
-        TDto MapToDTO(TEntity entity);
+        TDto MapToDto(TEntity entity);
         TEntity MapToEntity(TDto dto);
     }
 
     public interface IDualMapper<TEntity, TDto, TBag>
     {
-        TDto MapToDTO(TEntity entity, TBag mapperBag);
+        TDto MapToDto(TEntity entity, TBag mapperBag);
         TEntity MapToEntity(TDto dto, TBag mapperBag);
     }
 }

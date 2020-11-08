@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SharpDj.Common.DTO;
+﻿using SharpDj.Common.DTO;
 using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomConfigMapper : IDualMapper<RoomConfigEntity, RoomConfigDTO>
+    public class RoomConfigMapper : IRoomConfigMapper
     {
-        public RoomConfigDTO MapToDTO(RoomConfigEntity roomConfigEntity)
+        public RoomConfigDTO MapToDto(RoomConfigEntity roomConfigEntity)
         {
             return new RoomConfigDTO()
             {

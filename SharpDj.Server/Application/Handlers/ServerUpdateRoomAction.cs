@@ -18,10 +18,12 @@ namespace SharpDj.Server.Application.Handlers
 {
     public class ServerUpdateRoomAction : RequestHandler<UpdateRoomRequest>
     {
-        private readonly RoomMapper _roomMapper;
+        private readonly IRoomMapper _roomMapper;
         private readonly IRoomRepository _roomRepository;
 
-        public ServerUpdateRoomAction(RoomMapper roomMapper, IRoomRepository roomRepository, IDictionaryConverter<IActionBag> dictionaryConverter)
+        public ServerUpdateRoomAction(IRoomMapper roomMapper, 
+            IRoomRepository roomRepository, 
+            IDictionaryConverter<IActionBag> dictionaryConverter)
             : base(dictionaryConverter)
         {
             _roomMapper = roomMapper;
@@ -50,7 +52,7 @@ namespace SharpDj.Server.Application.Handlers
             await _roomRepository.UpdateRoom(room);
             await _roomRepository.UnitOfWork.SaveChangesAsync();
 
-            response = new UpdateRoomResponse(UpdateRoomResult.Success, _roomMapper.MapToDTO(room), req);
+            response = new UpdateRoomResponse(UpdateRoomResult.Success, _roomMapper.MapToDto(room), req);
             await connection.SendAsync<UpdateRoomResponse>(response);
             ((RoomEntityInstance)room)?.SendUpdateRequest();
         }

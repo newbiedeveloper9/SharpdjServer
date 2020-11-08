@@ -18,7 +18,9 @@ namespace SharpDj.Server.Application.Handlers
         private readonly IRoomRepository _roomRepository;
         private readonly IChatMessageFactory _chatMessageFactory;
 
-        public ServerSendRoomChatMessageAction(IRoomRepository roomRepository, IChatMessageFactory chatMessageFactory, IDictionaryConverter<IActionBag> bagsConverter)
+        public ServerSendRoomChatMessageAction(IRoomRepository roomRepository, 
+            IChatMessageFactory chatMessageFactory, 
+            IDictionaryConverter<IActionBag> bagsConverter)
             : base(bagsConverter)
         {
             _roomRepository = roomRepository;

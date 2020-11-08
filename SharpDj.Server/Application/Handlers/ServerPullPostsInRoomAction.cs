@@ -69,7 +69,7 @@
 //
 //                 var response = new PullRoomChatResponse(PullRoomChatResult.Success);
 //                 response.Posts = roomChatPosts
-//                     .Select(x => _chatMessageMapper.MapToDTO(x))
+//                     .Select(x => _chatMessageMapper.MapToDto(x))
 //                     .ToList();
 //
 //                 conn.Send(response);

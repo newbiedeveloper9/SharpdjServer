@@ -1,4 +1,5 @@
-﻿using SCPackets.Packets.Buffers;
+﻿using System.Linq;
+using SCPackets.Packets.Buffers;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 
@@ -6,7 +7,7 @@ namespace SharpDj.Server.Management.Buffers
 {
     public class SquareRoomBufferManager : BufferManager<SquareRoomBufferRequest>
     {
-        public SquareRoomBufferManager() : base(8000)
+        public SquareRoomBufferManager() : base(10_000)
         {
             CreateBuffer();
         }
@@ -32,9 +33,9 @@ namespace SharpDj.Server.Management.Buffers
                             .GetAllConnections();
 
                     var packet = actionBuffer.RequestPacket;
-                    actionBuffer.CanSend = (packet.InsertRooms.Count > 0 ||
-                                            packet.RemoveRooms.Count > 0 ||
-                                            packet.UpdatedRooms.Count > 0);
+                    actionBuffer.CanSend = (packet.InsertRooms.Any() ||
+                                            packet.RemoveRooms.Any() ||
+                                            packet.UpdatedRooms.Any());
                 };
 
             Buffers.Add(actionBuffer);

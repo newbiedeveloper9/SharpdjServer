@@ -70,8 +70,17 @@ namespace SharpDj.Common
             return Wrapper.Count(predicate);
         }
 
-        #endregion LINQ
+        public bool Any()
+        {
+            return Wrapper.Any();
+        }
 
+        public bool Any(Func<TObj, bool> predicate)
+        {
+            return Wrapper.Any(predicate);
+        }
+
+        #endregion LINQ
 
         #region Events
         public event EventHandler<UpdateEventArgs> AfterUpdate;

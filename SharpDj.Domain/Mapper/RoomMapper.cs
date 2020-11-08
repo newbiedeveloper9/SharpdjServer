@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SharpDj.Common.DTO;
+﻿using SharpDj.Common.DTO;
 using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class RoomMapper : IDualMapper<RoomEntity, RoomDetailsDTO, RoomMapperBag>
+    public class RoomMapper : IRoomMapper
     {
-        private readonly RoomConfigMapper _roomConfigMapper;
+        private readonly IRoomConfigMapper _roomConfigMapper;
 
-        public RoomMapper(RoomConfigMapper roomConfigMapper)
+        public RoomMapper(IRoomConfigMapper roomConfigMapper)
         {
             _roomConfigMapper = roomConfigMapper;
         }
 
-        public RoomDetailsDTO MapToDTO(RoomEntity entity, RoomMapperBag bag=null)
+        public RoomDetailsDTO MapToDto(RoomEntity entity, RoomMapperBag bag = null)
         {
             return new RoomDetailsDTO()
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImagePath,
-                RoomConfigDTO = _roomConfigMapper.MapToDTO(entity.ConfigEntity)
+                RoomConfigDTO = _roomConfigMapper.MapToDto(entity.ConfigEntity)
             };
         }
 

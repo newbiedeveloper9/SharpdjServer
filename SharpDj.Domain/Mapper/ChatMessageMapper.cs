@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SCPackets.Models;
+﻿using SCPackets.Models;
 using SharpDj.Domain.Entity;
 
 namespace SharpDj.Domain.Mapper
 {
-    public class ChatMessageMapper : IDualMapper<RoomChatMessageEntity, ChatMessage>
+    public class ChatMessageMapper : IChatMessageMapper
     {
-        public ChatMessage MapToDTO(RoomChatMessageEntity entity)
+        public ChatMessage MapToDto(RoomChatMessageEntity entity)
         {
             return new ChatMessage()
             {

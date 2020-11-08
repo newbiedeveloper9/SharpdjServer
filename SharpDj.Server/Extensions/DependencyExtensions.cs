@@ -5,6 +5,7 @@ using System.Text;
 using Autofac;
 using Autofac.Builder;
 using Microsoft.Extensions.Configuration;
+using SharpDj.Domain.Interfaces;
 using SharpDj.Domain.Mapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application;

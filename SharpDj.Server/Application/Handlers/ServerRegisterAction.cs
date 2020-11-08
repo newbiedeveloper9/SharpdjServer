@@ -17,7 +17,9 @@ namespace SharpDj.Server.Application.Handlers
         private readonly IUserRepository _userRepository;
         private readonly IUserFactory _userFactory;
 
-        public ServerRegisterAction(IDictionaryConverter<IActionBag> bagsConverter, IUserRepository userRepository, IUserFactory userFactory)
+        public ServerRegisterAction(IDictionaryConverter<IActionBag> bagsConverter,
+            IUserRepository userRepository,
+            IUserFactory userFactory)
             : base(bagsConverter)
         {
             _userRepository = userRepository;
