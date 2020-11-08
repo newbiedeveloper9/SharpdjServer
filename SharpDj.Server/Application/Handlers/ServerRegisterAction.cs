@@ -1,26 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Network;
+﻿using Network;
 using SCPackets.Packets.Register;
 using Serilog;
 using SharpDj.Common;
-using SharpDj.Domain.Entity;
+using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
 using SharpDj.Server.Application.Bags;
 using SharpDj.Server.Management;
 using SharpDj.Server.Management.HandlersAction;
-using SharpDj.Server.Security;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SharpDj.Server.Application.Handlers
 {
     public class ServerRegisterAction : RequestHandler<RegisterRequest>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserFactory _userFactory;
 
-        public ServerRegisterAction(IDictionaryConverter<IActionBag> bagsConverter, IUserRepository userRepository)
+        public ServerRegisterAction(IDictionaryConverter<IActionBag> bagsConverter, IUserRepository userRepository, IUserFactory userFactory)
             : base(bagsConverter)
         {
             _userRepository = userRepository;
+            _userFactory = userFactory;
         }
 
         protected override async Task Action(RegisterRequest req, Connection conn, List<IActionBag> actionBags)
@@ -29,23 +30,12 @@ namespace SharpDj.Server.Application.Handlers
             if (!validate)
                 return;
 
-            string salt = Scrypt.GenerateSalt();
-            var user = new UserEntity()
-            {
-                Email = req.Email,
-                UserAuthEntity = new UserAuthEntity()
-                {
-                    Salt = salt,
-                    Hash = Scrypt.Hash(req.Password, salt),
-                    Login = req.Login,
-                },
-                Username = req.Username
-            };
-            _userRepository.AddUser(user);
+            var newUser = _userFactory.GetUserEntity(req);
+            _userRepository.AddUser(newUser);
             await _userRepository.UnitOfWork.SaveChangesAsync();
 
             await conn.SendAsync<RegisterResponse>(new RegisterResponse(RegisterResult.Success, req));
-            Log.Information("Success register: {@UserEntity}", user.ToString());
+            Log.Information("Success register: {@UserEntity}", newUser.ToString());
         }
 
         private async Task<bool> Validate(RegisterRequest req, Connection conn)

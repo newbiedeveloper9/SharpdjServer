@@ -2,7 +2,7 @@
 using System.Text;
 using CryptSharp.Utility;
 
-namespace SharpDj.Server.Security
+namespace SharpDj.Common.Security
 {
     public static class Scrypt
     {
@@ -18,18 +18,15 @@ namespace SharpDj.Server.Security
 
             const int blockSize = 8;
             const int parallel = 1;
-            var maxThreads = (int?)null;
             const int derivedKeyLength = 128;
 
-            var bytes = SCrypt.ComputeDerivedKey(keyBytes, saltBytes, cost, blockSize, parallel, maxThreads, derivedKeyLength);
+            var bytes = SCrypt.ComputeDerivedKey(keyBytes, saltBytes, cost, blockSize, parallel, null, derivedKeyLength);
             return Convert.ToBase64String(bytes);
         }
 
         public static string GenerateSalt()
         {
-            Random rnd = new Random();
-            int length = rnd.Next(28, 32);
-            return Guid.NewGuid().ToString("n").Substring(0, length);
+            return Guid.NewGuid().ToString("n").Substring(0, 32);
         }
     }
 }

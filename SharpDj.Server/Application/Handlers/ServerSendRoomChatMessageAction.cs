@@ -1,7 +1,7 @@
 ﻿using Network;
-using SCPackets.Models;
 using SCPackets.Packets.CreateRoomMessage;
-using SharpDj.Domain.Entity;
+using Serilog;
+using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
 using SharpDj.Server.Application.Bags;
 using SharpDj.Server.Application.Dictionaries.Bags;
@@ -10,19 +10,19 @@ using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Serilog;
-using SharpDj.Server.Application.Models;
 
 namespace SharpDj.Server.Application.Handlers
 {
     public class ServerSendRoomChatMessageAction : RequestHandler<CreateRoomMessageRequest>
     {
         private readonly IRoomRepository _roomRepository;
+        private readonly IChatMessageFactory _chatMessageFactory;
 
-        public ServerSendRoomChatMessageAction(IRoomRepository roomRepository, IDictionaryConverter<IActionBag> bagsConverter)
+        public ServerSendRoomChatMessageAction(IRoomRepository roomRepository, IChatMessageFactory chatMessageFactory, IDictionaryConverter<IActionBag> bagsConverter)
             : base(bagsConverter)
         {
             _roomRepository = roomRepository;
+            _chatMessageFactory = chatMessageFactory;
         }
 
         protected override async Task Action(CreateRoomMessageRequest request, Connection connection,
@@ -41,7 +41,9 @@ namespace SharpDj.Server.Application.Handlers
             }
 
             var room = await _roomRepository.GetRoomByIdAsync(activeRoomId);
-            room.Posts.Add(GetRoomChatMessageEntity(request.Post, currentUser));
+
+            var chatMessage = _chatMessageFactory.GetChatMessage(currentUser.UserEntity, request.Post.Color.RGB, request.Post.Message);
+            room.Posts.Add(chatMessage);
             await _roomRepository.UpdateRoom(room);
 
             activeRoomInstance.ActionHelper.MessageDistribute(request, currentUser.UserEntity.ToUserClient());
@@ -63,16 +65,6 @@ namespace SharpDj.Server.Application.Handlers
             }
 
             return true;
-        }
-
-        private RoomChatMessageEntity GetRoomChatMessageEntity(ChatMessage chatMessage, ServerUserModel currentUser)
-        {
-            return new RoomChatMessageEntity()
-            {
-                User = currentUser.UserEntity,
-                Color = chatMessage.Color.RGB,
-                Text = chatMessage.Message
-            };
         }
     }
 }
