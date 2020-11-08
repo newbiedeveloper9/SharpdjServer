@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Network;
+using SharpDj.Server.Application.Models;
 
 namespace SharpDj.Server.Models
 {

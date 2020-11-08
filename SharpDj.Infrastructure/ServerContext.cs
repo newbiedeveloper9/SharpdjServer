@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SharpDj.Domain.Entity;
 using SharpDj.Domain.Repository;
+using SharpDj.Domain.SeedWork;
 using Claim = System.Security.Claims.Claim;
 
 namespace SharpDj.Infrastructure
@@ -32,7 +33,7 @@ namespace SharpDj.Infrastructure
         public DbSet<UserConnectionEntity> Connections { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
         {
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }

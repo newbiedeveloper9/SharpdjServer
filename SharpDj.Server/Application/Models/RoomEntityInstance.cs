@@ -9,6 +9,7 @@ using SharpDj.Domain.Entity;
 using SharpDj.Server.Management.Strategy;
 using SharpDj.Server.Singleton;
 using SharpDj.Common.DTO;
+using SharpDj.Server.Application.Models;
 using Log = Serilog.Log;
 
 namespace SharpDj.Server.Models
@@ -16,18 +17,18 @@ namespace SharpDj.Server.Models
     [NotMapped]
     public class RoomEntityInstance : RoomEntity
     {
-        public int AmountOfPeople => Users.Count;
-        public int AmountOfAdministration => Users.GetList().Count(x => x.UserEntity.Rank > 0);
+        public int AmountOfPeople => Users.Count();
+        public int AmountOfAdministration => Users.Count(x => x.UserEntity.Rank > 0);
 
-        public ITrackStrategy TrackStrategy { get; set; }
-        public TrackDTO CurrentTrack => Tracks.GetList().ElementAtOrDefault(0);
+        public ITrackStrategy TrackStrategy { get; }
+        public TrackDTO CurrentTrack => Tracks.FirstOrDefault();
 
         public RoomHelper ActionHelper { get; }
-        public ListWrapper<TrackDTO> Tracks { get; set; }
-        public ListWrapper<ServerUserModel> Users { get; set; }
+        public ListWrapper<TrackDTO> Tracks { get; }
+        public ListWrapper<ServerUserModel> Users { get; }
 
 
-        public RoomEntityInstance()
+        public RoomEntityInstance( )
         {
             Tracks = new ListWrapper<TrackDTO>();
             Users = new ListWrapper<ServerUserModel>();
@@ -93,24 +94,14 @@ namespace SharpDj.Server.Models
             BufferSingleton.Instance.SquareRoomBufferManager.GetRequest().UpdatedRooms.Add(ToRoomOutsideModel());
         }
 
-        #region Events
-        public event EventHandler TimeLeftReached;
-
-        protected virtual void OnTimeLeftReached(EventArgs e)
-        {
-            EventHandler handler = TimeLeftReached;
-            handler?.Invoke(this, e);
-        }
-        #endregion Events
-
         public PreviewRoomDTO ToRoomOutsideModel()
         {
             var next = new TrackDTO();
             var current = new TrackDTO();
             var previous = new TrackDTO();
 
-            if (Tracks.Count > 1)
-                next = Tracks.GetList().ElementAtOrDefault(1);
+            if (Tracks.Count() > 1)
+                next = Tracks.FirstOrDefault();
 
             return new PreviewRoomDTO()
             {
@@ -124,5 +115,15 @@ namespace SharpDj.Server.Models
                 PreviousTrack = previous
             };
         }
+
+        #region Events
+        public event EventHandler TimeLeftReached;
+
+        protected virtual void OnTimeLeftReached(EventArgs e)
+        {
+            var handler = TimeLeftReached;
+            handler?.Invoke(this, e);
+        }
+        #endregion Events
     }
 }

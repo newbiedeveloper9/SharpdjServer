@@ -33,7 +33,7 @@
 //
 //                 var roomInstance = RoomSingleton.Instance.RoomInstances
 //                     .GetList()
-//                     .FirstOrDefault(x => x.Id == active.ActiveRoom.RoomId);
+//                     .FirstOrDefault(x => x.Id == active.ActiveRoomId.RoomId);
 //                 if (roomInstance == null)
 //                 {
 //                     Log.Information("RoomEntity with given id doesn't exist");

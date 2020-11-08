@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Network;
+﻿using Network;
 using SCPackets.Models;
 using SCPackets.Packets.CreateRoomMessage;
 using SharpDj.Domain.Entity;
 using SharpDj.Domain.Repository;
-using SharpDj.Infrastructure;
 using SharpDj.Server.Application.Bags;
 using SharpDj.Server.Application.Dictionaries.Bags;
 using SharpDj.Server.Management.HandlersAction;
 using SharpDj.Server.Models;
 using SharpDj.Server.Singleton;
-using Log = Serilog.Log;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Serilog;
+using SharpDj.Server.Application.Models;
 
 namespace SharpDj.Server.Application.Handlers
 {
@@ -33,17 +30,17 @@ namespace SharpDj.Server.Application.Handlers
         {
             var currentUser = BagConverter.Get<ActiveUserBag>(actionBags).ActiveUser;
 
-            var activeRoom = currentUser.ActiveRoom;
-            var activeRoomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == activeRoom.RoomId);
+            var activeRoomId = currentUser.ActiveRoomId;
+            var activeRoomInstance = RoomSingleton.Instance.RoomInstances.FirstOrDefault(x => x.Id == activeRoomId);
 
-            if (!RoomExists(activeRoom, activeRoomInstance))
+            if (!RoomExists(activeRoomId, activeRoomInstance))
             {
                 await connection.SendAsync<CreateRoomMessageResponse>(
                     new CreateRoomMessageResponse(CreateRoomMessageResult.Error, request));
                 return;
             }
 
-            var room = await _roomRepository.GetRoomByIdAsync(activeRoom.RoomId);
+            var room = await _roomRepository.GetRoomByIdAsync(activeRoomId);
             room.Posts.Add(GetRoomChatMessageEntity(request.Post, currentUser));
             await _roomRepository.UpdateRoom(room);
 
@@ -57,11 +54,11 @@ namespace SharpDj.Server.Application.Handlers
                 activeRoomInstance.Name);
         }
 
-        private bool RoomExists(RoomUserConnection room, RoomEntityInstance roomInstance)
+        private bool RoomExists(int roomId, RoomEntityInstance roomInstance)
         {
             if (roomInstance == null)
             {
-                Log.Information("RoomDetails with id @RoomId doesn't exist", room.RoomId);
+                Log.Information("RoomDetails with id @RoomId doesn't exist", roomId);
                 return false;
             }
 

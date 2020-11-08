@@ -7,5 +7,6 @@ namespace SharpDj.Domain.Repository
     {
         Task<RoomEntity> GetRoomByIdAsync(int id);
         Task UpdateRoom(RoomEntity room);
+        bool AnyRoomContainsName(string name);
     }
 }

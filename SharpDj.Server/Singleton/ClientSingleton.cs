@@ -1,6 +1,7 @@
 ﻿using System;
 using SCPackets;
 using SharpDj.Common;
+using SharpDj.Server.Application.Models;
 using SharpDj.Server.Models;
 
 namespace SharpDj.Server.Singleton

@@ -4,6 +4,7 @@ using SCPackets.Models;
 using SCPackets.Packets.CreateRoomMessage;
 using SCPackets.Packets.RoomNewMessageRequest;
 using SharpDj.Common;
+using SharpDj.Server.Application.Models;
 
 namespace SharpDj.Server.Models
 {

@@ -4,32 +4,12 @@ using Network;
 using SharpDj.Domain.Entity;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Models
+namespace SharpDj.Server.Application.Models
 {
     public class ServerUserModel
     {
-        private RoomUserConnection _activeRoom;
         public UserEntity UserEntity { get; set; }
-        public IList<Connection> Connections { get; set; }
-
-        public RoomUserConnection ActiveRoom
-        {
-            get => _activeRoom;
-            set
-            {
-                if (value == _activeRoom) return;
-
-                var room = RoomSingleton.Instance.RoomInstances.GetList().
-                    FirstOrDefault(x => x.Users.GetList().Contains(this));
-                room?.Users.Remove(this);
-
-                var destinationRoom = RoomSingleton.Instance.RoomInstances.GetList()
-                    .FirstOrDefault(x => x.Id == value.RoomId);
-                destinationRoom?.Users.Add(this);
-
-                _activeRoom = value;
-            }
-        }
+        public List<Connection> Connections { get; set; }
 
         public ServerUserModel(UserEntity userEntity, Connection connection)
         {
@@ -37,6 +17,26 @@ namespace SharpDj.Server.Models
 
             UserEntity = userEntity;
             Connections.Add(connection);
+        }
+
+        private int _activeRoomId;
+        public int ActiveRoomId
+        {
+            get => _activeRoomId;
+            set
+            {
+                if (value == _activeRoomId) return;
+
+                var room = RoomSingleton.Instance.RoomInstances.GetList().
+                    FirstOrDefault(x => x.Users.GetList().Contains(this));
+                room?.Users.Remove(this);
+
+                var destinationRoom = RoomSingleton.Instance.RoomInstances.GetList()
+                    .FirstOrDefault(x => x.Id == value);
+                destinationRoom?.Users.Add(this);
+
+                _activeRoomId = value;
+            }
         }
     }
 }

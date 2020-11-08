@@ -17,8 +17,6 @@ namespace SharpDj.Common
         }
 
         #region Implementation
-        [PacketIgnoreProperty]
-        public int Count => Wrapper.Count();
 
         public IReadOnlyCollection<TObj> GetList() =>
             Wrapper.AsReadOnly();
@@ -52,9 +50,24 @@ namespace SharpDj.Common
 
         #region LINQ
 
+        public TObj FirstOrDefault()
+        {
+            return Wrapper.FirstOrDefault();
+        }
+
         public TObj FirstOrDefault(Func<TObj, bool> predicate)
         {
             return Wrapper.FirstOrDefault(predicate);
+        }
+
+        public int Count()
+        {
+            return Wrapper.Count();
+        }
+
+        public int Count(Func<TObj, bool> predicate)
+        {
+            return Wrapper.Count(predicate);
         }
 
         #endregion LINQ

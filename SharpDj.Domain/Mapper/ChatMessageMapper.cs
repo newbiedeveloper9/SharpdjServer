@@ -27,7 +27,7 @@ namespace SharpDj.Domain.Mapper
                 Color = dto.Color.RGB,
                 User = new UserEntity()
                 {
-                    Id = (int)dto.Author.Id,
+                    Id = dto.Author.Id,
                     Username = dto.Author.Username,
                     Rank = dto.Author.Rank
                 }

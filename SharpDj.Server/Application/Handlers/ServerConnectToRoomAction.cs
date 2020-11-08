@@ -24,7 +24,7 @@
 //             if (!Validate(room, active, request))
 //                 return;
 //
-//             active.ActiveRoom = new RoomUserConnection(room.Id);
+//             active.ActiveRoomId = new RoomUserConnection(room.Id);
 //
 //             var userList = room.Users
 //                 .GetList()
