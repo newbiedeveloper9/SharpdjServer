@@ -4,7 +4,7 @@ using Network;
 using SCPackets.Packets.Buffers;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Application.Management.Buffers
+namespace SharpDj.Server.Application.Buffers
 {
     public class RoomUserListBufferManager : BufferManager<RoomUserListBufferRequest>
     {

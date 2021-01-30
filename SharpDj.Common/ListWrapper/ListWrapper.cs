@@ -15,7 +15,7 @@ namespace SharpDj.Common.ListWrapper
 
         #region Implementation
 
-        public IReadOnlyCollection<TObj> GetList() =>
+        public IReadOnlyCollection<TObj> ToReadonlyList() =>
             Wrapper.AsReadOnly();
 
         public void Add(TObj obj, bool onlyOneInstance = true)

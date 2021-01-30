@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SharpDj.Domain.Entity;
-using SharpDj.Domain.Enums;
 using SharpDj.Domain.Repository;
 using SharpDj.Domain.SeedWork;
 
@@ -23,6 +23,14 @@ namespace SharpDj.Infrastructure.Repositories
             return await _serverContext.Rooms
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == roomId);
+        }
+
+        public IEnumerable<RoomEntity> GetRoomByCreatorId(ulong userId)
+        {
+            return _serverContext.Rooms
+                .AsNoTracking()
+                .Include(x => x.ConfigEntity)
+                .Where(x => x.Author.Id == userId);
         }
 
         public async Task UpdateRoom(RoomEntity room)

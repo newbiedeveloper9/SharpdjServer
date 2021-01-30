@@ -1,18 +1,19 @@
-﻿using Network;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Network;
 using SCPackets.Packets.UpdateRoom;
 using Serilog;
 using SharpDj.Common;
 using SharpDj.Domain.Entity;
 using SharpDj.Domain.Mapper;
 using SharpDj.Domain.Repository;
-using SharpDj.Server.Application.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Dictionaries.Bags;
+using SharpDj.Server.Application.Handlers.Base;
 using SharpDj.Server.Application.Management;
+using SharpDj.Server.Application.Models;
 
-namespace SharpDj.Server.Application.Handlers
+namespace SharpDj.Server.Application.Handlers.Room
 {
     public class ServerUpdateRoomAction : RequestHandler<UpdateRoomRequest>
     {

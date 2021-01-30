@@ -6,7 +6,7 @@ namespace SharpDj.Domain.Factory
 {
     public class UserFactory : IUserFactory
     {
-        public UserEntity GetUserEntity(RegisterRequest req)
+        public UserEntity CreateUserEntity(RegisterRequest req)
         {
             string salt = Scrypt.GenerateSalt();
             return new UserEntity()

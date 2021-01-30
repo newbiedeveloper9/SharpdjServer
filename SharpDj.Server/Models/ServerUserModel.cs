@@ -27,11 +27,11 @@ namespace SharpDj.Server.Application.Models
             {
                 if (value == _activeRoomId) return;
 
-                var room = RoomSingleton.Instance.RoomInstances.GetList().
-                    FirstOrDefault(x => x.Users.GetList().Contains(this));
+                var room = RoomSingleton.Instance.RoomInstances.ToReadonlyList().
+                    FirstOrDefault(x => x.Users.ToReadonlyList().Contains(this));
                 room?.Users.Remove(this);
 
-                var destinationRoom = RoomSingleton.Instance.RoomInstances.GetList()
+                var destinationRoom = RoomSingleton.Instance.RoomInstances.ToReadonlyList()
                     .FirstOrDefault(x => x.Id == value);
                 destinationRoom?.Users.Add(this);
 

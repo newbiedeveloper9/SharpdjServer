@@ -5,6 +5,6 @@ namespace SharpDj.Domain.Factory
 {
     public interface IUserFactory
     {
-        UserEntity GetUserEntity(RegisterRequest req);
+        UserEntity CreateUserEntity(RegisterRequest req);
     }
 }

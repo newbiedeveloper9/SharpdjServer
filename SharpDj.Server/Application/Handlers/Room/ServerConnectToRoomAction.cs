@@ -27,7 +27,7 @@
 //             active.ActiveRoomId = new RoomUserConnection(room.Id);
 //
 //             var userList = room.Users
-//                 .GetList()
+//                 .ToReadonlyList()
 //                 .Select(serverUserModel => serverUserModel.UserEntity.ToUserClient());
 //
 //             ext.SendPacket(new ConnectToRoomResponse(ConnectToRoomResult.Success,
@@ -37,7 +37,7 @@
 //         private bool Validate(RoomEntityInstance roomEntity, ServerUserModel loggedInUser, ConnectToRoomRequest request)
 //         {
 //             var connected = roomEntity?.Users
-//                 .GetList()
+//                 .ToReadonlyList()
 //                 .Any(x => x.UserEntity.Id == loggedInUser.UserEntity.Id);
 //
 //             var validation = new DictionaryConditionsValidation<ConnectToRoomResult>();

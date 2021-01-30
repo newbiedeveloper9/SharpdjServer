@@ -1,5 +1,5 @@
 ﻿using System;
-using SharpDj.Server.Application.Management.Buffers;
+using SharpDj.Server.Application.Buffers;
 
 namespace SharpDj.Server.Singleton
 {

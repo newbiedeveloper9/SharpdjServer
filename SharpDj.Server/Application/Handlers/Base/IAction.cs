@@ -1,6 +1,6 @@
 ﻿using Network;
 
-namespace SharpDj.Server.Application.Handlers
+namespace SharpDj.Server.Application.Handlers.Base
 {
     public interface IAction
     {

@@ -28,6 +28,6 @@ namespace SharpDj.Server.Models
             }
         }
 
-        public IEnumerable<Connection> GetConnections => _users.GetList().GetAllConnections();
+        public IEnumerable<Connection> GetConnections => _users.ToReadonlyList().GetAllConnections();
     }
 }

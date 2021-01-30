@@ -1,12 +1,11 @@
 ﻿using System;
 using Serilog;
-using SharpDj.Common;
 using SharpDj.Common.ListWrapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Application.Management
+namespace SharpDj.Server.Application
 {
     public class Setup
     {

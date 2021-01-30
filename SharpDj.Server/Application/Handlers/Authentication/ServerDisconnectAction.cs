@@ -28,7 +28,7 @@
 //             {
 //                 var user = ConnectionExtension.GetClient(connection);
 //                 var userContext = _context.Users.Include(x => x.UserAuthEntity).FirstOrDefault(x => x.Id == user.UserEntity.Id);
-//                 var isActive = ClientSingleton.Instance.Users.GetList().FirstOrDefault(x => x.UserEntity.Id == user.UserEntity.Id);
+//                 var isActive = ClientSingleton.Instance.Users.ToReadonlyList().FirstOrDefault(x => x.UserEntity.Id == user.UserEntity.Id);
 //                 if (isActive != null)
 //                 {
 //                     var removed = ClientSingleton.Instance.Users.Remove(isActive);

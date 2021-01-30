@@ -7,7 +7,7 @@ using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Dictionaries.Bags;
 using SharpDj.Server.Application.Handlers.CoR;
 
-namespace SharpDj.Server.Application.Handlers
+namespace SharpDj.Server.Application.Handlers.Base
 {
     public abstract class RequestHandler<TReq> : AbstractHandler, IAction
         where TReq : RequestPacket

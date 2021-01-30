@@ -7,7 +7,7 @@ namespace SharpDj.Domain.Factory
 {
     public class ChatMessageFactory : IChatMessageFactory
     {
-        public RoomChatMessageEntity GetChatMessage(UserEntity user, byte[] rgb, string text)
+        public RoomChatMessageEntity CreateChatMessage(UserEntity user, byte[] rgb, string text)
         {
             return new RoomChatMessageEntity()
             {

@@ -32,7 +32,7 @@
 //                 if (ext.IsUserLoggedIn(active)) return;
 //
 //                 var roomInstance = RoomSingleton.Instance.RoomInstances
-//                     .GetList()
+//                     .ToReadonlyList()
 //                     .FirstOrDefault(x => x.Id == active.ActiveRoomId.RoomId);
 //                 if (roomInstance == null)
 //                 {

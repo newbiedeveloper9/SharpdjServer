@@ -1,16 +1,17 @@
-﻿using Network;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Network;
 using SCPackets.Packets.Register;
 using Serilog;
 using SharpDj.Common;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Dictionaries.Bags;
+using SharpDj.Server.Application.Handlers.Base;
 using SharpDj.Server.Application.Management;
 
-namespace SharpDj.Server.Application.Handlers
+namespace SharpDj.Server.Application.Handlers.Authentication
 {
     public class ServerRegisterAction : RequestHandler<RegisterRequest>
     {
@@ -32,7 +33,7 @@ namespace SharpDj.Server.Application.Handlers
             if (!validate)
                 return;
 
-            var newUser = _userFactory.GetUserEntity(req);
+            var newUser = _userFactory.CreateUserEntity(req);
             _userRepository.AddUser(newUser);
             await _userRepository.UnitOfWork.SaveChangesAsync();
 
@@ -49,7 +50,7 @@ namespace SharpDj.Server.Application.Handlers
                 {RegisterResult.EmailError, !DataValidation.EmailIsValid(req.Email)},
                 {RegisterResult.LoginError, !DataValidation.LengthIsValid(req.Login, 2, 32)},
                 {RegisterResult.UsernameError, !DataValidation.LengthIsValid(req.Username, 2, 32)},
-                {RegisterResult.AlreadyExist, _userRepository.GivenLoginOrEmailExists(req.Login, req.Email)}
+                {RegisterResult.AlreadyExist, await _userRepository.GivenLoginOrEmailExistsAsync(req.Login, req.Email)}
             };
 
             var result = validation.AnyError();

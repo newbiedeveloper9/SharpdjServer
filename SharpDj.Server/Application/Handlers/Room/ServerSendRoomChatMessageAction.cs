@@ -1,16 +1,17 @@
-﻿using Network;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Network;
 using SCPackets.Packets.CreateRoomMessage;
 using Serilog;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
-using SharpDj.Server.Singleton;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Dictionaries.Bags;
+using SharpDj.Server.Application.Handlers.Base;
 using SharpDj.Server.Application.Models;
+using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Application.Handlers
+namespace SharpDj.Server.Application.Handlers.Room
 {
     public class ServerSendRoomChatMessageAction : RequestHandler<CreateRoomMessageRequest>
     {
@@ -43,7 +44,7 @@ namespace SharpDj.Server.Application.Handlers
 
             var room = await _roomRepository.GetRoomByIdAsync(activeRoomId);
 
-            var chatMessage = _chatMessageFactory.GetChatMessage(currentUser.UserEntity, request.Post.Color.RGB, request.Post.Message);
+            var chatMessage = _chatMessageFactory.CreateChatMessage(currentUser.UserEntity, request.Post.Color.RGB, request.Post.Message);
             room.Posts.Add(chatMessage);
             await _roomRepository.UpdateRoom(room);
 

@@ -6,6 +6,7 @@ using Network.Enums;
 using SharpDj.Domain.Builders;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application.Handlers;
+using SharpDj.Server.Application.Handlers.Base;
 using SharpDj.Server.Application.Handlers.CoR;
 using SharpDj.Server.Application.Management.Config;
 using Log = Serilog.Log;

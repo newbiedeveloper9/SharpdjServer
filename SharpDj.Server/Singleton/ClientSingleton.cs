@@ -22,11 +22,10 @@ namespace SharpDj.Server.Singleton
 
         private void AfterUserDisconnect(object sender, AfterRemoveEventArgs<ServerUserModel> e)
         {
-            foreach (var room in RoomSingleton.Instance.RoomInstances.GetList())
+            foreach (var room in RoomSingleton.Instance.RoomInstances.ToReadonlyList())
             {
                 room.Users.Remove(e.Item);
             }
         }
     }
-
 }

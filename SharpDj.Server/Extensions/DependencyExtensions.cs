@@ -1,11 +1,15 @@
 ﻿using System;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using SharpDj.Domain.Factory;
 using SharpDj.Domain.Interfaces;
+using SharpDj.Domain.Repository;
 using SharpDj.Infrastructure;
+using SharpDj.Infrastructure.Repositories;
 using SharpDj.Server.Application;
 using SharpDj.Server.Application.Dictionaries;
 using SharpDj.Server.Application.Handlers;
+using SharpDj.Server.Application.Handlers.Base;
 using SharpDj.Server.Application.Handlers.CoR;
 using SharpDj.Server.Application.Management;
 using SharpDj.Server.Application.Management.Config;
@@ -72,6 +76,32 @@ namespace SharpDj.Server.Extensions
             return builder;
         }
 
+        private static ContainerBuilder RegisterRepositories(this ContainerBuilder builder)
+        {
+            builder.RegisterType<RoomRepository>()
+                .As<IRoomRepository>()
+                .InstancePerDependency();
+
+            builder.RegisterType<UserRepository>()
+                .As<IUserRepository>()
+                .InstancePerDependency();
+
+            return builder;
+        }
+
+        private static ContainerBuilder RegisterFactories(this ContainerBuilder builder)
+        {
+            builder.RegisterType<ChatMessageFactory>()
+                .As<IChatMessageFactory>()
+                .SingleInstance();
+
+            builder.RegisterType<UserFactory>()
+                .As<IUserFactory>()
+                .SingleInstance();
+
+            return builder;
+        }
+
         public static IContainer BuildContainer(this IContainer container)
         {
             var builder = new ContainerBuilder();
@@ -82,6 +112,8 @@ namespace SharpDj.Server.Extensions
 
             builder.RegisterAppSettings()
                 .RegisterServerConfig()
+                .RegisterRepositories()
+                .RegisterFactories()
                 .RegisterAssemblies()
                 .RegisterServer();
 

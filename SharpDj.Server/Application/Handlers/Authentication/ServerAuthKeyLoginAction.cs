@@ -41,7 +41,7 @@
 //                     .FirstOrDefault(x => x.UserAuthEntity.AuthenticationKey == request.AuthenticationKey);
 //
 //                 loggedInUser = ClientSingleton.Instance.Users
-//                     .GetList()
+//                     .ToReadonlyList()
 //                     .FirstOrDefault(x => x.UserEntity.Id == userEntity?.Id);
 //
 //                 if (!Validate(ext, userEntity, request))
@@ -52,7 +52,7 @@
 //                 if (loggedInUser != null)
 //                 {
 //                     ClientSingleton.Instance.Users
-//                         .GetList()
+//                         .ToReadonlyList()
 //                         .FirstOrDefault(x => x.UserEntity.Id == userEntity.Id)
 //                         .Connections.Add(conn);
 //                 }

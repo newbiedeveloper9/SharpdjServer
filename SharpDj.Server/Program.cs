@@ -26,13 +26,13 @@ namespace SharpDj.Server
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             _container = _container.BuildContainer();
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            await SetupLogging()
+                .ConfigureAwait(false);
 
-            await SetupLogging().ConfigureAwait(false);
-            await SetupServer().ConfigureAwait(false);
+            await SetupServer()
+                .ConfigureAwait(false);
 
-            Listening(cancellationToken);
+            Listening();
 
             Log.Information("The process scope has ended.");
         }
@@ -68,16 +68,11 @@ namespace SharpDj.Server
         }
 
 
-        private static void Listening(CancellationToken cancellationToken)
+        private static void Listening()
         {
             var closeCommands = new[] { "exit", "quit", "q", "close", "stop" };
             while (true)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
                 var currentCommand = Console.ReadLine();
                 if (closeCommands.Any(x => x.Equals(currentCommand)))
                 {

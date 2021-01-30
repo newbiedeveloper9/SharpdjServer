@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Network.Packets;
 using Serilog;
 
-namespace SharpDj.Server.Application.Management.Buffers
+namespace SharpDj.Server.Application.Buffers
 {
     public abstract class BufferManager<TReq> where TReq : RequestPacket
     {
