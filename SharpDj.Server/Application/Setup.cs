@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using Serilog;
 using SharpDj.Common.ListWrapper;
 using SharpDj.Infrastructure;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
+using System;
 
 namespace SharpDj.Server.Application
 {
@@ -14,12 +15,14 @@ namespace SharpDj.Server.Application
         public Setup(ServerContext context)
         {
             _context = context;
+        }
 
+        public void Start()
+        {
             try
             {
                 Log.Information("Checking database health...");
-                if (CheckDatabaseHealth() == false)
-                    return;
+                DatabaseHealthCommand();
                 Log.Information("Initializing rooms...");
                 InitializeRooms();
                 Log.Information("Set up events...");
@@ -49,9 +52,9 @@ namespace SharpDj.Server.Application
             }
         }
 
-        private bool CheckDatabaseHealth()
+        private void DatabaseHealthCommand()
         {
-            return _context.Database.CanConnect();
+            _context.Database.ExecuteSqlRaw("SELECT 1");
         }
     }
 }

@@ -17,122 +17,35 @@ namespace SharpDj.Infrastructure.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.ConversationEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Conversations");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.ConversationMessageEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ConversationEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("ConversationEntityId");
-
-                    b.ToTable("ConversationMessages");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.LogEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("ConnectionType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserEntityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserEntityId");
-
-                    b.ToTable("Logs");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.RecordEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("MediaType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RoomEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoomEntityId");
-
-                    b.ToTable("MediaHistories");
-                });
+                .HasAnnotation("ProductVersion", "5.0.2");
 
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatMessageEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .UseIdentityColumn();
-
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
 
                     b.Property<byte[]>("Color")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int?>("RoomEntityId")
+                    b.Property<int>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("RoomId");
 
-                    b.HasIndex("RoomEntityId");
+                    b.HasIndex("Text");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("RoomChatPosts");
                 });
@@ -144,22 +57,29 @@ namespace SharpDj.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("ChatType")
-                        .HasColumnType("int");
-
                     b.Property<string>("LocalEnterMessage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("LocalLeaveMessage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("PublicEnterMessage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("PublicLeaveMessage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId")
+                        .IsUnique();
 
                     b.ToTable("RoomConfigs");
                 });
@@ -171,60 +91,31 @@ namespace SharpDj.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ConfigEntityId")
-                        .HasColumnType("int");
+                    b.Property<long>("AuthorId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ImagePath")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("ConfigEntityId");
+                    b.HasIndex("Name");
 
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.UserAuthEntity", b =>
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserAuditEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime?>("AuthenticationExpiration")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("AuthenticationKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Hash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Login")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Salt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserAuths");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.UserConnectionEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .UseIdentityColumn();
 
                     b.Property<int>("ConnectionType")
@@ -235,160 +126,169 @@ namespace SharpDj.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Ip")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
-                    b.Property<int>("ServerPort")
+                    b.Property<int>("Port")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserEntityId")
-                        .HasColumnType("int");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserEntityId");
+                    b.HasIndex("Date");
+
+                    b.HasIndex("Ip");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Connections");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserAuthEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .UseIdentityColumn();
 
-                    b.Property<string>("AvatarUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("AuthenticationExpiration")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("ConversationEntityId")
-                        .HasColumnType("int");
+                    b.Property<string>("AuthenticationKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Hash")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
-                    b.Property<int>("Rank")
-                        .HasColumnType("int");
+                    b.Property<string>("Login")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
-                    b.Property<int?>("UserAuthEntityId")
-                        .HasColumnType("int");
+                    b.Property<string>("Salt")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
-                    b.Property<int?>("UserEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConversationEntityId");
+                    b.HasIndex("Login");
 
-                    b.HasIndex("UserAuthEntityId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.HasIndex("UserEntityId");
+                    b.ToTable("UserAuths");
+                });
+
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Username")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Username");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.ConversationMessageEntity", b =>
-                {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.HasOne("SharpDj.Domain.Entity.ConversationEntity", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationEntityId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.LogEntity", b =>
-                {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "UserEntity")
-                        .WithMany()
-                        .HasForeignKey("UserEntityId");
-
-                    b.Navigation("UserEntity");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.RecordEntity", b =>
-                {
-                    b.HasOne("SharpDj.Domain.Entity.RoomEntity", null)
-                        .WithMany("Media")
-                        .HasForeignKey("RoomEntityId");
-                });
-
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomChatMessageEntity", b =>
                 {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.HasOne("SharpDj.Domain.Entity.RoomEntity", null)
+                    b.HasOne("SharpDj.Domain.Entity.RoomEntity", "Room")
                         .WithMany("Posts")
-                        .HasForeignKey("RoomEntityId");
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Room");
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SharpDj.Domain.Entity.RoomConfigEntity", b =>
+                {
+                    b.HasOne("SharpDj.Domain.Entity.RoomEntity", "Room")
+                        .WithOne("Config")
+                        .HasForeignKey("SharpDj.Domain.Entity.RoomConfigEntity", "RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomEntity", b =>
+                {
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "Author")
+                        .WithMany("Rooms")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserAuditEntity", b =>
                 {
                     b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.HasOne("SharpDj.Domain.Entity.RoomConfigEntity", "ConfigEntity")
-                        .WithMany()
-                        .HasForeignKey("ConfigEntityId");
+                        .WithMany("UserAudits")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
-
-                    b.Navigation("ConfigEntity");
                 });
 
-            modelBuilder.Entity("SharpDj.Domain.Entity.UserConnectionEntity", b =>
+            modelBuilder.Entity("SharpDj.Domain.Entity.UserAuthEntity", b =>
                 {
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "UserEntity")
-                        .WithMany()
-                        .HasForeignKey("UserEntityId");
+                    b.HasOne("SharpDj.Domain.Entity.UserEntity", "User")
+                        .WithOne("UserAuthEntity")
+                        .HasForeignKey("SharpDj.Domain.Entity.UserAuthEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("UserEntity");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
-                {
-                    b.HasOne("SharpDj.Domain.Entity.ConversationEntity", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ConversationEntityId");
-
-                    b.HasOne("SharpDj.Domain.Entity.UserAuthEntity", "UserAuthEntity")
-                        .WithMany()
-                        .HasForeignKey("UserAuthEntityId");
-
-                    b.HasOne("SharpDj.Domain.Entity.UserEntity", null)
-                        .WithMany("Friends")
-                        .HasForeignKey("UserEntityId");
-
-                    b.Navigation("UserAuthEntity");
-                });
-
-            modelBuilder.Entity("SharpDj.Domain.Entity.ConversationEntity", b =>
-                {
-                    b.Navigation("Messages");
-
-                    b.Navigation("Users");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.RoomEntity", b =>
                 {
-                    b.Navigation("Media");
+                    b.Navigation("Config");
 
                     b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("SharpDj.Domain.Entity.UserEntity", b =>
                 {
-                    b.Navigation("Friends");
+                    b.Navigation("Posts");
+
+                    b.Navigation("Rooms");
+
+                    b.Navigation("UserAudits");
+
+                    b.Navigation("UserAuthEntity");
                 });
 #pragma warning restore 612, 618
         }

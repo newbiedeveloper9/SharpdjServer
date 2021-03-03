@@ -1,39 +1,44 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using SharpDj.Common.Handlers;
+using SharpDj.Common.Handlers.Base;
+using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Interfaces;
 using SharpDj.Domain.Repository;
-using SharpDj.Infrastructure;
 using SharpDj.Infrastructure.Repositories;
 using SharpDj.Server.Application;
-using SharpDj.Server.Application.Dictionaries;
-using SharpDj.Server.Application.Handlers;
-using SharpDj.Server.Application.Handlers.Base;
-using SharpDj.Server.Application.Handlers.CoR;
-using SharpDj.Server.Application.Management;
-using SharpDj.Server.Application.Management.Config;
+using SharpDj.Server.Application.Commands.Handlers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Network.Packets;
+using SCPackets.Packets.Login;
+using SCPackets.Packets.Register;
+using SharpDj.Infrastructure;
 
 namespace SharpDj.Server.Extensions
 {
     public static class DependencyExtensions
     {
-        private static ContainerBuilder RegisterServerConfig(this ContainerBuilder builder)
+        private static ContainerBuilder RegisterServer(this ContainerBuilder builder, bool initial)
         {
-            builder.RegisterInstance(Config.LoadConfig())
-                .SingleInstance()
-                .As<IConfig>();
-
-            return builder;
-        }
-
-        private static ContainerBuilder RegisterServer(this ContainerBuilder builder)
-        {
-            builder.RegisterType<Setup>()
+            builder.RegisterType<Startup>()
+                .InstancePerDependency()
                 .AsSelf();
 
-            builder.RegisterType<App>()
-                .AsSelf();
+            if (initial == false)
+            {
+                builder.RegisterType<Setup>()
+                    .InstancePerDependency()
+                    .AsSelf();
+
+                builder.RegisterType<ServerMain>()
+                    .InstancePerDependency()
+                    .AsSelf();
+            }
 
             return builder;
         }
@@ -43,83 +48,122 @@ namespace SharpDj.Server.Extensions
             var appAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             builder.RegisterAssemblyTypes(appAssemblies)
-                .AsClosedTypesOf(typeof(IDualMapper<,>));
+                .AsClosedTypesOf(typeof(IDualMapper<,>))
+                .SingleInstance();
             builder.RegisterAssemblyTypes(appAssemblies)
-                .AsClosedTypesOf(typeof(IDualMapper<,,>));
+                .AsClosedTypesOf(typeof(IDualMapper<,,>))
+                .SingleInstance();
 
             builder.RegisterAssemblyTypes(appAssemblies)
-                .AsClosedTypesOf(typeof(IDictionaryConverter<>));
+                .AsClosedTypesOf(typeof(IDictionaryConverter<>))
+                .SingleInstance();
 
             builder.RegisterAssemblyTypes(appAssemblies)
                 .InNamespaceOf<AbstractHandler>()
                 .PublicOnly()
                 .Where(x => x.Name.EndsWith("Handler"))
-                .SingleInstance()
+                .InstancePerLifetimeScope()
                 .AsSelf();
 
             builder.RegisterAssemblyTypes(appAssemblies)
-                .InNamespace("SharpDj.Server.Application.Handlers")
+                .AsClosedTypesOf(typeof(IAction<>))
+                .InstancePerLifetimeScope();
+
+/*            builder.RegisterAssemblyTypes(appAssemblies)
+                .InNamespace(typeof(RequestHandler<>).Namespace ??
+                             throw new InvalidOperationException("Problem with finding namespace for Server Handlers"))
                 .PublicOnly()
-                .Where(x => x.Name.StartsWith("Server") && x.Name.EndsWith("Action"))
-                .SingleInstance()
-                .As<IAction>();
+                .Where(x => x.Name.EndsWith("PacketHandler"))
+                .InstancePerLifetimeScope()
+                .As<IAction>();*/
+
+            /*            builder.RegisterAssemblyTypes(appAssemblies)
+                            .InNamespace(typeof(RequestHandler<>).Namespace ??
+                                         throw new InvalidOperationException("Problem with finding namespace for Server Handlers"))
+                            .PublicOnly()
+                            .Where(x => x.Name.StartsWith("Server") && x.Name.EndsWith("Action"))
+                            .InstancePerLifetimeScope()
+                            .AsSelf();*/
 
             return builder;
         }
 
-        private static ContainerBuilder RegisterAppSettings(this ContainerBuilder builder)
+        private static ContainerBuilder RegisterHandler<T>(this ContainerBuilder builder)
+            where T : RequestPacket
         {
-            builder.RegisterInstance(new ConfigurationBuilder().AddAppsettingsConfiguration())
+            builder.RegisterType<RequestHandler<T>>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+
+            return builder;
+        }
+
+        private static ContainerBuilder RegisterHandlers(this ContainerBuilder builder)
+        {
+            builder.RegisterHandler<LoginRequest>()
+                .RegisterHandler<RegisterRequest>();
+
+            return builder;
+        }
+
+        private static ContainerBuilder RegisterConfiguration(this ContainerBuilder builder)
+        {
+            var configurationBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            builder.RegisterInstance(configurationBuilder)
                 .SingleInstance()
                 .AsImplementedInterfaces();
 
             return builder;
         }
 
-        private static ContainerBuilder RegisterRepositories(this ContainerBuilder builder)
+        private static ContainerBuilder RegisterContext<TContext>(this ContainerBuilder builder, string connectionString)
+            where TContext : DbContext
         {
-            builder.RegisterType<RoomRepository>()
-                .As<IRoomRepository>()
-                .InstancePerDependency();
+            builder.Register(componentContext =>
+                {
+                    var serviceProvider = componentContext.Resolve<IServiceProvider>();
+                    var configuration = componentContext.Resolve<IConfiguration>();
+                    var dbContextOptions = new DbContextOptions<TContext>(new Dictionary<Type, IDbContextOptionsExtension>());
+                    var optionsBuilder = new DbContextOptionsBuilder<TContext>(dbContextOptions)
+                        .UseApplicationServiceProvider(serviceProvider)
+                        .UseSqlServer(configuration.GetConnectionString(connectionString),
+                            serverOptions => serverOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30), null));
 
-            builder.RegisterType<UserRepository>()
-                .As<IUserRepository>()
-                .InstancePerDependency();
+                    return optionsBuilder.Options;
+                }).As<DbContextOptions<TContext>>()
+                .InstancePerLifetimeScope();
 
-            return builder;
-        }
+            builder.Register(context => context.Resolve<DbContextOptions<TContext>>())
+                .As<DbContextOptions>()
+                .InstancePerLifetimeScope();
 
-        private static ContainerBuilder RegisterFactories(this ContainerBuilder builder)
-        {
-            builder.RegisterType<ChatMessageFactory>()
-                .As<IChatMessageFactory>()
-                .SingleInstance();
-
-            builder.RegisterType<UserFactory>()
-                .As<IUserFactory>()
-                .SingleInstance();
-
-            return builder;
-        }
-
-        public static IContainer BuildContainer(this IContainer container)
-        {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterType<ServerContext>()
+            builder.RegisterType<TContext>()
                 .AsSelf()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterAppSettings()
-                .RegisterServerConfig()
-                .RegisterRepositories()
-                .RegisterFactories()
+            return builder;
+        }
+
+        public static IContainer BuildContainer(this ContainerBuilder builder)
+        {
+            builder.RegisterConfiguration()
+                .RegisterContext<ServerContext>("Main")
                 .RegisterAssemblies()
-                .RegisterServer();
+                .RegisterHandlers()
+                .RegisterServer(initial:false);
 
+            return builder.Build();
+        }
 
-            container = builder.Build();
-            return container;
+        public static IContainer BuildInitialContainer(this ContainerBuilder builder)
+        {
+            builder.RegisterConfiguration()
+                .RegisterServer(initial: true);
+
+            return builder.Build();
         }
     }
 }

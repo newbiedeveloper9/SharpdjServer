@@ -6,7 +6,7 @@ namespace SharpDj.Domain.Entity
 {
     public class UserAuthEntity
     {
-        public ulong Id { get; set; }
+        public long Id { get; set; }
         public string Login { get; set; }
         public string Hash { get; set; }
         public string Salt { get; set; }
@@ -15,6 +15,8 @@ namespace SharpDj.Domain.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [DataType(DataType.Date)]
         public DateTime? AuthenticationExpiration { get; set; }
-        
+
+        public UserEntity User { get; set; }
+        public long UserId { get; set; }
     }
 }

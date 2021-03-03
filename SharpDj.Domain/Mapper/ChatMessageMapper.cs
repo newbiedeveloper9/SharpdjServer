@@ -26,7 +26,6 @@ namespace SharpDj.Domain.Mapper
                 {
                     Id = dto.Author.Id,
                     Username = dto.Author.Username,
-                    Rank = dto.Author.Rank
                 }
             };
         }

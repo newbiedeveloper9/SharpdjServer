@@ -9,7 +9,7 @@ namespace SharpDj.Common.Security
         public static string Hash(string secret, string salt)
         {
             var keyBytes = Encoding.UTF8.GetBytes(secret);
-            var saltBytes = Encoding.UTF8.GetBytes(salt);
+            var saltBytes = Encoding.UTF8.GetBytes(salt ?? "");
             int cost = 2048;
 #if DEBUG
              cost = 2;

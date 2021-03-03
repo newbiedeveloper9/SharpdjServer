@@ -16,7 +16,7 @@ namespace SharpDj.Server.Application.Models
     public class RoomEntityInstance : RoomEntity
     {
         public int AmountOfPeople => Users.Count();
-        public int AmountOfAdministration => Users.Count(x => x.UserEntity.Rank > 0);
+       // public int AmountOfAdministration => Users.Count(x => x.UserEntity > 0);
 
         public TrackDTO CurrentTrack => Tracks.FirstOrDefault();
 
@@ -109,7 +109,7 @@ namespace SharpDj.Server.Application.Models
                 Name = Name,
                 ImagePath = ImagePath,
                 AmountOfPeople = AmountOfPeople,
-                AmountOfAdministration = AmountOfAdministration,
+                //AmountOfAdministration = AmountOfAdministration,
                 NextTrack = next,
                 CurrentTrack = current,
                 PreviousTrack = previous

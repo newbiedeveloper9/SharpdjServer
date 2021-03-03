@@ -3,34 +3,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SharpDj.Domain.Entity;
-using SharpDj.Domain.Repository;
 using SharpDj.Domain.SeedWork;
-using Claim = System.Security.Claims.Claim;
+using SharpDj.Infrastructure.EntityConfiguration;
 
 namespace SharpDj.Infrastructure
 {
     public class ServerContext : DbContext, IUnitOfWork
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ServerContext(DbContextOptions<ServerContext> options) 
+            : base(options)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(
-                    "Server=(localdb)\\MSSQLLocalDB; Database=SdjServerDB; Trusted_Connection=true;",
-                    builder =>
-                    {
-                        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                    });
-            }
+            
+        }
 
-            base.OnConfiguring(optionsBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserEntityTypeConfiguration).Assembly);
         }
 
         public DbSet<UserAuthEntity> UserAuths { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoomConfigEntity> RoomConfigs { get; set; }
         public DbSet<RoomChatMessageEntity> RoomChatPosts { get; set; }
-        public DbSet<UserConnectionEntity> Connections { get; set; }
+        public DbSet<UserAuditEntity> Connections { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)

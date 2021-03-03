@@ -1,40 +1,49 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Extensions.Configuration;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Exceptions;
-using Serilog.Formatting.Json;
-using SharpDj.Server.Application;
-using SharpDj.Server.Application.Management;
 using SharpDj.Server.Extensions;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace SharpDj.Server
 {
     internal class Program
     {
-        private static IContainer _container;
-
         private static async Task Main()
         {
+            //Log all unhandled exceptions
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-            _container = _container.BuildContainer();
 
-            await SetupLogging()
-                .ConfigureAwait(false);
+            //Create startup with initial IoC
+            var startup = CreateStartup();
 
-            await SetupServer()
-                .ConfigureAwait(false);
+            //Configure services with .NET build-in IoC
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptions<>), typeof(OptionsManager<>)));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IOptionsFactory<>), typeof(OptionsFactory<>)));
+            startup.ConfigureServices(serviceCollection);
 
+            //Populate autofac DI
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.Populate(serviceCollection);
+
+            //Create proper IoC
+            var container = containerBuilder.BuildContainer();
+            var serviceProvider = new AutofacServiceProvider(container);
+            serviceProvider.ConfigureAwait(false);
+
+            //Recreate startup
+            startup = serviceProvider.GetRequiredService<Startup>();
+
+            //Run
+            startup.Start(serviceProvider);
             Listening();
 
-            Log.Information("The process scope has ended.");
+            Log.Information("Closing server...");
         }
 
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -42,31 +51,16 @@ namespace SharpDj.Server
             Log.Error(e.ExceptionObject.ToString());
         }
 
-        private static async Task SetupLogging()
+        private static Startup CreateStartup()
         {
-            await using var scope = _container.BeginLifetimeScope();
+            var containerBuilder = new ContainerBuilder();
+            var container = containerBuilder.BuildInitialContainer();
 
-            var configuration = scope.Resolve<IConfiguration>();
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.WithThreadId()
-                .Enrich.WithThreadName()
-                .ReadFrom.Configuration(configuration)
-                .WriteTo.File(
-                    new JsonFormatter(renderMessage: true),
-                    @"logs\\log..txt",
-                    rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            var serviceProvider = new AutofacServiceProvider(container);
+            var startup = serviceProvider.GetService<Startup>();
+            serviceProvider.Dispose();
+            return startup;
         }
-
-        private static async Task SetupServer()
-        {
-            await using var scope = _container.BeginLifetimeScope();
-
-            var setup = scope.Resolve<Setup>();
-            var server = scope.Resolve<App>();
-            server.Start();
-        }
-
 
         private static void Listening()
         {

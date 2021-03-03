@@ -19,7 +19,7 @@ namespace SharpDj.Domain.Mapper
                 Id = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImagePath,
-                RoomConfigDTO = _roomConfigMapper.MapToDto(entity.ConfigEntity)
+                RoomConfigDTO = _roomConfigMapper.MapToDto(entity.Config)
             };
         }
 
@@ -31,7 +31,7 @@ namespace SharpDj.Domain.Mapper
                 Name = dto.Name,
                 Author = bag.Author,
                 ImagePath = dto.ImageUrl,
-                ConfigEntity = _roomConfigMapper.MapToEntity(dto.RoomConfigDTO)
+                Config = _roomConfigMapper.MapToEntity(dto.RoomConfigDTO)
             };
         }
     }

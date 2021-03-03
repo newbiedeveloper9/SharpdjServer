@@ -25,11 +25,11 @@ namespace SharpDj.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == roomId);
         }
 
-        public IEnumerable<RoomEntity> GetRoomByCreatorId(ulong userId)
+        public IEnumerable<RoomEntity> GetRoomByCreatorId(long userId)
         {
             return _serverContext.Rooms
                 .AsNoTracking()
-                .Include(x => x.ConfigEntity)
+                .Include(x => x.Config)
                 .Where(x => x.Author.Id == userId);
         }
 

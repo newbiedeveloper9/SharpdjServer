@@ -7,10 +7,12 @@ namespace SharpDj.Domain.Entity
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public UserEntity Author { get; set; }
         public string ImagePath { get; set; }
 
-        public RoomConfigEntity ConfigEntity { get; set; }
+        public UserEntity Author { get; set; }
+        public long AuthorId { get; set; }
+
+        public RoomConfigEntity Config { get; set; }
         public ICollection<RoomChatMessageEntity> Posts { get; set; }
     }
 }

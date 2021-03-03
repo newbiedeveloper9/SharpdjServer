@@ -1,47 +1,35 @@
-﻿using Network;
-using Network.RSA;
+﻿using Microsoft.Extensions.Options;
+using Network;
 using Serilog;
+using SharpDj.Domain.Options;
 
 namespace SharpDj.Domain.Builders
 {
     public class ServerBuilder : IServerBuilder
     {
-        private ServerConnectionContainer _serverConnection;
+        private readonly SettingsOptions _settings;
 
-        private string _ip;
-        private short _port;
-        private short? _rsaKeySize;
-
-        public IServerBuilder ConfigureServer(string ip, short port)
+        public ServerBuilder(IOptions<SettingsOptions> settingsOptions)
         {
-            _ip = ip;
-            _port = port;
-
-            return this;
-        }
-
-        public IServerBuilder SetRSA(short? rsaKeySize)
-        {
-            _rsaKeySize = rsaKeySize;
-
-            return this;
+            _settings = settingsOptions.Value;
         }
 
         public ServerConnectionContainer Build()
         {
-            if (_rsaKeySize.HasValue)
+            ServerConnectionContainer serverConnection;
+
+            if (_settings.RSAKeySize.HasValue && _settings.RSAKeySize > 0)
             {
-                _serverConnection = ConnectionFactory.CreateSecureServerConnectionContainer(_ip, _port, _rsaKeySize.Value, false);
+                serverConnection = ConnectionFactory.CreateSecureServerConnectionContainer(_settings.Ip, _settings.Port, _settings.RSAKeySize.Value, false);
                 Log.Information("Server will run {@Secure}...", "secured");
             }
             else
             {
-                _serverConnection = ConnectionFactory.CreateServerConnectionContainer(_ip, _port, false);
+                serverConnection = ConnectionFactory.CreateServerConnectionContainer(_settings.Ip, _settings.Port, false);
                 Log.Information("Server will run {@Secure}...", "unsecured");
             }
 
-
-            return _serverConnection;
+            return serverConnection;
         }
     }
 }

@@ -1,14 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace SharpDj.Domain.Entity
 {
     public class RoomChatMessageEntity
     {
-        public ulong Id { get; set; }
+        public long Id { get; set; }
         public string Text { get; set; }
         public byte[] Color { get; set; } //TODO ASAP
 
-        public virtual UserEntity User { get; set; }
-        public ulong UserId { get; set; }
+        public UserEntity User { get; set; }
+        public long UserId { get; set; }
+
+        public RoomEntity Room { get; set; }
+        public int RoomId { get; set; }
     }
 }
