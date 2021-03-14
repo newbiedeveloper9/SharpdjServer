@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: F:\source\repos\newbiedeveloper9\SharpDj\SharpdjServer\kompose.exe
+      convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mssqldb
+  name: mssqldb
+spec:
+  ports:
+  - name: "1433"
+    port: 1433
+    targetPort: 1433
+  selector:
+    io.kompose.service: mssqldb
+status:
+  loadBalancer: {}

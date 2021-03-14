@@ -53,7 +53,7 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
                 response.AuthenticationKey = authKey;
             }
 
-            await conn.SendAsync<LoginResponse>(response);
+            conn.Send(response);
             Log.Information("Success login: {@UserEntity}", userEntity.ToString());
             
         }

@@ -5,6 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>SharpDj.Server.Program</StartupObject>
     <ApplicationIcon />
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +27,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="SCPackets" Version="1.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00747" />
     <PackageReference Include="Serilog.Exceptions" Version="6.0.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.1-dev-00940" />
@@ -36,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SCPackets\SCPackets\SCPackets.csproj" />
+    <ProjectReference Include="..\SharpDj.Common\SharpDj.Common.csproj" />
     <ProjectReference Include="..\SharpDj.Domain\SharpDj.Domain.csproj" />
     <ProjectReference Include="..\SharpDj.Infrastructure\SharpDj.Infrastructure.csproj" />
   </ItemGroup>

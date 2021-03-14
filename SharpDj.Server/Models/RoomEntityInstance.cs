@@ -85,7 +85,7 @@ namespace SharpDj.Server.Application.Models
 
         private void TimeReachedZero(object sender, EventArgs e)
         {
-            //TrackStrategy.NextTrack(Tracks.Wrapper); xd
+            //TrackStrategy.NextTrack(Tracks.Wrapper1); xd
             if (CurrentTrack != null)
             {
                 TimeLeft = CurrentTrack.Duration;

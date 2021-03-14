@@ -6,12 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="SCPackets" Version="1.0.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SCPackets\SCPackets\SCPackets.csproj" />
     <ProjectReference Include="..\SharpDj.Common\SharpDj.Common.csproj" />
   </ItemGroup>
 

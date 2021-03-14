@@ -38,12 +38,7 @@ namespace SharpDj.Server.Application.Commands.Handlers
             var handler = _serviceProvider.GetRequiredService<IAction<TReq>>();
 
             await handler.Handle(request as TReq, connection, actionBags);
-            /*await Action(request as TReq, connection, actionBags, scope.ServiceProvider)
-                .ConfigureAwait(false);*/
         }
-
-/*        protected Task Action(TReq request, Connection conn, List<IActionBag> actionBags,
-            IServiceProvider serviceProvider);*/
 
         public void RegisterPacket(Connection conn)
         {

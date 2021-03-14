@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using SharpDj.Infrastructure;
 
 namespace SharpDj.Server.DesignTime
@@ -8,9 +10,13 @@ namespace SharpDj.Server.DesignTime
     {
         public ServerContext CreateDbContext(string[] args)
         {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
             var optionsBuilder = new DbContextOptionsBuilder<ServerContext>();
 
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB; Database=SdjServerDB; Trusted_Connection=true;Max Pool Size=200");
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("Main"));
 
             return new ServerContext(optionsBuilder.Options);
         }

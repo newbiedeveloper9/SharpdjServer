@@ -9,6 +9,7 @@ using SharpDj.Domain.Repository;
 using SharpDj.Infrastructure.Repositories;
 using SharpDj.Server.Application;
 using System;
+using System.Threading.Tasks;
 
 namespace SharpDj.Server
 {
@@ -31,18 +32,18 @@ namespace SharpDj.Server
                 .ReadFrom.Configuration(Configuration)
                 .WriteTo.File(
                     new JsonFormatter(renderMessage: true),
-                    @"logs\\log..txt",// log.20210214.txt
+                    @"/apps/publish/logs/log.txt",// log.20210214.txt
                     rollingInterval: RollingInterval.Day)
                 .CreateLogger();
         }
 
-        public void Start(IServiceProvider serviceProvider)
+        public async Task Start(IServiceProvider serviceProvider)
         {
-            var setup = serviceProvider.GetService<Setup>();
-            var server = serviceProvider.GetService<ServerMain>();
+            var setup = serviceProvider.GetRequiredService<Setup>();
+            var server = serviceProvider.GetRequiredService<ServerMain>();
 
-            setup.Start();
-            server.Start();
+            await setup.Start().ContinueWith(_ => server.Start())
+                .ConfigureAwait(false);
         }
 
         public void ConfigureServices(IServiceCollection services)

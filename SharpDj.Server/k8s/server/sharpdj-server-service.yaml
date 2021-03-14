@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: F:\source\repos\newbiedeveloper9\SharpDj\SharpdjServer\kompose.exe
+      convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sharpdj-server
+  name: sharpdj-server
+spec:
+  ports:
+  - name: "5666"
+    port: 5666
+    targetPort: 5666
+  selector:
+    io.kompose.service: sharpdj-server
+status:
+  loadBalancer: {}

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Library for use in both Sharpdj Client and Server.</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -37,7 +37,8 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
             _userRepository.AddUser(newUser);
             await _userRepository.UnitOfWork.SaveChangesAsync();
 
-            await conn.SendAsync<RegisterResponse>(new RegisterResponse(RegisterResult.Success, req));
+            conn.Send(new RegisterResponse(RegisterResult.Success, req));
+
             Log.Information("Success register: {@UserEntity}", newUser.ToString());
         }
 
@@ -56,8 +57,8 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
             var result = validation.AnyError();
             if (result != null)
             {
-                Log.Information("Register validation failed. @Result", result);
-                await conn.SendAsync<RegisterResponse>(new RegisterResponse((RegisterResult)result, req));
+                Log.Information("Register validation failed. {@Result}", result);
+                conn.Send(new RegisterResponse((RegisterResult)result, req));
                 return false;
             }
 

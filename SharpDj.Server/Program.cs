@@ -40,7 +40,8 @@ namespace SharpDj.Server
             startup = serviceProvider.GetRequiredService<Startup>();
 
             //Run
-            startup.Start(serviceProvider);
+            await startup.Start(serviceProvider)
+                .ConfigureAwait(false);
             Listening();
 
             Log.Information("Closing server...");

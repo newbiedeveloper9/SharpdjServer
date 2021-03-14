@@ -5,6 +5,8 @@ using SharpDj.Infrastructure;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SharpDj.Server.Application
 {
@@ -17,12 +19,16 @@ namespace SharpDj.Server.Application
             _context = context;
         }
 
-        public void Start()
+        public async Task Start()
         {
             try
             {
                 Log.Information("Checking database health...");
-                DatabaseHealthCommand();
+                await EnsureDatabaseCreated()
+                    .ConfigureAwait(false);
+                await DatabaseHealthCommand()
+                    .ConfigureAwait(false);
+
                 Log.Information("Initializing rooms...");
                 InitializeRooms();
                 Log.Information("Set up events...");
@@ -48,13 +54,26 @@ namespace SharpDj.Server.Application
             foreach (var room in _context.Rooms)
             {
                 RoomSingleton.Instance.RoomInstances.Add((RoomEntityInstance)room);
+
                 BufferSingleton.Instance.RoomUserListBufferManager.CreateBuffer(room.Id);
             }
         }
 
-        private void DatabaseHealthCommand()
+        private async Task EnsureDatabaseCreated()
         {
-            _context.Database.ExecuteSqlRaw("SELECT 1");
+            var pendingMigrations = await _context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+            {
+                Log.Information("Applying {@Count} migrations...", pendingMigrations.Count());
+                await _context.Database.MigrateAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
+        private async Task DatabaseHealthCommand()
+        {
+            await _context.Database.ExecuteSqlRawAsync("SELECT 1")
+                .ConfigureAwait(false);
         }
     }
 }

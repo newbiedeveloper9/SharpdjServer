@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: F:\source\repos\newbiedeveloper9\SharpDj\SharpdjServer\kompose.exe
+      convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sharpdj-server
+  name: sharpdj-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: sharpdj-server
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: F:\source\repos\newbiedeveloper9\SharpDj\SharpdjServer\kompose.exe
+          convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/sharpdj-net: "true"
+        io.kompose.service: sharpdj-server
+    spec:
+      containers:
+      - image: sharpdj-server
+        imagePullPolicy: Never
+        name: sharpdj-server
+        ports:
+        - containerPort: 5666
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}
