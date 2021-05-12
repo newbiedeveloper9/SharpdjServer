@@ -23,7 +23,7 @@ namespace SharpDj.Common.Handlers
             return handler;
         }
 
-        public virtual async Task<object> Handle(object request, List<IActionBag> actionBags)
+        public virtual async Task<object> Handle(object request, IList<IActionBag> actionBags)
         {   
             if (_successor != null)
             {

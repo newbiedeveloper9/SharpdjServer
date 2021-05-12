@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Network;
 using Network.Interfaces;
 using Network.Packets;
-using SCPackets.Packets.Login;
-using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Base;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
@@ -27,7 +25,7 @@ namespace SharpDj.Server.Application.Commands.Handlers
             _serviceProvider = serviceProvider;
 
             _packetHandler = async (packet, connection) =>
-                await Handle(packet, new List<IActionBag> {new ConnectionBag(connection)}).ConfigureAwait(false);
+                await Handle(packet, new List<IActionBag> { new ConnectionBag(connection) }).ConfigureAwait(false);
         }
 
         private async Task Handle(object request, List<IActionBag> actionBags)
@@ -36,8 +34,8 @@ namespace SharpDj.Server.Application.Commands.Handlers
             using var scope = _serviceProvider.CreateScope();
 
             var handler = _serviceProvider.GetRequiredService<IAction<TReq>>();
-
-            await handler.Handle(request as TReq, connection, actionBags);
+            
+            handler.Pipeline.SetNext()
         }
 
         public void RegisterPacket(Connection conn)

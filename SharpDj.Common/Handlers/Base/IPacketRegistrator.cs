@@ -14,6 +14,7 @@ namespace SharpDj.Common.Handlers.Base
 
     public interface IAction<T> where T : RequestPacket
     {
-        Task Handle(T req, Connection conn, IList<IActionBag> actionBags);
+        IHandler Pipeline { get; }
+        Task ProcessRequest(T req, Connection conn, IList<IActionBag> actionBags);
     }
 }

@@ -13,17 +13,21 @@ using SharpDj.Server.Singleton;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SharpDj.Common.Handlers;
+using SharpDj.Common.Handlers.Dictionaries;
+using SharpDj.Server.Application.Commands.Extensions;
 
 namespace SharpDj.Server.Application.Commands.Handlers.Authentication
 {
-    public class ServerLoginAction : IAction<LoginRequest>
+    public class ServerLoginAction : AbstractHandler,
+        IAction<LoginRequest>
     {
         private readonly IRoomMapper _roomMapper;
         private readonly IUserRepository _userRepository;
         private readonly IRoomRepository _roomRepository;
 
         public ServerLoginAction(IRoomMapper roomMapper, IUserRepository userRepository,
-            IRoomRepository roomRepository)
+            IRoomRepository roomRepository, IDictionaryConverter<IActionBag> bagConverter) : base(bagConverter)
         {
             _roomMapper = roomMapper;
             _userRepository = userRepository;
@@ -31,7 +35,17 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
         }
 
         //check if user is logged in already
-        public async Task Handle(LoginRequest req, Connection conn, IList<IActionBag> actionBags)
+
+        public IHandler Pipeline =>
+            new BasicIncludeHandler(BagConverter).SetNext(
+                new BlockLoggedUserHandler(BagConverter).SetNext(this));
+
+        public override Task<object> Handle(object request, IList<IActionBag> actionBags)
+        {
+            return base.Handle(request, actionBags);
+        }
+
+        public async Task ProcessRequest(LoginRequest req, Connection conn, IList<IActionBag> actionBags)
         {
 
             var userEntity = await _userRepository.GetUserByLoginOrEmailAsync(req.Login, req.Login);
@@ -55,7 +69,7 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
 
             conn.Send(response);
             Log.Information("Success login: {@UserEntity}", userEntity.ToString());
-            
+
         }
 
         //todo: move to special validation class for each handler

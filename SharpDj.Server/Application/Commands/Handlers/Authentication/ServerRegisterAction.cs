@@ -5,32 +5,43 @@ using Network;
 using SCPackets.Packets.Register;
 using Serilog;
 using SharpDj.Common;
+using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Base;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
 using SharpDj.Domain.Factory;
 using SharpDj.Domain.Repository;
+using SharpDj.Server.Application.Commands.Extensions;
 using SharpDj.Server.Application.Management;
 
 namespace SharpDj.Server.Application.Commands.Handlers.Authentication
 {
-    public class ServerRegisterAction : IAction<RegisterRequest>
+    public class ServerRegisterAction : AbstractHandler, 
+        IAction<RegisterRequest>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserFactory _userFactory;
 
-        public ServerRegisterAction(IUserRepository userRepository,
-            IUserFactory userFactory)
+        public ServerRegisterAction(IUserRepository userRepository, IUserFactory userFactory,
+            IDictionaryConverter<IActionBag> bagConverter) 
+            : base(bagConverter)
         {
             _userRepository = userRepository;
             _userFactory = userFactory;
         }
 
-        public async Task Handle(RegisterRequest req, Connection conn, IList<IActionBag> actionBags)
+        public IHandler Pipeline =>
+            new BasicIncludeHandler(BagConverter).SetNext(
+                new BlockLoggedUserHandler(BagConverter));
+
+        public IHandler PostHandler => null;
+
+        public async Task ProcessRequest(RegisterRequest req, Connection conn, IList<IActionBag> actionBags)
         {
             if (await Validate(req, conn) == false)
             {
-                return;
+                await base.Handle(req, actionBags)
+                    .ConfigureAwait(false);
             }
 
             var newUser = _userFactory.CreateUserEntity(req);
@@ -40,6 +51,9 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
             conn.Send(new RegisterResponse(RegisterResult.Success, req));
 
             Log.Information("Success register: {@UserEntity}", newUser.ToString());
+
+            await base.Handle(req, actionBags)
+                .ConfigureAwait(false);
         }
 
         private async Task<bool> Validate(RegisterRequest req, Connection conn)

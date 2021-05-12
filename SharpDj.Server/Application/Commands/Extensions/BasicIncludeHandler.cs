@@ -4,10 +4,9 @@ using Network;
 using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
+using SharpDj.Server.Application.Commands.Bags;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
-using ActiveUserBag = SharpDj.Server.Application.Commands.Bags.ActiveUserBag;
-using ConnectionBag = SharpDj.Server.Application.Commands.Bags.ConnectionBag;
 
 namespace SharpDj.Server.Application.Commands.Extensions
 {
@@ -19,7 +18,7 @@ namespace SharpDj.Server.Application.Commands.Extensions
         {
         }
 
-        public override async Task<object> Handle(object request, List<IActionBag> actionBags)
+        public override async Task<object> Handle(object request, IList<IActionBag> actionBags)
         {
             var connectionBag = BagConverter.Get<ConnectionBag>(actionBags);
             var active = GetActiveUser(connectionBag.Connection);
@@ -29,7 +28,8 @@ namespace SharpDj.Server.Application.Commands.Extensions
                 actionBags.Add(new ActiveUserBag(active));
             }
 
-            return await base.Handle(request, actionBags);
+            return await base.Handle(request, actionBags)
+                .ConfigureAwait(false);
         }
 
         private ServerUserModel GetActiveUser(Connection conn)

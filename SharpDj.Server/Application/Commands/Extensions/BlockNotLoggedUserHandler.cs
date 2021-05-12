@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
-using ActiveUserBag = SharpDj.Server.Application.Commands.Bags.ActiveUserBag;
+using SharpDj.Server.Application.Commands.Bags;
 
 namespace SharpDj.Server.Application.Commands.Extensions
 {
@@ -14,7 +14,7 @@ namespace SharpDj.Server.Application.Commands.Extensions
         {
         }
 
-        public override async Task<object> Handle(object request, List<IActionBag> actionBags)
+        public override async Task<object> Handle(object request, IList<IActionBag> actionBags)
         {
             var user = BagConverter.Get<ActiveUserBag>(actionBags);
 
@@ -23,7 +23,8 @@ namespace SharpDj.Server.Application.Commands.Extensions
                 return "User is not logged in";
             }
 
-            return await base.Handle(request, actionBags);
+            return await base.Handle(request, actionBags)
+                .ConfigureAwait(false);
         }
     }
 }
