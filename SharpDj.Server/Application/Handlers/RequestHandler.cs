@@ -6,22 +6,19 @@ using Network;
 using Network.Interfaces;
 using Network.Packets;
 using SharpDj.Common.Handlers.Base;
-using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
 using SharpDj.Server.Application.Commands.Bags;
 
 namespace SharpDj.Server.Application.Commands.Handlers
 {
-    public class RequestHandler<TReq> : IAction
+    public class RequestHandler<TReq> : IPacketRegister
         where TReq : RequestPacket
     {
-        private readonly IDictionaryConverter<IActionBag> _bagConverter;
         private readonly IServiceProvider _serviceProvider;
         private readonly PacketReceivedHandler<TReq> _packetHandler;
 
-        public RequestHandler(IDictionaryConverter<IActionBag> bagConverter, IServiceProvider serviceProvider)
+        public RequestHandler(IServiceProvider serviceProvider)
         {
-            _bagConverter = bagConverter;
             _serviceProvider = serviceProvider;
 
             _packetHandler = async (packet, connection) =>
@@ -30,12 +27,13 @@ namespace SharpDj.Server.Application.Commands.Handlers
 
         private async Task Handle(object request, List<IActionBag> actionBags)
         {
-            var connection = _bagConverter.Get<ConnectionBag>(actionBags).Connection;
             using var scope = _serviceProvider.CreateScope();
 
             var handler = _serviceProvider.GetRequiredService<IAction<TReq>>();
-            
-            handler.Pipeline.SetNext()
+
+            var pipeline =  handler.BuildPipeline();
+            await pipeline.Handle(request, actionBags)
+                .ConfigureAwait(false);
         }
 
         public void RegisterPacket(Connection conn)

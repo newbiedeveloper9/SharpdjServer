@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Network;
@@ -16,25 +16,23 @@ using SharpDj.Server.Application.Management;
 
 namespace SharpDj.Server.Application.Commands.Handlers.Authentication
 {
-    public class ServerRegisterAction : AbstractHandler, 
-        IAction<RegisterRequest>
+    public class ServerRegisterAction : AbstractHandler,
+        IPacketRegister<RegisterRequest>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserFactory _userFactory;
 
         public ServerRegisterAction(IUserRepository userRepository, IUserFactory userFactory,
-            IDictionaryConverter<IActionBag> bagConverter) 
+            IDictionaryConverter<IActionBag> bagConverter)
             : base(bagConverter)
         {
             _userRepository = userRepository;
             _userFactory = userFactory;
         }
 
-        public IHandler Pipeline =>
+        public IHandler BuildPipeline =>
             new BasicIncludeHandler(BagConverter).SetNext(
                 new BlockLoggedUserHandler(BagConverter));
-
-        public IHandler PostHandler => null;
 
         public async Task ProcessRequest(RegisterRequest req, Connection conn, IList<IActionBag> actionBags)
         {
@@ -68,6 +66,7 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
                 {RegisterResult.AlreadyExist, await _userRepository.GivenLoginOrEmailExistsAsync(req.Login, req.Email)}
             };
 
+
             var result = validation.AnyError();
             if (result != null)
             {
@@ -80,3 +79,4 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
         }
     }
 }
+*/

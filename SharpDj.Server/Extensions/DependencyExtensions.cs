@@ -5,10 +5,7 @@ using Microsoft.Extensions.Configuration;
 using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Base;
 using SharpDj.Common.Handlers.Dictionaries;
-using SharpDj.Domain.Factory;
 using SharpDj.Domain.Interfaces;
-using SharpDj.Domain.Repository;
-using SharpDj.Infrastructure.Repositories;
 using SharpDj.Server.Application;
 using SharpDj.Server.Application.Commands.Handlers;
 using System;
@@ -68,22 +65,6 @@ namespace SharpDj.Server.Extensions
             builder.RegisterAssemblyTypes(appAssemblies)
                 .AsClosedTypesOf(typeof(IAction<>))
                 .InstancePerLifetimeScope();
-
-/*            builder.RegisterAssemblyTypes(appAssemblies)
-                .InNamespace(typeof(RequestHandler<>).Namespace ??
-                             throw new InvalidOperationException("Problem with finding namespace for Server Handlers"))
-                .PublicOnly()
-                .Where(x => x.Name.EndsWith("PacketHandler"))
-                .InstancePerLifetimeScope()
-                .As<IAction>();*/
-
-            /*            builder.RegisterAssemblyTypes(appAssemblies)
-                            .InNamespace(typeof(RequestHandler<>).Namespace ??
-                                         throw new InvalidOperationException("Problem with finding namespace for Server Handlers"))
-                            .PublicOnly()
-                            .Where(x => x.Name.StartsWith("Server") && x.Name.EndsWith("Action"))
-                            .InstancePerLifetimeScope()
-                            .AsSelf();*/
 
             return builder;
         }

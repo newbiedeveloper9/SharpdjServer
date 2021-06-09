@@ -34,23 +34,24 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
             _roomRepository = roomRepository;
         }
 
-        //check if user is logged in already
-
-        public IHandler Pipeline =>
-            new BasicIncludeHandler(BagConverter).SetNext(
-                new BlockLoggedUserHandler(BagConverter).SetNext(this));
-
-        public override Task<object> Handle(object request, IList<IActionBag> actionBags)
+        public IHandler BuildPipeline()
         {
-            return base.Handle(request, actionBags);
+            var include = new BasicIncludeHandler(BagConverter);
+            var blockLoggedUser = new BlockLoggedUserHandler(BagConverter);
+
+            include.SetNext(blockLoggedUser);
+            blockLoggedUser.SetNext(this);
+
+            return include;
         }
 
         public async Task ProcessRequest(LoginRequest req, Connection conn, IList<IActionBag> actionBags)
         {
-
             var userEntity = await _userRepository.GetUserByLoginOrEmailAsync(req.Login, req.Login);
-            if (await Validate(req, conn, userEntity) == false)
+            if (IsValid(req, userEntity) == false)
             {
+                Log.Information("Login validation failed. {@Result}", LoginResult.CredentialsError);
+                conn.Send(new LoginResponse(LoginResult.CredentialsError, req));
                 return;
             }
 
@@ -69,11 +70,10 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
 
             conn.Send(response);
             Log.Information("Success login: {@UserEntity}", userEntity.ToString());
-
         }
 
         //todo: move to special validation class for each handler
-        private async Task<bool> Validate(LoginRequest req, Connection conn, UserEntity userEntity)
+        private bool IsValid(LoginRequest req, UserEntity userEntity)
         {
             if (userEntity != null)
             {
@@ -84,8 +84,6 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
                 }
             }
 
-            Log.Information("Login validation failed. {@Result}", LoginResult.CredentialsError);
-            conn.Send(new LoginResponse(LoginResult.CredentialsError, req));
             return false;
         }
 
@@ -96,8 +94,8 @@ namespace SharpDj.Server.Application.Commands.Handlers.Authentication
             if (userIsActive != null)
             {
                 ClientSingleton.Instance.Users
-                    .FirstOrDefault(x => x.UserEntity.Id == user.Id)
-                    .Connections.Add(conn);
+                    .FirstOrDefault(x => x.UserEntity.Id == user.Id).Connections
+                    .Add(conn);
             }
             else
             {

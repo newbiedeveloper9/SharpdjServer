@@ -12,7 +12,6 @@ namespace SharpDj.Server.Application.Commands.Extensions
 {
     public class BasicIncludeHandler : AbstractHandler
     {
-
         public BasicIncludeHandler(IDictionaryConverter<IActionBag> bagConverter)
         : base(bagConverter)
         {
