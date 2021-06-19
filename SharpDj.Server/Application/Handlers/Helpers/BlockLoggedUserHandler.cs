@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
-using SharpDj.Server.Application.Commands.Bags;
+using SharpDj.Server.Application.Bags;
 
-namespace SharpDj.Server.Application.Commands.Extensions
+namespace SharpDj.Server.Application.Handlers.Helpers
 {
     public class BlockLoggedUserHandler : AbstractHandler
     {

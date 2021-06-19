@@ -9,7 +9,7 @@ using SharpDj.Common.Handlers.Base;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
 using SharpDj.Server.Application.Commands.Bags;
 
-namespace SharpDj.Server.Application.Commands.Handlers
+namespace SharpDj.Server.Application.Handlers
 {
     public class RequestHandler<TReq> : IPacketRegister
         where TReq : RequestPacket

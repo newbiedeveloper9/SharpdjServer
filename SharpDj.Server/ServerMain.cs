@@ -5,7 +5,6 @@ using Network.Enums;
 using SCPackets.Packets.Login;
 using Serilog;
 using SharpDj.Domain.Builders;
-using SharpDj.Server.Application.Commands.Handlers;
 
 namespace SharpDj.Server.Application
 {

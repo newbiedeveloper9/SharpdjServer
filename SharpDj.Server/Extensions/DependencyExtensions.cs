@@ -7,7 +7,6 @@ using SharpDj.Common.Handlers.Base;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Domain.Interfaces;
 using SharpDj.Server.Application;
-using SharpDj.Server.Application.Commands.Handlers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +14,7 @@ using Network.Packets;
 using SCPackets.Packets.Login;
 using SCPackets.Packets.Register;
 using SharpDj.Infrastructure;
+using SharpDj.Server.Application.Handlers;
 
 namespace SharpDj.Server.Extensions
 {

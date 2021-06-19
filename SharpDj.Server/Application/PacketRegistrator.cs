@@ -4,7 +4,7 @@ using Network;
 using SCPackets.Packets.Login;
 using SCPackets.Packets.Register;
 using SharpDj.Common.Handlers.Base;
-using SharpDj.Server.Application.Commands.Handlers;
+using SharpDj.Server.Application.Handlers;
 
 namespace SharpDj.Server.Application
 {

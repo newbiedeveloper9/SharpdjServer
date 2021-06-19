@@ -1,23 +1,23 @@
-﻿using Network;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Network;
 using SCPackets.Models;
 using SCPackets.Packets.Login;
 using Serilog;
+using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Base;
+using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
 using SharpDj.Common.Security;
 using SharpDj.Domain.Entity;
 using SharpDj.Domain.Mapper;
 using SharpDj.Domain.Repository;
+using SharpDj.Server.Application.Handlers.Helpers;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SharpDj.Common.Handlers;
-using SharpDj.Common.Handlers.Dictionaries;
-using SharpDj.Server.Application.Commands.Extensions;
 
-namespace SharpDj.Server.Application.Commands.Handlers.Authentication
+namespace SharpDj.Server.Application.Handlers.Authentication
 {
     public class ServerLoginAction : AbstractHandler,
         IAction<LoginRequest>

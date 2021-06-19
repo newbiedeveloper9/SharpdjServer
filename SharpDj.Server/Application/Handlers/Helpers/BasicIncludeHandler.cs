@@ -4,11 +4,12 @@ using Network;
 using SharpDj.Common.Handlers;
 using SharpDj.Common.Handlers.Dictionaries;
 using SharpDj.Common.Handlers.Dictionaries.Bags;
+using SharpDj.Server.Application.Bags;
 using SharpDj.Server.Application.Commands.Bags;
 using SharpDj.Server.Application.Models;
 using SharpDj.Server.Singleton;
 
-namespace SharpDj.Server.Application.Commands.Extensions
+namespace SharpDj.Server.Application.Handlers.Helpers
 {
     public class BasicIncludeHandler : AbstractHandler
     {

@@ -1,7 +1,7 @@
 ﻿using SharpDj.Common.Handlers.Dictionaries.Bags;
 using SharpDj.Server.Application.Models;
 
-namespace SharpDj.Server.Application.Commands.Bags
+namespace SharpDj.Server.Application.Bags
 {
     public class ActiveUserBag : IActionBag
     {
